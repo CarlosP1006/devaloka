@@ -10,7 +10,7 @@ const htmlPluginCfg = new htmlPlugin({
 });
 
 const copyPluginCfg = new copyPlugin({
-  patterns: [{ from: 'maps/*.json', to: 'maps/[name].json' }],
+  patterns: [{ from: 'maps/*.json', to: 'maps/[name].json', noErrorOnMissing: true }],
 });
 
 const tsconfigPathsPluginCfg = new TsconfigPathsPlugin();

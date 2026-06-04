@@ -10,8 +10,8 @@ export class Game extends Phaser.Game {
 
 window.addEventListener('load', () => {
   const cfg: Phaser.Types.Core.GameConfig = {
-    width: 375,
-    height: 812,
+    width: 1280,
+    height: 720,
     type: Phaser.AUTO,
     parent: 'game',
     scene: [BootScene, GameScene],
@@ -27,6 +27,10 @@ window.addEventListener('load', () => {
         debug: false,
       },
     },
+    scale: {
+      mode: Phaser.Scale.RESIZE,
+      autoCenter: Phaser.Scale.CENTER_BOTH,
+    },
     backgroundColor: '#222',
     render: {
       pixelArt: true,
@@ -34,5 +38,5 @@ window.addEventListener('load', () => {
     },
   };
 
-  const game = new Game(cfg);
+  new Game(cfg);
 });

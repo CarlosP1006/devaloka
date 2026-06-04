@@ -4,7 +4,7 @@ const copyPlugin = require('copy-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 const htmlPluginCfg = new htmlPlugin({
-  template: path.resolve(__dirname, 'index.html'),
+  template: path.resolve(__dirname, 'src/index.html'),
   filename: 'index.html',
   inject: 'body',
 });

@@ -1,16 +1,10 @@
 {
-  "name": "phaser-typescript-skeleton",
+  "name": "devaloka",
   "version": "1.0.0",
-  "description": "A simple skeleton to help quickly bootstraping Phaser games with TypeScript.",
+  "description": "",
   "main": "src/game.ts",
-  "license": "GPL-3.0",
-  "keywords": [
-    "phaser",
-    "typescript",
-    "game",
-    "html5",
-    "webgl"
-  ],
+  "license": "ISC",
+  "keywords": [],
   "scripts": {
     "build": "webpack --mode production --config webpack.config.js",
     "dev": "webpack --mode development && webpack serve --mode development",
@@ -18,7 +12,7 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
   },
-  "author": "Níckolas Da Silva <nickolas@phpsp.org.br>",
+  "author": "Carlos Eduardo <dinosauroxd9@gmail.com>",
   "engines": {
     "node": ">=16.19.0"
   },

@@ -1,5 +1,5 @@
 import { container } from '../../containers';
-import { PlayerProvider } from '@providers/player/PlayerProvider';
+import { PlayerObject } from '@objects/player/PlayerObject';
 import { PlayerService } from '@services/PlayerService';
 
 export class SwampRoomScene extends Phaser.Scene {
@@ -12,7 +12,7 @@ export class SwampRoomScene extends Phaser.Scene {
   preload(): void {}
 
   create(): void {
-    const player = PlayerProvider.create(this, 640, 650);
+    const player = PlayerObject.create(this, 640, 650);
     this.playerService = container.resolve<PlayerService>('playerService');
     this.playerService.init(player, this);
   }

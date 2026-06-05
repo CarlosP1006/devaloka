@@ -1,10 +1,10 @@
-export class PlayerProvider extends Phaser.Physics.Arcade.Sprite {
+export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
   }
 
-  static create(scene: Phaser.Scene, x: number, y: number): PlayerProvider {
-    const player = new PlayerProvider(scene, x, y);
+  static create(scene: Phaser.Scene, x: number, y: number): PlayerObject {
+    const player = new PlayerObject(scene, x, y);
     scene.add.existing(player);
     scene.physics.add.existing(player);
     player.setCollideWorldBounds(true);

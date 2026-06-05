@@ -1,13 +1,13 @@
-import { PlayerProvider } from '@providers/player/PlayerProvider';
+import { PlayerObject } from '@objects/player/PlayerObject';
 
 export class PlayerService {
-  private player!: PlayerProvider;
+  private player!: PlayerObject;
   private keyA!: Phaser.Input.Keyboard.Key;
   private keyD!: Phaser.Input.Keyboard.Key;
   private shiftKey!: Phaser.Input.Keyboard.Key;
   private spaceKey!: Phaser.Input.Keyboard.Key;
 
-  init(player: PlayerProvider, scene: Phaser.Scene): void {
+  init(player: PlayerObject, scene: Phaser.Scene): void {
     this.player = player;
     this.keyA = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyD = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.D);

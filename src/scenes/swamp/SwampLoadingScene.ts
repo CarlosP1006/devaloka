@@ -1,5 +1,5 @@
 import playerImg from '@assets/player/images/player.png';
-import { loadPlayerAnimations } from '@providers/player/PlayerLoader';
+import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
 
 export class SwampLoadingScene extends Phaser.Scene {
   constructor() {

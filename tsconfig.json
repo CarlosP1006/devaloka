@@ -14,7 +14,7 @@
       "@assets/*": ["./assets/*"],
       "@maps/*": ["./maps/*"],
       "@scenes/*": ["./src/scenes/*"],
-      "@objects/*": ["./src/objects/*"],
+      "@providers/*": ["./src/providers/*"],
       "@utils/*": ["./src/utils/*"],
       "@services/*": ["./src/services/*"]
     }

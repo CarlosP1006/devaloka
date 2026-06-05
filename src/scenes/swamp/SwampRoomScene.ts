@@ -1,18 +1,18 @@
-import { container } from '../containers';
-import { Player } from '@objects/player/Player';
+import { container } from '../../containers';
+import { PlayerProvider } from '@providers/player/PlayerProvider';
 import { PlayerService } from '@services/PlayerService';
 
-export class GameScene extends Phaser.Scene {
+export class SwampRoomScene extends Phaser.Scene {
   private playerService!: PlayerService;
 
   constructor() {
-    super({ key: 'GameScene' });
+    super({ key: 'SwampRoomScene' });
   }
 
   preload(): void {}
 
   create(): void {
-    const player = Player.create(this, 640, 360);
+    const player = PlayerProvider.create(this, 640, 650);
     this.playerService = container.resolve<PlayerService>('playerService');
     this.playerService.init(player, this);
   }

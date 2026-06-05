@@ -1,22 +1,31 @@
-import { Player } from '@objects/player/Player';
+import { PlayerProvider } from '@providers/player/PlayerProvider';
 
 export class PlayerService {
-  private player!: Player;
+  private player!: PlayerProvider;
   private keyA!: Phaser.Input.Keyboard.Key;
   private keyD!: Phaser.Input.Keyboard.Key;
   private shiftKey!: Phaser.Input.Keyboard.Key;
+  private spaceKey!: Phaser.Input.Keyboard.Key;
 
-  init(player: Player, scene: Phaser.Scene): void {
+  init(player: PlayerProvider, scene: Phaser.Scene): void {
     this.player = player;
     this.keyA = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyD = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.shiftKey = scene.input.keyboard!.addKey(
       Phaser.Input.Keyboard.KeyCodes.SHIFT,
     );
+    this.spaceKey = scene.input.keyboard!.addKey(
+      Phaser.Input.Keyboard.KeyCodes.SPACE,
+    );
   }
 
   update(): void {
     const running = this.shiftKey.isDown;
+    const onGround = this.player.body!.blocked.down;
+
+    if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && onGround) {
+      this.player.jump();
+    }
 
     if (this.keyA.isDown) {
       if (running) this.player.runLeft();
@@ -24,7 +33,7 @@ export class PlayerService {
     } else if (this.keyD.isDown) {
       if (running) this.player.runRight();
       else this.player.moveRight();
-    } else {
+    } else if (onGround) {
       this.player.idle();
     }
   }

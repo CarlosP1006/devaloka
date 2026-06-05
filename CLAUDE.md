@@ -28,7 +28,7 @@ There are no tests configured in this project.
 
 **Path aliases** (configured in `tsconfig.json`, resolved by `tsconfig-paths-webpack-plugin`):
 - `@scenes/*` → `src/scenes/`
-- `@objects/*` → `src/objects/`
+- `@providers/*` → `src/providers/`
 - `@services/*` → `src/services/`
 - `@utils/*` → `src/utils/`
 - `@assets/*` → `assets/`

@@ -1,14 +1,13 @@
-export class Player extends Phaser.Physics.Arcade.Sprite {
+export class PlayerProvider extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
   }
 
-  static create(scene: Phaser.Scene, x: number, y: number): Player {
-    const player = new Player(scene, x, y);
+  static create(scene: Phaser.Scene, x: number, y: number): PlayerProvider {
+    const player = new PlayerProvider(scene, x, y);
     scene.add.existing(player);
     scene.physics.add.existing(player);
     player.setCollideWorldBounds(true);
-    player.setGravityY(-1000);
     player.setScale(2);
     return player;
   }
@@ -35,6 +34,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setVelocityX(400);
     this.setFlipX(false);
     this.anims.play('run', true);
+  }
+
+  public jump(): void {
+    this.setVelocityY(-600);
+    this.anims.play('jump', true);
   }
 
   public idle(): void {

@@ -55,6 +55,9 @@ module.exports = {
     open: false,
     hot: true,
     watchFiles: ['src/**/*.ts', 'index.html'],
+    client: {
+      overlay: { warnings: false, errors: true },
+    },
   },
   resolve: {
     extensions: ['.ts', '.js'],

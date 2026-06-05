@@ -15,7 +15,8 @@
       "@maps/*": ["./maps/*"],
       "@scenes/*": ["./src/scenes/*"],
       "@objects/*": ["./src/objects/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@services/*": ["./src/services/*"]
     }
   },
   "include": ["src/**/*"],

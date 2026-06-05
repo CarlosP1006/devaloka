@@ -1,6 +1,9 @@
-import { AwilixContainer } from 'awilix';
+import { asClass, AwilixContainer } from 'awilix';
+import { PlayerService } from '@services/PlayerService';
 
-export function registerServices(_container: AwilixContainer): void {
-  // Register game services here as they are created
-  // e.g.: container.register('audioService', asClass(AudioService, { lifetime: 'SINGLETON' }))
+export function registerServices(container: AwilixContainer): void {
+  container.register(
+    'playerService',
+    asClass(PlayerService, { lifetime: 'SINGLETON' }),
+  );
 }

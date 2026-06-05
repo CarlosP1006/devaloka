@@ -1,0 +1,18 @@
+## Sistema de Transição de Fases
+
+- Criar funções explícitas `startScene()` e `stopScene()` em cada RoomScene
+  contendo os `scene.start()` e `scene.stop()` do Phaser, pra garantir
+  controle total do ciclo de vida de cada cena
+
+- Tela de loading entre fases: quando player entra no portal, inicia a
+  LoadingScene da próxima fase, descarrega assets da fase anterior,
+  carrega assets da nova fase, e ao terminar inicia a RoomScene
+
+- Portais de entrada e saída entre fases (A → B → C sequencialmente)
+  A lógica de transição fica na RoomScene que o player está saindo
+
+## Player — Próximas Implementações
+
+- Adicionar animações de ataque ao spritesheet do player
+- Adicionar arma ao personagem
+- Implementar ataque básico (função + animação + tecla)

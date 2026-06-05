@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## IMPORTANTE — Ler no início de toda conversa
+
+Sempre ler `IDEIAS_FUTURAS.TXT` na raiz do projeto e lembrar o usuário das ideias pendentes registradas lá.
+
 ## Commands
 
 ```bash
@@ -16,33 +20,57 @@ There are no tests configured in this project.
 
 ## Architecture
 
-**Phaser 3 TypeScript browser game** with Webpack 5 bundling. Entry point is `src/game.ts` which creates the Phaser game instance and registers scenes.
+**Phaser 3 TypeScript browser game** com Webpack 5. Entry point: `src/game.ts`.
 
-**Scene lifecycle:**
-1. `BootScene` — preloads all assets
-2. `GameScene` — main game logic (runs after boot completes)
+**Estrutura de pastas:**
+```
+src/
+  game.ts                        # Entry point, config do Phaser
+  containers/                    # DI container (Awilix)
+  objects/                       # Objetos físicos do jogo (estendem Phaser)
+    player/
+      PlayerObject.ts            # Sprite do player, funções de movimento
+      PlayerAnimations.ts        # Mapeamento de frames do spritesheet LPC
+      PlayerLoader.ts            # Registra animações no Phaser
+  scenes/                        # Cenas do jogo, organizadas por área
+    swamp/
+      SwampLoadingScene.ts       # Carrega assets do Swamp
+      SwampRoomScene.ts          # Lógica da fase Swamp
+  services/                      # Lógica de gameplay (input, IA, combate)
+    PlayerService.ts
+  types/
+    global.d.ts                  # Tipos globais (imports de imagens)
+  utils/                         # Utilitários gerais
 
-**Custom game objects** live in `src/objects/` and extend Phaser built-ins.
+assets/
+  player/
+    images/player.png            # Spritesheet LPC do personagem
+    audio/                       # Sons do player
+    data/player.json             # Config do gerador LPC (backup)
+  maps/                          # Tilemaps Tiled (.json)
+```
 
-**DI container** lives in `src/containers/`. Uses Awilix with `CLASSIC` injection mode. Register new services in `registerServices.ts` and resolve them in scenes via `container.resolve<MyService>('myService')`. Never call `container.resolve()` inside `update()` — resolve once in `create()` and store the reference.
+**Convenção de nomes de cenas:**
+- `{Area}LoadingScene` — carrega assets da área, registra animações
+- `{Area}RoomScene` — lógica da fase, objetos, colisões, transições
 
-**Path aliases** (configured in `tsconfig.json`, resolved by `tsconfig-paths-webpack-plugin`):
+**DI container** (`src/containers/`): Awilix `CLASSIC` injection mode. Registrar serviços em `registerServices.ts`. Resolver sempre no `create()`, nunca no `update()`.
+
+**Path aliases** (`tsconfig.json`):
 - `@scenes/*` → `src/scenes/`
-- `@providers/*` → `src/providers/`
+- `@objects/*` → `src/objects/`
 - `@services/*` → `src/services/`
 - `@utils/*` → `src/utils/`
 - `@assets/*` → `assets/`
 - `@maps/*` → `maps/`
 
-**Game config** (in `src/game.ts`): 1280×720, `Scale.RESIZE` (fills window), arcade physics (gravity y: 1000), pixel art rendering.
-
-**Asset loading**: Images handled by `file-loader`. TypeScript types declared in `src/types/global.d.ts`.
+**Game config** (`src/game.ts`): 1280×720, `Scale.RESIZE`, arcade physics (gravity y: 1000), pixel art.
 
 ## Player Spritesheet
 
-`assets/player.png` — LPC format, 64×64 per frame, 13 columns × 54 rows. Frame index = `row * 13 + col`. Full mapping in `src/objects/player/PlayerAnimations.ts`.
+`assets/player/images/player.png` — LPC format, 64×64 per frame, 13 columns × 54 rows. Frame index = `row * 13 + col`. Mapeamento completo em `src/objects/player/PlayerAnimations.ts`.
 
-Direction order within each animation group: `+0=up`, `+1=left`, `+2=down`, `+3=right`.
+Direções por animação: `+0=up`, `+1=left`, `+2=down`, `+3=right`.
 
 | Animation | Rows | Frames | Descrição |
 |---|---|---|---|
@@ -60,10 +88,8 @@ Direction order within each animation group: `+0=up`, `+1=left`, `+2=down`, `+3=
 | `thrust` | 4–7 | 8 | Ataque frontal |
 | `shoot` | 16–19 | 13 | Atirar com arco |
 | `slash_1h` | 50–53 | 13 | Ataque diagonal baixo |
-| `backslash_1h` | 54–57 | 13 | Ataque diagonal cima |
-| `halfslash_1h` | 58–61 | 13 | Ataque médio diagonal |
 | `watering` | 46–49 | 7 | Regar |
 
 ## Code Style
 
-Prettier config: single quotes, semicolons, trailing commas (all), 2-space indent, 80-char line width, no arrow parens for single-arg functions, auto line endings.
+Prettier: single quotes, semicolons, trailing commas (all), 2-space indent, 80-char line width, no arrow parens, auto line endings.

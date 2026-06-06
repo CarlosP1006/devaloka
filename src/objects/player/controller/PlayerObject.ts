@@ -1,3 +1,5 @@
+import { Depth } from '@utils/Depth';
+
 export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
@@ -8,6 +10,7 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(player);
     scene.physics.add.existing(player);
     player.setCollideWorldBounds(true);
+    player.setDepth(Depth.PLAYER);
     player.setScale(1.6);
     (player.body as Phaser.Physics.Arcade.Body).setSize(24, 40);
     player.setOffset(20, 20);

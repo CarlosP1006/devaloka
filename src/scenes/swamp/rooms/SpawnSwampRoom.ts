@@ -21,7 +21,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
       mapWidth,
     );
 
-    const GROUND_SCALE = 0.06;
+    const GROUND_SCALE = 0.1;
     const tileH = Math.round(739 * GROUND_SCALE);
     const groundTop = this.scale.height - tileH;
     this.add

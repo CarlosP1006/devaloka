@@ -1,6 +1,6 @@
 import 'phaser';
-import { SwampLoadingScene } from '@scenes/swamp/SwampLoadingScene';
-import { SwampRoomScene } from '@scenes/swamp/SwampRoomScene';
+import { SwampLoaderScene } from '@scenes/swamp/SwampLoaderScene';
+import { SpawnSwampRoom } from '@scenes/swamp/rooms/SpawnSwampRoom';
 
 export class Game extends Phaser.Game {
   constructor(config: Phaser.Types.Core.GameConfig) {
@@ -14,7 +14,7 @@ window.addEventListener('load', () => {
     height: 720,
     type: Phaser.AUTO,
     parent: 'game',
-    scene: [SwampLoadingScene, SwampRoomScene],
+    scene: [SwampLoaderScene, SpawnSwampRoom],
     input: {
       keyboard: true,
     },

@@ -1,4 +1,4 @@
-import { PlayerObject } from '@objects/player/PlayerObject';
+import { PlayerObject } from '@objects/player/controller/PlayerObject';
 
 export class PlayerService {
   private player!: PlayerObject;

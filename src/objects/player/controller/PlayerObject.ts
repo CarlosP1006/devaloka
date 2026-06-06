@@ -8,7 +8,9 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(player);
     scene.physics.add.existing(player);
     player.setCollideWorldBounds(true);
-    player.setScale(2);
+    player.setScale(1.6);
+    (player.body as Phaser.Physics.Arcade.Body).setSize(24, 40);
+    player.setOffset(20, 20);
     return player;
   }
 

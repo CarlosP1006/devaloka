@@ -1,4 +1,4 @@
-import { LPC } from './PlayerAnimations';
+import { LPC } from './utils/PlayerAnimations';
 
 export function loadPlayerAnimations(scene: Phaser.Scene): void {
   scene.anims.create({

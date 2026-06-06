@@ -1,9 +1,10 @@
 import playerImg from '@assets/player/images/player.png';
+import swampGroundBase from '@assets/swamp/images/swamp-ground-base.png';
 import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
 
-export class SwampLoadingScene extends Phaser.Scene {
+export class SwampLoaderScene extends Phaser.Scene {
   constructor() {
-    super({ key: 'SwampLoadingScene' });
+    super({ key: 'SwampLoaderScene' });
   }
 
   preload(): void {
@@ -11,10 +12,11 @@ export class SwampLoadingScene extends Phaser.Scene {
       frameWidth: 64,
       frameHeight: 64,
     });
+    this.load.image('swamp-ground', swampGroundBase);
   }
 
   create(): void {
     loadPlayerAnimations(this);
-    this.scene.start('SwampRoomScene');
+    this.scene.start('SpawnSwampRoom');
   }
 }

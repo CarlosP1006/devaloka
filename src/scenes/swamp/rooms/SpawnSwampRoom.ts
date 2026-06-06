@@ -15,11 +15,14 @@ export class SpawnSwampRoom extends Phaser.Scene {
 
   create(): void {
     const mapWidth = 2560;
-    const groundBody = createGround(this, mapWidth);
+    const { body: groundBody, width: groundWidth } = createGround(this, mapWidth);
 
-    const player = PlayerObject.create(this, 640, 360);
+    const GROUND_SCALE = 0.06;
+    const tileH = Math.round(739 * GROUND_SCALE);
+    const groundTop = this.scale.height - tileH;
+    const player = PlayerObject.create(this, 100, groundTop - 60);
     this.physics.add.collider(player, groundBody);
-    PlayerCamera.setup(this, player, mapWidth);
+    PlayerCamera.setup(this, player, groundWidth);
     this.playerService = container.resolve<PlayerService>('playerService');
     this.playerService.init(player, this);
   }

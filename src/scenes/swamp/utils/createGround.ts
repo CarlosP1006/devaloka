@@ -1,7 +1,7 @@
 export function createGround(
   scene: Phaser.Scene,
   mapWidth: number,
-): Phaser.GameObjects.Rectangle {
+): { body: Phaser.GameObjects.Rectangle; width: number } {
   const tex = scene.textures.get('swamp-ground');
   tex.add('ground-tile', 0, 235, 349, 2322, 739);
 
@@ -10,12 +10,22 @@ export function createGround(
   const tileW = Math.round(2322 * SCALE);
   const groundY = scene.scale.height - tileH / 2;
 
-  for (let x = tileW / 2; x < mapWidth; x += tileW) {
+  let lastX = tileW / 2;
+  for (let x = tileW / 2; x < mapWidth + tileW; x += tileW) {
     scene.add.image(x, groundY, 'swamp-ground', 'ground-tile').setScale(SCALE);
+    lastX = x;
   }
 
+  const actualWidth = lastX + tileW / 2;
   const groundTop = groundY - tileH / 2;
-  const body = scene.add.rectangle(mapWidth / 2, groundTop, mapWidth, 4, 0, 0);
+  const body = scene.add.rectangle(
+    actualWidth / 2,
+    groundTop,
+    actualWidth,
+    4,
+    0,
+    0,
+  );
   scene.physics.add.existing(body, true);
-  return body;
+  return { body, width: actualWidth };
 }

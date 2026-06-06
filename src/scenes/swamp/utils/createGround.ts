@@ -3,32 +3,15 @@ export function createGround(
   mapWidth: number,
 ): Phaser.GameObjects.Rectangle {
   const tex = scene.textures.get('swamp-ground');
-  tex.add('ground-left', 0, 234, 363, 751, 739);
-  tex.add('ground-middle', 0, 1020, 363, 775, 739);
-  tex.add('ground-right', 0, 1830, 363, 751, 739);
+  tex.add('ground-tile', 0, 235, 349, 2322, 739);
 
   const SCALE = 0.06;
   const tileH = Math.round(739 * SCALE);
-  const leftW = Math.round(751 * SCALE);
-  const midW = Math.round(775 * SCALE);
+  const tileW = Math.round(2322 * SCALE);
   const groundY = scene.scale.height - tileH / 2;
 
-  const groupW = leftW + midW + leftW;
-  for (let gx = 0; gx < mapWidth; gx += groupW) {
-    scene.add
-      .image(gx + leftW / 2, groundY, 'swamp-ground', 'ground-left')
-      .setScale(SCALE);
-    scene.add
-      .image(gx + leftW + midW / 2, groundY, 'swamp-ground', 'ground-middle')
-      .setScale(SCALE);
-    scene.add
-      .image(
-        gx + leftW + midW + leftW / 2,
-        groundY,
-        'swamp-ground',
-        'ground-right',
-      )
-      .setScale(SCALE);
+  for (let x = tileW / 2; x < mapWidth; x += tileW) {
+    scene.add.image(x, groundY, 'swamp-ground', 'ground-tile').setScale(SCALE);
   }
 
   const groundTop = groundY - tileH / 2;

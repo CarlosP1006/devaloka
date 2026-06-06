@@ -31,7 +31,7 @@ window.addEventListener('load', () => {
       mode: Phaser.Scale.RESIZE,
       autoCenter: Phaser.Scale.CENTER_BOTH,
     },
-    backgroundColor: '#0d1a12',
+    backgroundColor: '#000000',
     render: {
       pixelArt: true,
       antialias: false,

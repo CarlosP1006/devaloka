@@ -25,12 +25,22 @@ export class SpawnSwampRoom extends Phaser.Scene {
     const tileH = Math.round(739 * GROUND_SCALE);
     const groundTop = this.scale.height - tileH;
     this.add
-      .image(400, 460, 'swamp-trunk-broken')
-      .setScale(0.15)
+      .image(mapWidth / 2, 360, 'swamp-background')
+      .setDisplaySize(mapWidth, this.scale.height)
+      .setDepth(Depth.FAR_BACKGROUND)
+      .setAlpha(0.6);
+    this.add
+      .image(510, 280, 'swamp-trees-cluster')
+      .setScale(0.38)
+      .setDepth(Depth.BACKGROUND_2)
+      .setAlpha(0.8);
+    this.add
+      .image(400, 417, 'swamp-trunk-broken')
+      .setScale(0.2)
       .setDepth(Depth.BACKGROUND_1);
     this.add
-      .image(900, 460, 'swamp-trunk-face')
-      .setScale(0.15)
+      .image(900, 417, 'swamp-trunk-face')
+      .setScale(0.2)
       .setDepth(Depth.BACKGROUND_1);
 
     const player = PlayerObject.create(this, 100, groundTop - 60);

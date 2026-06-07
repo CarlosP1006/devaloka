@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Sempre ler `IDEIAS_FUTURAS.TXT` na raiz do projeto e lembrar o usuário das ideias pendentes registradas lá.
 
+## IMPORTANTE — Geração de imagens / prompts para IA
+
+Sempre que o usuário pedir um prompt para gerar imagem, ler `ASSETS.TXT` na raiz do projeto antes de escrever o prompt, para garantir que as resoluções e padrões estejam corretos.
+
 ## Commands
 
 ```bash

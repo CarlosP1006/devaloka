@@ -1,0 +1,65 @@
+## PADRÕES DE IMAGENS E TEXTURAS
+
+Arquivo de referência para manter consistência ao gerar ou editar assets.
+Sempre consultar antes de pedir imagem pra IA ou criar nova textura.
+
+---
+
+## RESOLUÇÃO DA SALA
+
+- Largura: 2560px (2 telas de 1280px)
+- Altura: 720px (1 tela)
+- Base engine: Phaser 3, Scale.RESIZE, roundPixels: true
+
+---
+
+## BACKGROUND (fundo da sala)
+
+- Resolução: 2560 × 720px
+- Formato: PNG ou JPG
+- Sem divisórias, imagem única cobrindo a sala inteira
+- Não precisa de transparência
+- Exemplo: swamp-background.png
+
+---
+
+## TILE DE CHÃO (superfície — grama, areia, etc.)
+
+- Resolução original: 2322 × 739px
+- Sem padding, full bleed (conteúdo até as bordas)
+- Formato: PNG com transparência
+- Scale no jogo: 0.06 → tile renderizado ~139 × 44px
+- Tile deve ter grama/superfície visível na parte de cima
+- Parte de baixo pode ter terra/raízes (visível quando não há underground)
+- Exemplo: swamp-ground-roots.png
+
+---
+
+## TILE DE TERRA/UNDERGROUND (camadas abaixo da superfície)
+
+- Resolução original: 2322 × 739px  ← MESMO PADRÃO do tile de superfície
+- Sem padding, full bleed
+- Formato: PNG com transparência
+- Scale no jogo: 0.06 → tile renderizado ~139 × 44px
+- SEM grama — apenas terra, raízes, rocha, etc.
+- Deve encaixar perfeitamente abaixo do tile de superfície (mesma largura/escala)
+- Exemplo: swamp-ground-dirt.png
+
+---
+
+## CHUNK DE UNDERGROUND (createGroundChunk)
+
+- Camada 0 (topo): tile de superfície (surfaceKey)
+- Camadas 1..N (abaixo): tile de terra (dirtKey)
+- Tiles são empilhados verticalmente sem gap
+- Física cobre toda a altura do chunk (TILE_H * (layers + 1))
+
+---
+
+## REGRAS GERAIS PARA PEDIR PRO GEMINI
+
+- Sempre especificar a resolução exata
+- Pedir fundo transparente quando for tile
+- Para tiles de chão: pedir full bleed, sem margem, sem padding
+- Para backgrounds: pedir imagem única, sem divisória central
+- Estilo: pixel art, compatível com personagem LPC (64×64 sprites)

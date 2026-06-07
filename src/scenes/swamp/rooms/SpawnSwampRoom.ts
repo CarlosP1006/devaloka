@@ -30,7 +30,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
       .setDepth(Depth.FAR_BACKGROUND)
       .setAlpha(0.6);
 
-    const { group: chunkGroup } = createGroundChunk(
+    const { group: chunk1 } = createGroundChunk(
       this,
       4,
       10,
@@ -40,8 +40,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
     );
 
     const player = PlayerObject.create(this, 100, groundTop - 60);
-    this.physics.add.collider(player, groundGroup);
-    this.physics.add.collider(player, chunkGroup);
+    this.physics.add.collider(player, [groundGroup, chunk1]);
     PlayerCamera.setup(this, player, mapWidth);
     this.playerService = container.resolve<PlayerService>('playerService');
     this.playerService.init(player, this);

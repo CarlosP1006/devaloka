@@ -23,43 +23,7 @@ Sempre consultar antes de pedir imagem pra IA ou criar nova textura.
 
 ---
 
-## TILE DE CHÃO (superfície — grama, areia, etc.)
+## TILE DE CHÃO
 
-- Resolução original: 2322 × 739px
-- Sem padding, full bleed (conteúdo até as bordas)
-- Formato: PNG com transparência
-- Scale no jogo: 0.06 → tile renderizado ~139 × 44px
-- Tile deve ter grama/superfície visível na parte de cima
-- Parte de baixo pode ter terra/raízes (visível quando não há underground)
-- Exemplo: swamp-ground-roots.png
-
----
-
-## TILE DE TERRA/UNDERGROUND (camadas abaixo da superfície)
-
-- Resolução original: 2322 × 739px  ← MESMO PADRÃO do tile de superfície
-- Sem padding, full bleed
-- Formato: PNG com transparência
-- Scale no jogo: 0.06 → tile renderizado ~139 × 44px
-- SEM grama — apenas terra, raízes, rocha, etc.
-- Deve encaixar perfeitamente abaixo do tile de superfície (mesma largura/escala)
-- Exemplo: swamp-ground-dirt.png
-
----
-
-## CHUNK DE UNDERGROUND (createGroundChunk)
-
-- Camada 0 (topo): tile de superfície (surfaceKey)
-- Camadas 1..N (abaixo): tile de terra (dirtKey)
-- Tiles são empilhados verticalmente sem gap
-- Física cobre toda a altura do chunk (TILE_H * (layers + 1))
-
----
-
-## REGRAS GERAIS PARA PEDIR PRO GEMINI
-
-- Sempre especificar a resolução exata
-- Pedir fundo transparente quando for tile
-- Para tiles de chão: pedir full bleed, sem margem, sem padding
-- Para backgrounds: pedir imagem única, sem divisória central
-- Estilo: pixel art, compatível com personagem LPC (64×64 sprites)
+- Tamanho final no jogo: 2322 × 739px
+- Após receber da IA: redimensionar pra 2322×739 com PowerShell

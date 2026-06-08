@@ -8,7 +8,25 @@ Sempre ler `IDEIAS_FUTURAS.TXT` na raiz do projeto e lembrar o usuário das idei
 
 ## IMPORTANTE — Geração de imagens / prompts para IA
 
-Sempre que o usuário pedir um prompt para gerar imagem, ler `ASSETS.TXT` na raiz do projeto antes de escrever o prompt, para garantir que as resoluções e padrões estejam corretos.
+Sempre que o usuário pedir um prompt para gerar imagem, consultar os padrões abaixo antes de escrever o prompt.
+
+### Resoluções e padrões de assets
+
+**Resolução da sala:** 2560 × 720px (2 telas de 1280px)
+
+**Background:**
+- Resolução: 2560 × 720px
+- Formato: PNG ou JPG, imagem única sem divisórias, não precisa de transparência
+
+**Tile de chão:**
+- Tamanho final: 2322 × 739px
+- Após receber da IA: redimensionar para 2322×739 com PowerShell
+
+**Objetos decorativos (árvores, pedras, props):**
+- PNG com fundo transparente real (alpha channel)
+- Hard pixel edges, sem anti-aliasing, sem semi-transparência
+- Tamanho livre — escala é controlada no código via `setScale()`
+- Física feita com retângulo invisível separado da imagem visual
 
 ## Commands
 
@@ -93,6 +111,17 @@ Direções por animação: `+0=up`, `+1=left`, `+2=down`, `+3=right`.
 | `shoot` | 16–19 | 13 | Atirar com arco |
 | `slash_1h` | 50–53 | 13 | Ataque diagonal baixo |
 | `watering` | 46–49 | 7 | Regar |
+
+## Profundidade (Depth)
+
+Sempre consultar `src/utils/Depth.ts` ao adicionar objetos na cena. Usar o depth correto:
+
+- `FAR_BACKGROUND` — céu, névoa, background principal
+- `BACKGROUND_2` — árvores e objetos distantes (atrás de tudo)
+- `BACKGROUND_1` — árvores e objetos próximos ao player
+- `GROUND_DEFAULT` — chão base da sala
+- `MAIN` — chunks, plataformas, props com física (pedras, objetos interativos)
+- `PLAYER` — player, sempre na frente
 
 ## Code Style
 

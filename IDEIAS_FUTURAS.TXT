@@ -1,3 +1,9 @@
+## Cenário Swamp — Ajustes Visuais
+
+- Continuar decorando a SpawnSwampRoom (árvores, objetos, detalhes)
+- Revisar profundidades e posições quando a fase estiver quase pronta
+- Pedir background em ratio 32:9 pro Gemini pra não precisar esticar
+
 ## Sistema de Transição de Fases
 
 - Criar funções explícitas `startScene()` e `stopScene()` em cada RoomScene
@@ -11,14 +17,9 @@
 - Portais de entrada e saída entre fases (A → B → C sequencialmente)
   A lógica de transição fica na RoomScene que o player está saindo
 
-## Cenário Swamp — Ajustes Visuais
-
-- Reposicionar e reescalar todas as imagens da SpawnSwampRoom (background, cluster, troncos)
-- Pedir imagem do background em ratio 32:9 pro Gemini pra não precisar esticar
-- Revisar todas as camadas de profundidade (alpha, scale, posição)
-
-## Player — Próximas Implementações
+## Combate e Inimigos (só após primeira fase completa e portal funcionando)
 
 - Adicionar animações de ataque ao spritesheet do player
 - Adicionar arma ao personagem
 - Implementar ataque básico (função + animação + tecla)
+- Criar primeiro inimigo da fase swamp

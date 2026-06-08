@@ -5,6 +5,7 @@ import swampGroundDirt from '@assets/swamp/images/swamp-ground-dirt.png';
 import swampTreeTwisted from '@assets/swamp/images/swamp-tree-twisted.png';
 import swampTreeLarge from '@assets/swamp/images/swamp-tree-large.png';
 import swampStoneRune from '@assets/swamp/images/swamp-stone-rune.png';
+import swampOwl from '@assets/swamp/images/swamp-owl.png';
 import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
 
 export class SwampLoaderScene extends Phaser.Scene {
@@ -23,6 +24,10 @@ export class SwampLoaderScene extends Phaser.Scene {
     this.load.image('swamp-tree-twisted', swampTreeTwisted);
     this.load.image('swamp-tree-large', swampTreeLarge);
     this.load.image('swamp-stone-rune', swampStoneRune);
+    this.load.spritesheet('swamp-owl', swampOwl, {
+      frameWidth: 338,
+      frameHeight: 369,
+    });
   }
 
   create(): void {

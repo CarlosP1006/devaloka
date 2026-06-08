@@ -94,9 +94,9 @@ export class SpawnSwampRoom extends Phaser.Scene {
     );
 
     this.add
-      .image(2050, groundTop - 160, 'swamp-tree-large')
+      .image(2057, groundTop - 156, 'swamp-tree-large')
       .setOrigin(0.5, 1)
-      .setScale(0.75)
+      .setScale(0.82)
       .setDepth(Depth.BACKGROUND_2);
 
     this.add
@@ -115,6 +115,20 @@ export class SpawnSwampRoom extends Phaser.Scene {
     const stoneBody = this.add.rectangle(120, groundTop + 36, 235, 450, 0, 0);
     stoneBody.setOrigin(0.5, 1);
     stoneRuneGroup.add(stoneBody);
+
+    this.anims.create({
+      key: 'owl-blink',
+      frames: [
+        { key: 'swamp-owl', frame: 0, duration: 5000 },
+        { key: 'swamp-owl', frame: 1, duration: 500 },
+      ],
+      repeat: -1,
+    });
+    this.add
+      .sprite(2210, groundTop - 268, 'swamp-owl')
+      .setScale(0.15)
+      .setDepth(Depth.MAIN)
+      .play('owl-blink');
 
     const player = PlayerObject.create(this, 300, groundTop - 60);
     this.physics.add.collider(player, [

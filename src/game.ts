@@ -35,6 +35,7 @@ window.addEventListener('load', () => {
     render: {
       pixelArt: true,
       antialias: false,
+      roundPixels: true,
     },
   };
 

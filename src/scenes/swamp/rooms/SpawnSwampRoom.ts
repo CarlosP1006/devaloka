@@ -25,7 +25,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
 
     const groundTop = this.scale.height - TILE_H;
     this.add
-      .image(mapWidth / 2, 280, 'swamp-background')
+      .image(mapWidth / 2, this.scale.height / 2, 'swamp-background')
       .setDisplaySize(mapWidth, this.scale.height)
       .setDepth(Depth.FAR_BACKGROUND)
       .setAlpha(0.6);
@@ -94,25 +94,25 @@ export class SpawnSwampRoom extends Phaser.Scene {
     );
 
     this.add
-      .image(2050, 405, 'swamp-tree-large')
+      .image(2050, groundTop - 160, 'swamp-tree-large')
       .setOrigin(0.5, 1)
       .setScale(0.75)
       .setDepth(Depth.BACKGROUND_2);
 
     this.add
-      .image(450, 615, 'swamp-tree-twisted')
+      .image(450, groundTop - -50, 'swamp-tree-twisted')
       .setOrigin(0.5, 1)
       .setScale(0.65)
       .setDepth(Depth.BACKGROUND_1);
 
     this.add
-      .image(120, 712, 'swamp-stone-rune')
+      .image(120, groundTop + 155, 'swamp-stone-rune')
       .setOrigin(0.5, 1)
       .setScale(1.1)
       .setDepth(Depth.MAIN);
 
     const stoneRuneGroup = this.physics.add.staticGroup();
-    const stoneBody = this.add.rectangle(120, 712, 235, 450, 0, 0);
+    const stoneBody = this.add.rectangle(120, groundTop + 36, 235, 450, 0, 0);
     stoneBody.setOrigin(0.5, 1);
     stoneRuneGroup.add(stoneBody);
 

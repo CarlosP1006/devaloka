@@ -14,13 +14,34 @@
 [x] Adicionar alias @containers/* no tsconfig.json
 [x] Padronizar imports com aliases em MenuScene, SpawnSwampRoom, PlayerLoader
 [x] Atualizar CLAUDE.md com convenção de nomes de rooms e SoundVolume
-
 [x] Adicionar som ambiente da SwampRoom — swamp-ambient.ogg em loop infinito
 [x] Adicionar som de coruja — swamp-owl-call.ogg a cada 15 segundos
 
 --------------------------------------------------
 ## IDEIAS FUTURAS
 
+- URGENTE: Sistema de persistência de sessão — salvar posição/cena atual no localStorage para não voltar ao início a cada reload
+
+- Sistema de Save completo (pensar antes de implementar):
+  OBJETO DO PLAYER (localStorage "devaloka_save"):
+    - cena atual + posição X/Y
+    - hp, stats
+    - inventário (itens adquiridos)
+    - progresso (fases desbloqueadas)
+
+  ESTADO PERSISTENTE DAS ROOMS (mesmo localStorage ou separado — decidir):
+    - baús abertos (por ID único)
+    - bosses mortos (por ID)
+    - portas destrancadas (por ID)
+    - qualquer evento único que não deve resetar
+
+  REGRA DE RESET:
+    - ao entrar em uma room, inimigos e itens comuns nascem do zero
+    - EXCEÇÕES: baús abertos, bosses mortos, portas destrancadas — nunca resetam
+    - cada objeto único precisa de um ID fixo no código para ser rastreado
+
+  DECISÃO PENDENTE: guardar estado das rooms dentro do mesmo objeto do player
+  ou em um segundo localStorage separado ("devaloka_world")
 - Decoração da SwampRoom — mais props, árvores, detalhes
 - Portal de saída — transição pra próxima fase
 - Menu de configurações — slider de volume conectado ao AudioManager

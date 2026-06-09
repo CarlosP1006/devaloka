@@ -144,7 +144,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
     ]);
     PlayerCamera.setup(this, player, mapWidth);
     this.playerService = container.resolve<PlayerService>('playerService');
-    this.playerService.init(player, this);
+    this.playerService.init(player, this, 'swamp');
   }
 
   update(): void {

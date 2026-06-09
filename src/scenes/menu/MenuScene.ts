@@ -2,6 +2,7 @@ import startMenu from '@assets/menu/images/start-menu.png';
 import menuButtonStart from '@assets/menu/images/menu-button-start.png';
 import devalokaMenu from '@assets/menu/images/devaloka-menu.png';
 import playerImg from '@assets/player/images/player.png';
+import playerJump from '@assets/player/audio/player-jump.ogg';
 import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
 import { container } from '../../containers';
 import { AudioManager } from '@services/AudioManager';
@@ -19,6 +20,7 @@ export class MenuScene extends Phaser.Scene {
       frameWidth: 64,
       frameHeight: 64,
     });
+    this.load.audio('player-jump', playerJump);
   }
 
   create(): void {

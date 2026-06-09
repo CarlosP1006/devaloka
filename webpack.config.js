@@ -31,6 +31,13 @@ module.exports = {
         },
       },
       {
+        test: /\.(ogg|wav|mp3)$/i,
+        loader: 'file-loader',
+        options: {
+          name: 'assets/audio/[name].[ext]',
+        },
+      },
+      {
         test: /\.ts$/,
         include: path.resolve(__dirname, 'src'),
         loader: 'ts-loader',

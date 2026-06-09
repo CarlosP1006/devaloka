@@ -3,6 +3,7 @@ export class AudioManager {
 
   init(scene: Phaser.Scene): void {
     this.soundManager = scene.sound;
+    this.soundManager.volume = 0.5;
   }
 
   setVolume(value: number): void {

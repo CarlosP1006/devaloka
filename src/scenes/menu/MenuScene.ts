@@ -3,6 +3,8 @@ import menuButtonStart from '@assets/menu/images/menu-button-start.png';
 import devalokaMenu from '@assets/menu/images/devaloka-menu.png';
 import playerImg from '@assets/player/images/player.png';
 import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
+import { container } from '../../containers';
+import { AudioManager } from '@services/AudioManager';
 
 export class MenuScene extends Phaser.Scene {
   constructor() {
@@ -21,6 +23,7 @@ export class MenuScene extends Phaser.Scene {
 
   create(): void {
     loadPlayerAnimations(this);
+    container.resolve<AudioManager>('audioManager').init(this);
     const cx = this.scale.width / 2;
     const cy = this.scale.height / 2;
 

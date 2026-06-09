@@ -1,44 +1,28 @@
-## Cenário Swamp — Ajustes Visuais
+## 2026-06-08
+[x] Corrigir posições quebrando em monitores diferentes — usar groundTop relativo
+[x] Adicionar coruja com animação de piscar na SwampRoom
+[x] Criar MenuScene com background, logo e botão iniciar
+[x] Mover carregamento de assets globais pro MenuScene
+[x] Criar AudioManager — setVolume, mute, unmute
+[x] Criar SoundVolume.ts — categorias de volume (PLAYER, ENEMY, AMBIENT, MUSIC, INTERFACE)
+[x] Configurar Webpack para processar arquivos .ogg / .wav / .mp3
+[x] Converter swamp-step.wav para OGG com FFmpeg
+[x] Implementar som de passo — distância acumulada a cada 80px no chão
+[x] Converter player-jump.wav para OGG com FFmpeg
+[x] Implementar som de pulo
+[x] Reorganizar assets de áudio nas pastas corretas (player/ e swamp/)
+[x] Adicionar alias @containers/* no tsconfig.json
+[x] Padronizar imports com aliases em MenuScene, SpawnSwampRoom, PlayerLoader
+[x] Atualizar CLAUDE.md com convenção de nomes de rooms e SoundVolume
 
-- Continuar decorando a SpawnSwampRoom (árvores, objetos, detalhes)
-- Revisar profundidades e posições quando a fase estiver quase pronta
-- Pedir background em ratio 32:9 pro Gemini pra não precisar esticar
+[x] Adicionar som ambiente da SwampRoom — swamp-ambient.ogg em loop infinito
+[x] Adicionar som de coruja — swamp-owl-call.ogg a cada 15 segundos
 
-## Sistema de Transição de Fases
+--------------------------------------------------
+## IDEIAS FUTURAS
 
-- Criar funções explícitas `startScene()` e `stopScene()` em cada RoomScene
-  contendo os `scene.start()` e `scene.stop()` do Phaser, pra garantir
-  controle total do ciclo de vida de cada cena
-
-- Tela de loading entre fases: quando player entra no portal, inicia a
-  LoadingScene da próxima fase, descarrega assets da fase anterior,
-  carrega assets da nova fase, e ao terminar inicia a RoomScene
-
-- Portais de entrada e saída entre fases (A → B → C sequencialmente)
-  A lógica de transição fica na RoomScene que o player está saindo
-
-## Menu
-- Mapear tudo que carrega uma vez só no projeto e mover pro MenuScene
-- Inicializar AudioManager no Menu
-
-## AudioManager
-- Criar src/services/AudioManager.ts
-- Métodos: setVolume(), mute(), unmute() — wrapping do this.sound do Phaser
-- Registrar no Awilix em registerServices.ts
-- Inicializar no MenuScene
-
-## Sons (implementar no futuro)
-- Passos/corrida: ficam no player, room passa setBiome('swamp') pro PlayerService
-  - Loader do bioma carrega swamp-step.ogg, swamp-run.ogg
-  - A testar: som acelerado funciona pra corrida ou precisa de áudio separado
-- Pulo: fixo no player, um som ao sair do chão, carregado no PlayerLoader
-- Room/ambiente: música por capítulo inteiro, sons específicos por room na construção delas
-- Inimigos: sons próprios, discutir na construção de cada inimigo
-- Combate: fixos no player (ataque, tomar dano), sem variação por inimigo por enquanto
-
-## Combate e Inimigos (só após primeira fase completa e portal funcionando)
-
-- Adicionar animações de ataque ao spritesheet do player
-- Adicionar arma ao personagem
-- Implementar ataque básico (função + animação + tecla)
-- Criar primeiro inimigo da fase swamp
+- Decoração da SwampRoom — mais props, árvores, detalhes
+- Portal de saída — transição pra próxima fase
+- Menu de configurações — slider de volume conectado ao AudioManager
+- Sons de combate — pra quando implementar o combate
+- Combate e inimigos — só após portal funcionando

@@ -16,7 +16,8 @@
       "@scenes/*": ["./src/scenes/*"],
       "@objects/*": ["./src/objects/*"],
       "@utils/*": ["./src/utils/*"],
-      "@services/*": ["./src/services/*"]
+      "@services/*": ["./src/services/*"],
+      "@containers/*": ["./src/containers/*"]
     }
   },
   "include": ["src/**/*"],

@@ -6,6 +6,8 @@ import swampTreeLarge from '@assets/swamp/images/swamp-tree-large.png';
 import swampStoneRune from '@assets/swamp/images/swamp-stone-rune.png';
 import swampOwl from '@assets/swamp/images/swamp-owl.png';
 import swampStep from '@assets/swamp/audio/swamp-step.ogg';
+import swampAmbient from '@assets/swamp/audio/swamp-ambient.ogg';
+import swampOwlCall from '@assets/swamp/audio/swamp-owl-call.ogg';
 export class SwampLoaderScene extends Phaser.Scene {
   constructor() {
     super({ key: 'SwampLoaderScene' });
@@ -23,6 +25,8 @@ export class SwampLoaderScene extends Phaser.Scene {
       frameHeight: 369,
     });
     this.load.audio('swamp-step', swampStep);
+    this.load.audio('swamp-ambient', swampAmbient);
+    this.load.audio('swamp-owl-call', swampOwlCall);
   }
 
   create(): void {

@@ -35,7 +35,7 @@ export class PlayerService {
 
     if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && onGround) {
       this.player.jump();
-      this.scene.sound.play('player-jump', { volume: 0.15 });
+      this.scene.sound.play('player-jump', { volume: 0.35 });
     }
 
     if (this.keyA.isDown) {

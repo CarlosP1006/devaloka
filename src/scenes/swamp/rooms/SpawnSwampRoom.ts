@@ -1,10 +1,11 @@
-import { container } from '../../../containers';
+import { container } from '@containers/index';
 import { PlayerObject } from '@objects/player/controller/PlayerObject';
 import { PlayerCamera } from '@objects/player/utils/PlayerCamera';
 import { PlayerService } from '@objects/player/services/PlayerService';
 import { createGround } from '@utils/createGround';
 import { createGroundChunk, TILE_H } from '@utils/createGroundChunk';
 import { Depth } from '@utils/Depth';
+import { SoundVolume } from '@utils/SoundVolume';
 
 export class SpawnSwampRoom extends Phaser.Scene {
   private playerService!: PlayerService;
@@ -129,6 +130,17 @@ export class SpawnSwampRoom extends Phaser.Scene {
       .setScale(0.15)
       .setDepth(Depth.MAIN)
       .play('owl-blink');
+
+    this.sound.play('swamp-ambient', {
+      loop: true,
+      volume: SoundVolume.AMBIENT,
+    });
+
+    this.time.addEvent({
+      delay: 15000,
+      loop: true,
+      callback: () => this.sound.play('swamp-owl-call', { volume: 0.1 }),
+    });
 
     const player = PlayerObject.create(this, 300, groundTop - 60);
     this.physics.add.collider(player, [

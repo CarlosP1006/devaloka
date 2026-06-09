@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Sempre ler `IDEIAS_FUTURAS.TXT` na raiz do projeto e lembrar o usuário das ideias pendentes registradas lá.
 
+## IMPORTANTE — Atualizar IDEIAS_FUTURAS.TXT
+
+Sempre que algo novo for concluído durante a sessão — mesmo que pequeno (um som, um ajuste, uma feature) — adicionar um `[x]` com descrição curta na seção da data atual em `IDEIAS_FUTURAS.TXT`. Se a data não existir ainda, criar uma nova seção de data acima da linha divisória.
+
 ## IMPORTANTE — Geração de imagens / prompts para IA
 
 Sempre que o usuário pedir um prompt para gerar imagem, consultar os padrões abaixo antes de escrever o prompt.
@@ -73,8 +77,8 @@ assets/
 ```
 
 **Convenção de nomes de cenas:**
-- `{Area}LoadingScene` — carrega assets da área, registra animações
-- `{Area}RoomScene` — lógica da fase, objetos, colisões, transições
+- `{Area}LoaderScene` — carrega assets da área, registra animações
+- `{Descrição}{Capítulo}Room` — lógica da fase, objetos, colisões, transições (ex: `SpawnSwampRoom`)
 
 **Regra de carregamento — global vs por bioma:**
 - `MenuScene` é a primeira cena e carrega tudo que é global (usado em qualquer bioma): spritesheet do player, animações do player, AudioManager (futuro), etc.
@@ -88,6 +92,7 @@ assets/
 - `@objects/*` → `src/objects/`
 - `@services/*` → `src/services/`
 - `@utils/*` → `src/utils/`
+- `@containers/*` → `src/containers/`
 - `@assets/*` → `assets/`
 - `@maps/*` → `maps/`
 
@@ -116,6 +121,18 @@ Direções por animação: `+0=up`, `+1=left`, `+2=down`, `+3=right`.
 | `shoot` | 16–19 | 13 | Atirar com arco |
 | `slash_1h` | 50–53 | 13 | Ataque diagonal baixo |
 | `watering` | 46–49 | 7 | Regar |
+
+## Volume de Sons (SoundVolume)
+
+Sempre consultar `src/utils/SoundVolume.ts` ao adicionar sons na cena. Usar a categoria correta:
+
+- `PLAYER` — passos, pulo, combate e qualquer som do player
+- `ENEMY` — sons de inimigos
+- `AMBIENT` — sons de ambiente da room (vento, água, etc.)
+- `MUSIC` — música de fundo
+- `INTERFACE` — UI, itens, portais, interações com objetos do mundo
+
+Sons com volume específico intencional (ajuste manual) podem usar valor direto sem consultar `SoundVolume`.
 
 ## Profundidade (Depth)
 

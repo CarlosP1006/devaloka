@@ -17,6 +17,25 @@
 - Portais de entrada e saída entre fases (A → B → C sequencialmente)
   A lógica de transição fica na RoomScene que o player está saindo
 
+## Menu
+- Mapear tudo que carrega uma vez só no projeto e mover pro MenuScene
+- Inicializar AudioManager no Menu
+
+## AudioManager
+- Criar src/services/AudioManager.ts
+- Métodos: setVolume(), mute(), unmute() — wrapping do this.sound do Phaser
+- Registrar no Awilix em registerServices.ts
+- Inicializar no MenuScene
+
+## Sons (implementar no futuro)
+- Passos/corrida: ficam no player, room passa setBiome('swamp') pro PlayerService
+  - Loader do bioma carrega swamp-step.ogg, swamp-run.ogg
+  - A testar: som acelerado funciona pra corrida ou precisa de áudio separado
+- Pulo: fixo no player, um som ao sair do chão, carregado no PlayerLoader
+- Room/ambiente: música por capítulo inteiro, sons específicos por room na construção delas
+- Inimigos: sons próprios, discutir na construção de cada inimigo
+- Combate: fixos no player (ataque, tomar dano), sem variação por inimigo por enquanto
+
 ## Combate e Inimigos (só após primeira fase completa e portal funcionando)
 
 - Adicionar animações de ataque ao spritesheet do player

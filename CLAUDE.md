@@ -76,6 +76,11 @@ assets/
 - `{Area}LoadingScene` — carrega assets da área, registra animações
 - `{Area}RoomScene` — lógica da fase, objetos, colisões, transições
 
+**Regra de carregamento — global vs por bioma:**
+- `MenuScene` é a primeira cena e carrega tudo que é global (usado em qualquer bioma): spritesheet do player, animações do player, AudioManager (futuro), etc.
+- `{Area}LoaderScene` carrega APENAS assets específicos daquele bioma (prefixo `swamp-`, `forest-`, etc.)
+- Nunca carregar assets globais dentro de um loader de bioma
+
 **DI container** (`src/containers/`): Awilix `CLASSIC` injection mode. Registrar serviços em `registerServices.ts`. Resolver sempre no `create()`, nunca no `update()`.
 
 **Path aliases** (`tsconfig.json`):

@@ -102,7 +102,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
       .setDepth(Depth.BACKGROUND_2);
 
     this.add
-      .image(450, groundTop - -50, 'swamp-tree-twisted')
+      .image(450, groundTop + 50, 'swamp-tree-twisted')
       .setOrigin(0.5, 1)
       .setScale(0.65)
       .setDepth(Depth.BACKGROUND_1);

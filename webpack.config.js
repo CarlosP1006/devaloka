@@ -66,6 +66,10 @@ module.exports = {
       overlay: { warnings: false, errors: true },
     },
   },
+  stats: 'errors-warnings',
+  ignoreWarnings: [
+    { module: /awilix/, message: /Critical dependency/ },
+  ],
   resolve: {
     extensions: ['.ts', '.js'],
     plugins: [tsconfigPathsPluginCfg],

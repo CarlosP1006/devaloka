@@ -2,7 +2,7 @@ import { GameSaveTypes } from '../types/GameSaveTypes';
 
 const SAVE_KEY = 'devaloka_save';
 
-export class SaveManager {
+export class SaveManagerService {
   private current: GameSaveTypes | null = null;
 
   constructor() {

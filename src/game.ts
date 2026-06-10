@@ -1,5 +1,6 @@
 import 'phaser';
 import { MenuScene } from '@scenes/menu/MenuScene';
+import { ConfigScene } from '@scenes/config/ConfigScene';
 import { SwampLoaderScene } from '@scenes/swamp/SwampLoaderScene';
 import { SpawnSwampRoom } from '@scenes/swamp/rooms/SpawnSwampRoom';
 
@@ -15,7 +16,7 @@ window.addEventListener('load', () => {
     height: 720,
     type: Phaser.AUTO,
     parent: 'game',
-    scene: [MenuScene, SwampLoaderScene, SpawnSwampRoom],
+    scene: [MenuScene, ConfigScene, SwampLoaderScene, SpawnSwampRoom],
     input: {
       keyboard: true,
     },

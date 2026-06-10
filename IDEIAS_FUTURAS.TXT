@@ -23,6 +23,22 @@
 [x] Injetar SaveManager no PlayerService — salva room/x/y a cada 5s se player no chão
 [x] MenuScene lê save e roteia pro loader correto via ROOM_TO_LOADER
 [x] SpawnSwampRoom lê save e posiciona player nas coordenadas salvas
+[x] Botões Novo Jogo e Continuar no menu com lógica de save
+[x] ESLint corrigido pro webpack.config.js — override com ambiente Node
+[x] Webpack host 0.0.0.0 — acesso pela rede local
+[x] ConfigTypes subtype — volume e isMuted na typagem mestra
+[x] Menu de configurações — painel principal + painel de volume com slider e mute/unmute
+[x] Config persiste no SaveManager — não zera no Novo Jogo
+
+- PRIORIDADE: Adicionar imagens ao painel de config — botão CONFIG, background do painel, slider, botão mute
+
+## 2026-06-10
+[x] Renomear AudioManager → AudioManagerService e SaveManager → SaveManagerService em todos os arquivos
+[x] ConfigPanelService extraído como singleton — init/show/hide desacoplados
+[x] GameInputService — ESC abre config e pausa jogo
+[x] ConfigScene — cena overlay separada para o painel de config (input funciona mesmo com jogo pausado)
+[x] Sons pausam/retomam junto com o jogo ao abrir/fechar config (pauseAll/resumeAll)
+[x] Depth.CONFIG = 100 — painel sempre na frente de tudo
 
 --------------------------------------------------
 ## IDEIAS FUTURAS

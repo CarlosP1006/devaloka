@@ -5,4 +5,5 @@ export const Depth = {
   GROUND_DEFAULT: -1, // chão base que vai até o fim da sala
   MAIN: 0, // chunks de underground, plataformas, inimigos
   PLAYER: 1, // player — sempre na frente do plano principal
+  CONFIG: 100,
 };

@@ -51,41 +51,70 @@ There are no tests configured in this project.
 **Estrutura de pastas:**
 ```
 src/
-  game.ts                        # Entry point, config do Phaser
-  containers/                    # DI container (Awilix)
-  objects/                       # Objetos físicos do jogo (estendem Phaser)
+  game.ts                              # Entry point, config do Phaser, lista de cenas
+  containers/
+    index.ts                           # Cria e exporta o container Awilix
+    registerServices.ts                # Registra todos os serviços como SINGLETON
+  objects/
     player/
-      PlayerObject.ts            # Sprite do player, funções de movimento
-      PlayerAnimations.ts        # Mapeamento de frames do spritesheet LPC
-      PlayerLoader.ts            # Registra animações no Phaser
-  scenes/                        # Cenas do jogo, organizadas por área
+      PlayerLoader.ts                  # Registra animações do player no Phaser
+      controller/
+        PlayerObject.ts                # Sprite do player, funções de movimento
+      services/
+        PlayerService.ts               # Input, movimento, save periódico (3s), ESC
+      utils/
+        PlayerAnimations.ts            # Mapeamento de frames do spritesheet LPC
+        PlayerCamera.ts                # Setup de câmera com bounds do mapa
+  scenes/
+    ConfigScene.ts                     # Cena overlay do painel de config (lançada por GameInputService)
+    menu/
+      MenuScene.ts                     # Cena inicial — assets globais, Novo Jogo / Continuar
     swamp/
-      SwampLoadingScene.ts       # Carrega assets do Swamp
-      SwampRoomScene.ts          # Lógica da fase Swamp
-  services/                      # Lógica de gameplay (input, IA, combate)
-    PlayerService.ts
+      SwampLoaderScene.ts              # Carrega assets do bioma Swamp
+      rooms/
+        SpawnSwampRoom.ts              # Primeira room do Swamp
+    highlands/
+      rooms/                           # (futuro)
+  services/
+    AudioManagerService.ts             # Controla volume global e mute/unmute
+    ConfigPanelService.ts              # Painel de config — init / show / openInGame / hide
+    GameInputService.ts                # ESC → lança ConfigScene e pausa o jogo
+    SaveManagerService.ts              # localStorage — save (merge parcial), load, clear, get
   types/
-    global.d.ts                  # Tipos globais (imports de imagens)
-  utils/                         # Utilitários gerais
+    global.d.ts                        # Tipos globais (imports de imagens e áudio)
+    GameSaveTypes.ts                   # Tipo mestre do save — agrega todos os subTypes
+    subTypes/
+      PlayerLocationTypes.ts           # room: string, x: number, y: number
+      ConfigTypes.ts                   # volume: number, isMuted: boolean
+  utils/
+    createGround.ts                    # Cria o chão base que preenche a sala
+    createGroundChunk.ts               # Cria chunk de plataforma elevada com física
+    Depth.ts                           # Constantes de profundidade (z-index)
+    SoundVolume.ts                     # Constantes de volume por categoria
 
 assets/
+  menu/images/                         # background, botões do menu
   player/
-    images/player.png            # Spritesheet LPC do personagem
-    audio/                       # Sons do player
-    data/player.json             # Config do gerador LPC (backup)
-  maps/                          # Tilemaps Tiled (.json)
+    images/player.png                  # Spritesheet LPC do personagem
+    audio/player-jump.ogg
+    data/player.json                   # Config do gerador LPC (backup)
+  swamp/
+    images/                            # background, ground, árvores, pedras, coruja
+    audio/                             # swamp-step.ogg, swamp-ambient.ogg, swamp-owl-call.ogg
+  forest/images/                       # (assets futuros)
 ```
 
-**Convenção de nomes de cenas:**
-- `{Area}LoaderScene` — carrega assets da área, registra animações
-- `{Descrição}{Capítulo}Room` — lógica da fase, objetos, colisões, transições (ex: `SpawnSwampRoom`)
+**Convenção de nomes:**
+- Arquivos e classes de serviço terminam em `Service` (ex: `SaveManagerService`)
+- Cenas: `{Area}LoaderScene` para loader, `{Descrição}{Area}Room` para rooms (ex: `SpawnSwampRoom`)
+- Injeção de dependência: chave = nome da classe com primeira letra minúscula (ex: `saveManagerService`)
 
 **Regra de carregamento — global vs por bioma:**
-- `MenuScene` é a primeira cena e carrega tudo que é global (usado em qualquer bioma): spritesheet do player, animações do player, AudioManager (futuro), etc.
-- `{Area}LoaderScene` carrega APENAS assets específicos daquele bioma (prefixo `swamp-`, `forest-`, etc.)
+- `MenuScene` carrega tudo que é global (spritesheet do player, animações, áudio global)
+- `{Area}LoaderScene` carrega APENAS assets do bioma com prefixo do bioma (`swamp-`, `forest-`, etc.)
 - Nunca carregar assets globais dentro de um loader de bioma
 
-**DI container** (`src/containers/`): Awilix `CLASSIC` injection mode. Registrar serviços em `registerServices.ts`. Resolver sempre no `create()`, nunca no `update()`.
+**DI container** (`src/containers/`): Awilix `CLASSIC` injection mode — construtor recebe args posicionais, nunca destruct. Registrar em `registerServices.ts`. Resolver sempre no `create()`, nunca no `update()`.
 
 **Path aliases** (`tsconfig.json`):
 - `@scenes/*` → `src/scenes/`
@@ -94,13 +123,36 @@ assets/
 - `@utils/*` → `src/utils/`
 - `@containers/*` → `src/containers/`
 - `@assets/*` → `assets/`
-- `@maps/*` → `maps/`
 
 **Game config** (`src/game.ts`): 1280×720, `Scale.RESIZE`, arcade physics (gravity y: 1000), pixel art.
 
+## Serviços
+
+**AudioManagerService** — singleton. `init(scene)` vincula ao sound manager do Phaser. Controla `setVolume`, `mute`, `unmute`, `isMuted`. Deve ser iniciado na `MenuScene`.
+
+**SaveManagerService** — singleton. Persiste no localStorage (`devaloka_save`). `save(patch)` faz merge parcial com `GameSaveTypes`. `get()` retorna cache em memória sem re-ler. `clear()` apaga tudo.
+
+**ConfigPanelService** — singleton. `init(scene)` cria objetos do painel na cena informada (destrói os anteriores). `show()` exibe o painel sem pausar (uso no menu). `openInGame(scene)` pausa sons, pausa cena e lança `ConfigScene` como overlay. `hide()` fecha o painel, para `ConfigScene` e retoma a cena pausada.
+
+**GameInputService** — singleton. `init(scene)` registra o listener de ESC que chama `configPanelService.openInGame(scene)`.
+
+**ConfigScene** — cena overlay transparente, lançada via `gameScene.scene.launch('ConfigScene')`. Cria o dim overlay e chama `configPanelService.initOverlay(this)`. Não aparece na lista de cenas ativas do jogo, apenas quando o config está aberto.
+
+## Sistema de Save (GameSaveTypes)
+
+Tipo mestre em `src/types/GameSaveTypes.ts` agrega os subTypes de `src/types/subTypes/`. Para adicionar dados novos ao save: criar um subType em `subTypes/`, importar na mestra. Os subTypes nunca são usados diretamente fora da tipagem mestra.
+
+```
+GameSaveTypes
+  └─ location: PlayerLocationTypes   (room, x, y)
+  └─ config: ConfigTypes             (volume, isMuted)
+```
+
+`PlayerService` salva `location` a cada 3s quando o player está no chão. `MenuScene` lê `location.room` e roteia via `ROOM_TO_LOADER` para o loader correto. Cada room lê o save no `create()` para restaurar estado específico.
+
 ## Player Spritesheet
 
-`assets/player/images/player.png` — LPC format, 64×64 per frame, 13 columns × 54 rows. Frame index = `row * 13 + col`. Mapeamento completo em `src/objects/player/PlayerAnimations.ts`.
+`assets/player/images/player.png` — LPC format, 64×64 per frame, 13 columns × 54 rows. Frame index = `row * 13 + col`. Mapeamento completo em `src/objects/player/utils/PlayerAnimations.ts`.
 
 Direções por animação: `+0=up`, `+1=left`, `+2=down`, `+3=right`.
 
@@ -144,6 +196,7 @@ Sempre consultar `src/utils/Depth.ts` ao adicionar objetos na cena. Usar o depth
 - `GROUND_DEFAULT` — chão base da sala
 - `MAIN` — chunks, plataformas, props com física (pedras, objetos interativos)
 - `PLAYER` — player, sempre na frente
+- `CONFIG` — painel de configurações, sempre acima de tudo (valor 100)
 
 ## Sites Úteis
 

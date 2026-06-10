@@ -7,8 +7,9 @@ import playerImg from '@assets/player/images/player.png';
 import playerJump from '@assets/player/audio/player-jump.ogg';
 import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
 import { container } from '@containers/index';
-import { AudioManager } from '@services/AudioManager';
-import { SaveManager } from '@services/SaveManager';
+import { AudioManagerService } from '@services/AudioManagerService';
+import { SaveManagerService } from '@services/SaveManagerService';
+import { ConfigPanelService } from '@services/ConfigPanelService';
 
 const ROOM_TO_LOADER: Record<string, string> = {
   SpawnSwampRoom: 'SwampLoaderScene',
@@ -34,7 +35,12 @@ export class MenuScene extends Phaser.Scene {
 
   create(): void {
     loadPlayerAnimations(this);
-    container.resolve<AudioManager>('audioManager').init(this);
+    const audioManagerService = container.resolve<AudioManagerService>(
+      'audioManagerService',
+    );
+    audioManagerService.init(this);
+    const saveManagerService =
+      container.resolve<SaveManagerService>('saveManagerService');
     const cx = this.scale.width / 2;
     const cy = this.scale.height / 2;
 
@@ -44,7 +50,23 @@ export class MenuScene extends Phaser.Scene {
 
     this.add.image(cx, -120, 'devaloka-menu').setOrigin(0.5, 0).setScale(1.3);
 
-    const saveManager = container.resolve<SaveManager>('saveManager');
+    const savedConfig = saveManagerService.get()?.config;
+    audioManagerService.setVolume(savedConfig?.volume ?? 0.5);
+    if (savedConfig?.isMuted) audioManagerService.mute();
+
+    const configPanelService =
+      container.resolve<ConfigPanelService>('configPanelService');
+    configPanelService.init(this);
+
+    const configBtn = this.add
+      .text(20, this.scale.height - 20, 'CONFIG', {
+        fontSize: '14px',
+        color: '#ffffff',
+      })
+      .setOrigin(0, 1)
+      .setInteractive({ useHandCursor: true });
+
+    configBtn.on('pointerdown', () => configPanelService.show());
 
     const btnNewGame = this.add
       .image(cx, cy + 60, 'menu-button-new-game')
@@ -74,14 +96,14 @@ export class MenuScene extends Phaser.Scene {
     btnNewGame.on('pointerover', () => btnNewGame.setDisplaySize(264, 144));
     btnNewGame.on('pointerout', () => btnNewGame.setDisplaySize(240, 131));
     btnNewGame.on('pointerdown', () => {
-      saveManager.clear();
+      saveManagerService.clear();
       this.scene.start('SwampLoaderScene');
     });
 
     btnContinue.on('pointerover', () => btnContinue.setDisplaySize(238, 130));
     btnContinue.on('pointerout', () => btnContinue.setDisplaySize(216, 118));
     btnContinue.on('pointerdown', () => {
-      const save = saveManager.get();
+      const save = saveManagerService.get();
       const room = save?.location?.room ?? 'SpawnSwampRoom';
       const loader = ROOM_TO_LOADER[room] ?? 'SwampLoaderScene';
       this.scene.start(loader);

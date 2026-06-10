@@ -1,4 +1,4 @@
-export class AudioManager {
+export class AudioManagerService {
   private soundManager!: Phaser.Sound.BaseSoundManager;
 
   init(scene: Phaser.Scene): void {

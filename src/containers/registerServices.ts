@@ -1,7 +1,9 @@
 import { asClass, AwilixContainer } from 'awilix';
 import { PlayerService } from '@objects/player/services/PlayerService';
-import { AudioManager } from '@services/AudioManager';
-import { SaveManager } from '@services/SaveManager';
+import { AudioManagerService } from '@services/AudioManagerService';
+import { SaveManagerService } from '@services/SaveManagerService';
+import { ConfigPanelService } from '@services/ConfigPanelService';
+import { GameInputService } from '@services/GameInputService';
 
 export function registerServices(container: AwilixContainer): void {
   container.register(
@@ -9,11 +11,19 @@ export function registerServices(container: AwilixContainer): void {
     asClass(PlayerService, { lifetime: 'SINGLETON' }),
   );
   container.register(
-    'audioManager',
-    asClass(AudioManager, { lifetime: 'SINGLETON' }),
+    'audioManagerService',
+    asClass(AudioManagerService, { lifetime: 'SINGLETON' }),
   );
   container.register(
-    'saveManager',
-    asClass(SaveManager, { lifetime: 'SINGLETON' }),
+    'saveManagerService',
+    asClass(SaveManagerService, { lifetime: 'SINGLETON' }),
+  );
+  container.register(
+    'configPanelService',
+    asClass(ConfigPanelService, { lifetime: 'SINGLETON' }),
+  );
+  container.register(
+    'gameInputService',
+    asClass(GameInputService, { lifetime: 'SINGLETON' }),
   );
 }

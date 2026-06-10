@@ -1,6 +1,7 @@
 import { PlayerObject } from '@objects/player/controller/PlayerObject';
 import { SoundVolume } from '@utils/SoundVolume';
-import { SaveManager } from '@services/SaveManager';
+import { SaveManagerService } from '@services/SaveManagerService';
+import { GameInputService } from '@services/GameInputService';
 
 const STEP_INTERVAL = 80;
 const SAVE_INTERVAL = 3000;
@@ -15,10 +16,15 @@ export class PlayerService {
   private spaceKey!: Phaser.Input.Keyboard.Key;
   private lastX = 0;
   private stepDistance = 0;
-  private saveManager: SaveManager;
+  private saveManagerService: SaveManagerService;
+  private gameInputService: GameInputService;
 
-  constructor(saveManager: SaveManager) {
-    this.saveManager = saveManager;
+  constructor(
+    saveManagerService: SaveManagerService,
+    gameInputService: GameInputService,
+  ) {
+    this.saveManagerService = saveManagerService;
+    this.gameInputService = gameInputService;
   }
 
   init(player: PlayerObject, scene: Phaser.Scene, biome = ''): void {
@@ -26,13 +32,14 @@ export class PlayerService {
     this.scene = scene;
     this.biome = biome;
     this.lastX = player.x;
+    this.gameInputService.init(scene);
 
     scene.time.addEvent({
       delay: SAVE_INTERVAL,
       loop: true,
       callback: () => {
         if (!this.player.body!.blocked.down) return;
-        this.saveManager.save({
+        this.saveManagerService.save({
           location: {
             room: scene.scene.key,
             x: Math.round(this.player.x),

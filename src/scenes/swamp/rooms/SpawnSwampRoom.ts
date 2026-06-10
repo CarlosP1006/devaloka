@@ -2,6 +2,7 @@ import { container } from '@containers/index';
 import { PlayerObject } from '@objects/player/controller/PlayerObject';
 import { PlayerCamera } from '@objects/player/utils/PlayerCamera';
 import { PlayerService } from '@objects/player/services/PlayerService';
+import { SaveManager } from '@services/SaveManager';
 import { createGround } from '@utils/createGround';
 import { createGroundChunk, TILE_H } from '@utils/createGroundChunk';
 import { Depth } from '@utils/Depth';
@@ -142,7 +143,15 @@ export class SpawnSwampRoom extends Phaser.Scene {
       callback: () => this.sound.play('swamp-owl-call', { volume: 0.1 }),
     });
 
-    const player = PlayerObject.create(this, 300, groundTop - 60);
+    const saveManager = container.resolve<SaveManager>('saveManager');
+    const save = saveManager.get();
+    const spawnX =
+      save?.location?.room === 'SpawnSwampRoom' ? save.location.x : 300;
+    const spawnY =
+      save?.location?.room === 'SpawnSwampRoom'
+        ? save.location.y
+        : groundTop - 60;
+    const player = PlayerObject.create(this, spawnX, spawnY);
     this.physics.add.collider(player, [
       groundGroup,
       stoneRuneGroup,

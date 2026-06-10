@@ -1,7 +1,9 @@
 import { PlayerObject } from '@objects/player/controller/PlayerObject';
 import { SoundVolume } from '@utils/SoundVolume';
+import { SaveManager } from '@services/SaveManager';
 
 const STEP_INTERVAL = 80;
+const SAVE_INTERVAL = 5000;
 
 export class PlayerService {
   private player!: PlayerObject;
@@ -13,12 +15,32 @@ export class PlayerService {
   private spaceKey!: Phaser.Input.Keyboard.Key;
   private lastX = 0;
   private stepDistance = 0;
+  private saveManager: SaveManager;
+
+  constructor(saveManager: SaveManager) {
+    this.saveManager = saveManager;
+  }
 
   init(player: PlayerObject, scene: Phaser.Scene, biome = ''): void {
     this.player = player;
     this.scene = scene;
     this.biome = biome;
     this.lastX = player.x;
+
+    scene.time.addEvent({
+      delay: SAVE_INTERVAL,
+      loop: true,
+      callback: () => {
+        if (!this.player.body!.blocked.down) return;
+        this.saveManager.save({
+          location: {
+            room: scene.scene.key,
+            x: Math.round(this.player.x),
+            y: Math.round(this.player.y),
+          },
+        });
+      },
+    });
     this.keyA = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyD = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.shiftKey = scene.input.keyboard!.addKey(

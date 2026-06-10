@@ -6,6 +6,11 @@ import playerJump from '@assets/player/audio/player-jump.ogg';
 import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
 import { container } from '@containers/index';
 import { AudioManager } from '@services/AudioManager';
+import { SaveManager } from '@services/SaveManager';
+
+const ROOM_TO_LOADER: Record<string, string> = {
+  SpawnSwampRoom: 'SwampLoaderScene',
+};
 
 export class MenuScene extends Phaser.Scene {
   constructor() {
@@ -42,6 +47,11 @@ export class MenuScene extends Phaser.Scene {
 
     button.on('pointerover', () => button.setScale(0.44));
     button.on('pointerout', () => button.setScale(0.4));
-    button.on('pointerdown', () => this.scene.start('SwampLoaderScene'));
+    button.on('pointerdown', () => {
+      const save = container.resolve<SaveManager>('saveManager').get();
+      const room = save?.location?.room ?? 'SpawnSwampRoom';
+      const loader = ROOM_TO_LOADER[room] ?? 'SwampLoaderScene';
+      this.scene.start(loader);
+    });
   }
 }

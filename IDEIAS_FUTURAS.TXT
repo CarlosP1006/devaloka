@@ -17,6 +17,13 @@
 [x] Adicionar som ambiente da SwampRoom — swamp-ambient.ogg em loop infinito
 [x] Adicionar som de coruja — swamp-owl-call.ogg a cada 15 segundos
 
+## 2026-06-09
+[x] Criar sistema de tipagem mestra GameSaveTypes com subTypes (PlayerLocationTypes)
+[x] Criar SaveManager — load, save (merge parcial), clear, get — singleton no container
+[x] Injetar SaveManager no PlayerService — salva room/x/y a cada 5s se player no chão
+[x] MenuScene lê save e roteia pro loader correto via ROOM_TO_LOADER
+[x] SpawnSwampRoom lê save e posiciona player nas coordenadas salvas
+
 --------------------------------------------------
 ## IDEIAS FUTURAS
 

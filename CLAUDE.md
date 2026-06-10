@@ -145,6 +145,14 @@ Sempre consultar `src/utils/Depth.ts` ao adicionar objetos na cena. Usar o depth
 - `MAIN` — chunks, plataformas, props com física (pedras, objetos interativos)
 - `PLAYER` — player, sempre na frente
 
+## Sites Úteis
+
+- **remove.bg** — remover fundo de imagens (PNG transparente)
+
+## Convenções de Nomes
+
+Ao sugerir nomes de arquivos de mídia (imagens, áudio, vídeo), nunca incluir a extensão.
+
 ## Code Style
 
 Prettier: single quotes, semicolons, trailing commas (all), 2-space indent, 80-char line width, no arrow parens, auto line endings.

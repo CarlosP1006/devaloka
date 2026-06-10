@@ -45,4 +45,15 @@ export default [
       'prettier/prettier': 'error',
     },
   },
+  {
+    files: ['webpack.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
 ]

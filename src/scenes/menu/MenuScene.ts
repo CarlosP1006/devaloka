@@ -1,5 +1,7 @@
 import startMenu from '@assets/menu/images/start-menu.png';
 import menuButtonStart from '@assets/menu/images/menu-button-start.png';
+import menuButtonNewGame from '@assets/menu/images/menu-button-new-game.png';
+import menuButtonContinue from '@assets/menu/images/menu-button-continue.png';
 import devalokaMenu from '@assets/menu/images/devaloka-menu.png';
 import playerImg from '@assets/player/images/player.png';
 import playerJump from '@assets/player/audio/player-jump.ogg';
@@ -20,6 +22,8 @@ export class MenuScene extends Phaser.Scene {
   preload(): void {
     this.load.image('start-menu', startMenu);
     this.load.image('menu-button-start', menuButtonStart);
+    this.load.image('menu-button-new-game', menuButtonNewGame);
+    this.load.image('menu-button-continue', menuButtonContinue);
     this.load.image('devaloka-menu', devalokaMenu);
     this.load.spritesheet('player', playerImg, {
       frameWidth: 64,
@@ -40,6 +44,20 @@ export class MenuScene extends Phaser.Scene {
 
     this.add.image(cx, -120, 'devaloka-menu').setOrigin(0.5, 0).setScale(1.3);
 
+    const saveManager = container.resolve<SaveManager>('saveManager');
+
+    const btnNewGame = this.add
+      .image(cx, cy + 60, 'menu-button-new-game')
+      .setDisplaySize(240, 131)
+      .setInteractive({ useHandCursor: true })
+      .setVisible(false);
+
+    const btnContinue = this.add
+      .image(cx, cy + 200, 'menu-button-continue')
+      .setDisplaySize(216, 118)
+      .setInteractive({ useHandCursor: true })
+      .setVisible(false);
+
     const button = this.add
       .image(cx, cy + 150, 'menu-button-start')
       .setScale(0.4)
@@ -48,7 +66,22 @@ export class MenuScene extends Phaser.Scene {
     button.on('pointerover', () => button.setScale(0.44));
     button.on('pointerout', () => button.setScale(0.4));
     button.on('pointerdown', () => {
-      const save = container.resolve<SaveManager>('saveManager').get();
+      button.setVisible(false);
+      btnNewGame.setVisible(true);
+      btnContinue.setVisible(true);
+    });
+
+    btnNewGame.on('pointerover', () => btnNewGame.setDisplaySize(264, 144));
+    btnNewGame.on('pointerout', () => btnNewGame.setDisplaySize(240, 131));
+    btnNewGame.on('pointerdown', () => {
+      saveManager.clear();
+      this.scene.start('SwampLoaderScene');
+    });
+
+    btnContinue.on('pointerover', () => btnContinue.setDisplaySize(238, 130));
+    btnContinue.on('pointerout', () => btnContinue.setDisplaySize(216, 118));
+    btnContinue.on('pointerdown', () => {
+      const save = saveManager.get();
       const room = save?.location?.room ?? 'SpawnSwampRoom';
       const loader = ROOM_TO_LOADER[room] ?? 'SwampLoaderScene';
       this.scene.start(loader);

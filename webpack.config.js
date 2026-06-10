@@ -57,7 +57,7 @@ module.exports = {
   plugins: [htmlPluginCfg, copyPluginCfg],
   devServer: {
     static: path.resolve(__dirname, './dist'),
-    host: 'localhost',
+    host: '0.0.0.0',
     port: 8080,
     open: false,
     hot: true,

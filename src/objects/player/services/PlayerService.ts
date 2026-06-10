@@ -3,7 +3,7 @@ import { SoundVolume } from '@utils/SoundVolume';
 import { SaveManager } from '@services/SaveManager';
 
 const STEP_INTERVAL = 80;
-const SAVE_INTERVAL = 5000;
+const SAVE_INTERVAL = 3000;
 
 export class PlayerService {
   private player!: PlayerObject;

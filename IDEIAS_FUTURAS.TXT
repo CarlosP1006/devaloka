@@ -72,6 +72,9 @@
 --------------------------------------------------
 ## IDEIAS FUTURAS
 
+PRIORIDADE:
+- Botão no painel de config in-game para voltar ao menu principal
+
 - Decoração da SwampRoom — mais props, árvores, detalhes
 - Portal de saída — transição pra próxima fase
 - Sons de combate — pra quando implementar o combate

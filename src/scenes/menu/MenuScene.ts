@@ -3,6 +3,16 @@ import menuButtonStart from '@assets/menu/images/menu-button-start.png';
 import menuButtonNewGame from '@assets/menu/images/menu-button-new-game.png';
 import menuButtonContinue from '@assets/menu/images/menu-button-continue.png';
 import devalokaMenu from '@assets/menu/images/devaloka-menu.png';
+import configIconImg from '@assets/menu/images/config-icon.png';
+import configPanelImg from '@assets/menu/images/config-panel.png';
+import configTitleImg from '@assets/menu/images/config-title.png';
+import volumeTitleImg from '@assets/menu/images/volume-title.png';
+import menuItemBgImg from '@assets/menu/images/menu-item-bg.png';
+import configBackImg from '@assets/menu/images/config-back.png';
+import menuMusicOnImg from '@assets/menu/images/menu-music-on.png';
+import menuMusicOffImg from '@assets/menu/images/menu-music-off.png';
+import menuMusicSfx from '@assets/menu/audio/menu-music.ogg';
+import stoneClickSfx from '@assets/menu/audio/stone-click.ogg';
 import playerImg from '@assets/player/images/player.png';
 import playerJump from '@assets/player/audio/player-jump.ogg';
 import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
@@ -10,6 +20,7 @@ import { container } from '@containers/index';
 import { AudioManagerService } from '@services/AudioManagerService';
 import { SaveManagerService } from '@services/SaveManagerService';
 import { ConfigPanelService } from '@services/ConfigPanelService';
+import { SoundVolume } from '@utils/SoundVolume';
 
 const ROOM_TO_LOADER: Record<string, string> = {
   SpawnSwampRoom: 'SwampLoaderScene',
@@ -26,10 +37,20 @@ export class MenuScene extends Phaser.Scene {
     this.load.image('menu-button-new-game', menuButtonNewGame);
     this.load.image('menu-button-continue', menuButtonContinue);
     this.load.image('devaloka-menu', devalokaMenu);
+    this.load.image('config-icon', configIconImg);
+    this.load.image('config-panel', configPanelImg);
+    this.load.image('config-title', configTitleImg);
+    this.load.image('volume-title', volumeTitleImg);
+    this.load.image('menu-item-bg', menuItemBgImg);
+    this.load.image('config-back', configBackImg);
+    this.load.image('menu-music-on', menuMusicOnImg);
+    this.load.image('menu-music-off', menuMusicOffImg);
     this.load.spritesheet('player', playerImg, {
       frameWidth: 64,
       frameHeight: 64,
     });
+    this.load.audio('menu-music', menuMusicSfx);
+    this.load.audio('stone-click', stoneClickSfx);
     this.load.audio('player-jump', playerJump);
   }
 
@@ -41,16 +62,50 @@ export class MenuScene extends Phaser.Scene {
     audioManagerService.init(this);
     const saveManagerService =
       container.resolve<SaveManagerService>('saveManagerService');
+    const savedConfig = saveManagerService.get()?.config;
     const cx = this.scale.width / 2;
     const cy = this.scale.height / 2;
+
+    let musicMuted = savedConfig?.musicMenuIsMuted ?? false;
+    const music = this.sound.add('menu-music', {
+      loop: true,
+      volume: SoundVolume.MUSIC,
+    });
+    if (!musicMuted) music.play();
 
     this.add
       .image(cx, cy, 'start-menu')
       .setDisplaySize(this.scale.width, this.scale.height);
 
-    this.add.image(cx, -120, 'devaloka-menu').setOrigin(0.5, 0).setScale(1.3);
+    this.add.image(cx, 120, 'devaloka-menu').setOrigin(0.5, 0.5).setScale(0.65);
 
-    const savedConfig = saveManagerService.get()?.config;
+    const musicBtn = this.add
+      .image(
+        musicMuted ? this.scale.width - 40 : this.scale.width - 34,
+        93,
+        musicMuted ? 'menu-music-off' : 'menu-music-on',
+      )
+      .setScale(0.16)
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true, pixelPerfect: true });
+
+    musicBtn.on('pointerover', () => musicBtn.setScale(0.175));
+    musicBtn.on('pointerout', () => musicBtn.setScale(0.16));
+    musicBtn.on('pointerdown', () => {
+      musicMuted = !musicMuted;
+      musicBtn.setTexture(musicMuted ? 'menu-music-off' : 'menu-music-on');
+      musicBtn.setX(musicMuted ? this.scale.width - 40 : this.scale.width - 34);
+      if (musicMuted) music.stop();
+      else music.play();
+      const cfg = saveManagerService.get()?.config ?? {
+        volume: 0.5,
+        isMuted: false,
+      };
+      saveManagerService.save({
+        config: { ...cfg, musicMenuIsMuted: musicMuted },
+      });
+    });
+
     audioManagerService.setVolume(savedConfig?.volume ?? 0.5);
     if (savedConfig?.isMuted) audioManagerService.mute();
 
@@ -59,24 +114,23 @@ export class MenuScene extends Phaser.Scene {
     configPanelService.init(this);
 
     const configBtn = this.add
-      .text(20, this.scale.height - 20, 'CONFIG', {
-        fontSize: '14px',
-        color: '#ffffff',
-      })
-      .setOrigin(0, 1)
+      .image(this.scale.width - 40, 40, 'config-icon')
+      .setScale(0.13)
+      .setOrigin(0.5, 0.5)
       .setInteractive({ useHandCursor: true });
 
-    configBtn.on('pointerdown', () => configPanelService.show());
+    configBtn.on('pointerover', () => configBtn.setScale(0.145));
+    configBtn.on('pointerout', () => configBtn.setScale(0.13));
 
     const btnNewGame = this.add
       .image(cx, cy + 60, 'menu-button-new-game')
-      .setDisplaySize(240, 131)
+      .setScale(0.35)
       .setInteractive({ useHandCursor: true })
       .setVisible(false);
 
     const btnContinue = this.add
       .image(cx, cy + 200, 'menu-button-continue')
-      .setDisplaySize(216, 118)
+      .setScale(0.31)
       .setInteractive({ useHandCursor: true })
       .setVisible(false);
 
@@ -84,6 +138,22 @@ export class MenuScene extends Phaser.Scene {
       .image(cx, cy + 150, 'menu-button-start')
       .setScale(0.4)
       .setInteractive({ useHandCursor: true });
+
+    const lockMenuBtns = () => {
+      button.disableInteractive();
+      btnNewGame.disableInteractive();
+      btnContinue.disableInteractive();
+    };
+    const unlockMenuBtns = () => {
+      button.setInteractive({ useHandCursor: true });
+      btnNewGame.setInteractive({ useHandCursor: true });
+      btnContinue.setInteractive({ useHandCursor: true });
+    };
+    configPanelService.setOnHide(unlockMenuBtns);
+    configBtn.on('pointerdown', () => {
+      if (!configPanelService.open) lockMenuBtns();
+      configPanelService.toggle();
+    });
 
     button.on('pointerover', () => button.setScale(0.44));
     button.on('pointerout', () => button.setScale(0.4));
@@ -93,19 +163,23 @@ export class MenuScene extends Phaser.Scene {
       btnContinue.setVisible(true);
     });
 
-    btnNewGame.on('pointerover', () => btnNewGame.setDisplaySize(264, 144));
-    btnNewGame.on('pointerout', () => btnNewGame.setDisplaySize(240, 131));
+    btnNewGame.on('pointerover', () => btnNewGame.setScale(0.39));
+    btnNewGame.on('pointerout', () => btnNewGame.setScale(0.35));
     btnNewGame.on('pointerdown', () => {
+      const config = saveManagerService.get()?.config;
       saveManagerService.clear();
+      if (config) saveManagerService.save({ config });
+      music.stop();
       this.scene.start('SwampLoaderScene');
     });
 
-    btnContinue.on('pointerover', () => btnContinue.setDisplaySize(238, 130));
-    btnContinue.on('pointerout', () => btnContinue.setDisplaySize(216, 118));
+    btnContinue.on('pointerover', () => btnContinue.setScale(0.35));
+    btnContinue.on('pointerout', () => btnContinue.setScale(0.31));
     btnContinue.on('pointerdown', () => {
       const save = saveManagerService.get();
       const room = save?.location?.room ?? 'SpawnSwampRoom';
       const loader = ROOM_TO_LOADER[room] ?? 'SwampLoaderScene';
+      music.stop();
       this.scene.start(loader);
     });
   }

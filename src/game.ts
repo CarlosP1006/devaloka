@@ -16,7 +16,7 @@ window.addEventListener('load', () => {
     height: 720,
     type: Phaser.AUTO,
     parent: 'game',
-    scene: [MenuScene, ConfigScene, SwampLoaderScene, SpawnSwampRoom],
+    scene: [MenuScene, SwampLoaderScene, SpawnSwampRoom, ConfigScene],
     input: {
       keyboard: true,
     },

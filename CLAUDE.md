@@ -26,6 +26,14 @@ Sempre que o usuário pedir um prompt para gerar imagem, consultar os padrões a
 - Tamanho final: 2322 × 739px
 - Após receber da IA: redimensionar para 2322×739 com PowerShell
 
+**Imagens interativas (botões, ícones clicáveis, hover):**
+- Sempre passar pelo ImageMagick antes de usar no jogo:
+  ```
+  & "C:\Program Files\ImageMagick-7.1.2-Q16-HDRI\magick.exe" "arquivo.png" -trim +repage "arquivo.png"
+  ```
+- Isso remove bordas transparentes e faz o hit area casar com o visual real
+- Para formas não-retangulares (setas, ícones irregulares): usar `pixelPerfect: true` no `setInteractive`
+
 **Objetos decorativos (árvores, pedras, props):**
 - PNG com fundo transparente real (alpha channel)
 - Hard pixel edges, sem anti-aliasing, sem semi-transparência
@@ -201,6 +209,9 @@ Sempre consultar `src/utils/Depth.ts` ao adicionar objetos na cena. Usar o depth
 ## Sites Úteis
 
 - **remove.bg** — remover fundo de imagens (PNG transparente)
+- **ElevenLabs** — gerar efeitos sonoros e músicas com IA (elevenlabs.io)
+- **freesound.org** — biblioteca enorme de efeitos sonoros gratuitos, filtro por licença
+- **OpenGameArt** — assets de áudio e arte específicos pra jogos, licença livre (opengameart.org)
 
 ## Convenções de Nomes
 

@@ -30,8 +30,6 @@
 [x] Menu de configurações — painel principal + painel de volume com slider e mute/unmute
 [x] Config persiste no SaveManager — não zera no Novo Jogo
 
-- PRIORIDADE: Adicionar imagens ao painel de config — botão CONFIG, background do painel, slider, botão mute
-
 ## 2026-06-10
 [x] Renomear AudioManager → AudioManagerService e SaveManager → SaveManagerService em todos os arquivos
 [x] ConfigPanelService extraído como singleton — init/show/hide desacoplados
@@ -39,34 +37,53 @@
 [x] ConfigScene — cena overlay separada para o painel de config (input funciona mesmo com jogo pausado)
 [x] Sons pausam/retomam junto com o jogo ao abrir/fechar config (pauseAll/resumeAll)
 [x] Depth.CONFIG = 100 — painel sempre na frente de tudo
+[x] Ícone de engrenagem (config-icon.png) no menu — canto superior direito, hover sutil, substituiu texto CONFIG
+[x] Logo DEVALOKA atualizada — alta resolução com glifos nórdicos iluminados em azul
+[x] Background do painel de config substituído por imagem de pedra musguenta (config-panel.png)
+[x] Bug corrigido — painel não abria segunda vez no menu após fechar
+[x] Botão X de fechar substituído por imagem config-close.png
+[x] Engrenagem vira toggle — abre e fecha o painel de config
+[x] Títulos CONFIGURAÇÕES e VOLUME substituídos por imagens com fonte Pirata One estilo neon azul
+[x] Seta <- para voltar ao painel principal dentro de Volume
+[x] Botões do menu bloqueados enquanto config está aberto
+[x] ESC fecha o painel de config in-game (além de abrir)
+[x] Bug corrigido — callback do menu não vaza pro contexto in-game
+[x] Botões VOLUME e MUTE ganham fundo de pedra musguenta (menu-item-bg.png) com hover conjunto
+[x] Títulos e botões do painel com cor azul brilhante (#00ddff)
+[x] Barinha de volume mantida como está
+[x] Botão X substituído por pedra SAIR vermelha — removido do painel de volume
+[x] strokeThickness 1.5 em todos os textos de botão (VOLUME, MUTE, SAIR)
+[x] ImageMagick instalado — trim automático de bordas transparentes em imagens interativas
+[x] Seta config-back com pixelPerfect — hit area exato na forma da seta
+[x] Botões NOVO JOGO e CONTINUAR migrados de setDisplaySize para setScale
+[x] Regra adicionada no CLAUDE.md — todas imagens interativas passam pelo trim do ImageMagick
+[x] Sistema de persistência de sessão — posição/room salvas no localStorage (devaloka_save)
+[x] Menu de configurações — slider de volume + mute/unmute conectado ao AudioManagerService
+[x] Save básico — location (room, x, y) e config (volume, isMuted) persistidos
+[x] Som de clique nas pedras (stone-click.ogg) em todos os botões do painel de config
+[x] Música de fundo do menu (menu-music.ogg) em loop — para ao entrar no jogo
+[x] Botão megafone para mutar/desmutar música do menu — estado persiste no save (musicMenuIsMuted)
+[x] Bug corrigido — Novo Jogo preserva config (volume, mute, musicMenuIsMuted) ao limpar save
 
 --------------------------------------------------
 ## IDEIAS FUTURAS
 
-- URGENTE: Sistema de persistência de sessão — salvar posição/cena atual no localStorage para não voltar ao início a cada reload
+- Música de fundo no menu
+- Decoração da SwampRoom — mais props, árvores, detalhes
+- Portal de saída — transição pra próxima fase
+- Sons de combate — pra quando implementar o combate
+- Combate e inimigos — só após portal funcionando
 
-- Sistema de Save completo (pensar antes de implementar):
-  OBJETO DO PLAYER (localStorage "devaloka_save"):
-    - cena atual + posição X/Y
+- Sistema de Save avançado (pensar antes de implementar):
+  OBJETO DO PLAYER:
     - hp, stats
     - inventário (itens adquiridos)
     - progresso (fases desbloqueadas)
 
-  ESTADO PERSISTENTE DAS ROOMS (mesmo localStorage ou separado — decidir):
+  ESTADO PERSISTENTE DAS ROOMS:
     - baús abertos (por ID único)
     - bosses mortos (por ID)
     - portas destrancadas (por ID)
-    - qualquer evento único que não deve resetar
-
-  REGRA DE RESET:
-    - ao entrar em uma room, inimigos e itens comuns nascem do zero
-    - EXCEÇÕES: baús abertos, bosses mortos, portas destrancadas — nunca resetam
-    - cada objeto único precisa de um ID fixo no código para ser rastreado
 
   DECISÃO PENDENTE: guardar estado das rooms dentro do mesmo objeto do player
   ou em um segundo localStorage separado ("devaloka_world")
-- Decoração da SwampRoom — mais props, árvores, detalhes
-- Portal de saída — transição pra próxima fase
-- Menu de configurações — slider de volume conectado ao AudioManager
-- Sons de combate — pra quando implementar o combate
-- Combate e inimigos — só após portal funcionando

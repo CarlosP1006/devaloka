@@ -8,8 +8,9 @@ export class GameInputService {
   }
 
   init(scene: Phaser.Scene): void {
-    scene.input.keyboard!.on('keydown-ESC', () =>
-      this.configPanelService.openInGame(scene),
-    );
+    scene.input.keyboard!.on('keydown-ESC', () => {
+      if (this.configPanelService.open) this.configPanelService.hide();
+      else this.configPanelService.openInGame(scene);
+    });
   }
 }

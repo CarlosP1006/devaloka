@@ -12,6 +12,7 @@ export class ConfigPanelService {
   private pausedScene: Phaser.Scene | null = null;
   private overlayScene: Phaser.Scene | null = null;
   private isOpen = false;
+  private onHideCallback: (() => void) | null = null;
 
   constructor(
     audioManagerService: AudioManagerService,
@@ -19,6 +20,11 @@ export class ConfigPanelService {
   ) {
     this.audioManagerService = audioManagerService;
     this.saveManagerService = saveManagerService;
+  }
+
+  private playClick(scene: Phaser.Scene): void {
+    if (scene.cache.audio.exists('stone-click'))
+      scene.sound.play('stone-click', { volume: 0.6 });
   }
 
   init(scene: Phaser.Scene): void {
@@ -32,8 +38,8 @@ export class ConfigPanelService {
     this.volPanel = [];
     const cx = scene.scale.width / 2;
     const cy = scene.scale.height / 2;
-    const panelW = 400;
-    const panelH = 220;
+    const panelW = 630;
+    const panelH = 441;
     const trackW = 260;
     const trackX = cx - trackW / 2;
     const trackY = cy + 10;
@@ -49,41 +55,97 @@ export class ConfigPanelService {
     const hide = (objects: Showable[]) =>
       objects.forEach(o => o.setVisible(false));
 
+    const mainBgFill = scene.add
+      .rectangle(cx, cy, panelW - 80, panelH - 60, 0x1a1a2e)
+      .setDepth(D)
+      .setVisible(false);
     const mainBg = scene.add
-      .rectangle(cx, cy, panelW, panelH, 0x000000, 0.88)
+      .image(cx, cy, 'config-panel')
+      .setDisplaySize(panelW, panelH)
       .setDepth(D)
       .setVisible(false);
     const mainTitle = scene.add
-      .text(cx, cy - 80, 'CONFIGURAÇÕES', {
-        fontSize: '18px',
-        color: '#ffffff',
-      })
+      .image(cx, cy - 100, 'config-title')
+      .setScale(0.35)
       .setOrigin(0.5)
       .setDepth(D)
+      .setVisible(false);
+    const itemScaleX = 0.42;
+    const itemScaleY = 0.3;
+    const mainBtnVolumeBg = scene.add
+      .image(cx, cy - 50, 'menu-item-bg')
+      .setScale(itemScaleX, itemScaleY)
+      .setOrigin(0.5)
+      .setDepth(D)
+      .setInteractive({ useHandCursor: true })
       .setVisible(false);
     const mainBtnVolume = scene.add
-      .text(cx, cy, 'VOLUME', { fontSize: '16px', color: '#4488ff' })
-      .setOrigin(0.5)
-      .setDepth(D)
-      .setInteractive({ useHandCursor: true })
-      .setVisible(false);
-    const mainClose = scene.add
-      .text(cx + panelW / 2 - 16, cy - panelH / 2 + 16, 'X', {
-        fontSize: '18px',
-        color: '#ff4444',
+      .text(cx, cy - 51, 'VOLUME', {
+        fontSize: '28px',
+        color: '#00ddff',
+        stroke: '#00ddff',
+        strokeThickness: 1.5,
       })
       .setOrigin(0.5)
       .setDepth(D)
+      .setVisible(false);
+    mainBtnVolumeBg.on('pointerover', () => {
+      mainBtnVolumeBg.setScale(itemScaleX * 1.08, itemScaleY * 1.08);
+      mainBtnVolume.setScale(1.08);
+    });
+    mainBtnVolumeBg.on('pointerout', () => {
+      mainBtnVolumeBg.setScale(itemScaleX, itemScaleY);
+      mainBtnVolume.setScale(1);
+    });
+    const sairScaleX = 0.42;
+    const sairScaleY = 0.3;
+    const mainCloseBg = scene.add
+      .image(cx, cy + 30, 'menu-item-bg')
+      .setScale(sairScaleX, sairScaleY)
+      .setOrigin(0.5)
+      .setDepth(D)
       .setInteractive({ useHandCursor: true })
       .setVisible(false);
-    this.mainPanel = [mainBg, mainTitle, mainBtnVolume, mainClose];
+    const mainCloseText = scene.add
+      .text(cx, cy + 30, 'SAIR', {
+        fontSize: '28px',
+        color: '#ff3333',
+        stroke: '#ff3333',
+        strokeThickness: 1.5,
+      })
+      .setOrigin(0.5)
+      .setDepth(D)
+      .setVisible(false);
+    mainCloseBg.on('pointerover', () => {
+      mainCloseBg.setScale(sairScaleX * 1.08, sairScaleY * 1.08);
+      mainCloseText.setScale(1.08);
+    });
+    mainCloseBg.on('pointerout', () => {
+      mainCloseBg.setScale(sairScaleX, sairScaleY);
+      mainCloseText.setScale(1);
+    });
+    this.mainPanel = [
+      mainBgFill,
+      mainBg,
+      mainTitle,
+      mainBtnVolumeBg,
+      mainBtnVolume,
+      mainCloseBg,
+      mainCloseText,
+    ];
 
+    const volBgFill = scene.add
+      .rectangle(cx, cy, panelW - 80, panelH - 60, 0x1a1a2e)
+      .setDepth(D)
+      .setVisible(false);
     const volBg = scene.add
-      .rectangle(cx, cy, panelW, panelH, 0x000000, 0.88)
+      .image(cx, cy, 'config-panel')
+      .setDisplaySize(panelW, panelH)
       .setDepth(D)
       .setVisible(false);
     const volTitle = scene.add
-      .text(cx, cy - 80, 'VOLUME', { fontSize: '18px', color: '#ffffff' })
+      .image(cx, cy - 90, 'volume-title')
+      .setScale(0.25)
       .setOrigin(0.5)
       .setDepth(D)
       .setVisible(false);
@@ -102,43 +164,57 @@ export class ConfigPanelService {
       .setDepth(D)
       .setInteractive({ draggable: true, useHandCursor: true })
       .setVisible(false);
-    const volPct = scene.add
-      .text(
-        trackX + trackW + 12,
-        trackY,
-        `${Math.round(currentVolume * 100)}%`,
-        { fontSize: '13px', color: '#ffffff' },
-      )
-      .setOrigin(0, 0.5)
+    const muteScaleX = 0.3;
+    const muteScaleY = 0.22;
+    const muteBtnBg = scene.add
+      .image(cx, trackY + 70, 'menu-item-bg')
+      .setScale(muteScaleX, muteScaleY)
+      .setOrigin(0.5)
       .setDepth(D)
+      .setInteractive({ useHandCursor: true })
       .setVisible(false);
     const muteBtn = scene.add
-      .text(cx, trackY + 50, muted ? 'UNMUTE' : 'MUTE', {
+      .text(cx, trackY + 70, muted ? 'UNMUTE' : 'MUTE', {
         fontSize: '15px',
-        color: '#ffffff',
+        color: '#00ddff',
+        stroke: '#00ddff',
+        strokeThickness: 1.5,
       })
       .setOrigin(0.5)
       .setDepth(D)
-      .setInteractive({ useHandCursor: true })
       .setVisible(false);
-    const volClose = scene.add
-      .text(cx + panelW / 2 - 16, cy - panelH / 2 + 16, 'X', {
-        fontSize: '18px',
-        color: '#ff4444',
-      })
+    muteBtnBg.on('pointerover', () => {
+      muteBtnBg.setScale(muteScaleX * 1.08, muteScaleY * 1.08);
+      muteBtn.setScale(1.08);
+    });
+    muteBtnBg.on('pointerout', () => {
+      muteBtnBg.setScale(muteScaleX, muteScaleY);
+      muteBtn.setScale(1);
+    });
+    const backScale = 0.12;
+    const volBack = scene.add
+      .image(cx - panelW / 2 + 130, cy - panelH / 2 + 118, 'config-back')
+      .setScale(backScale)
       .setOrigin(0.5)
       .setDepth(D)
-      .setInteractive({ useHandCursor: true })
+      .setInteractive({ useHandCursor: true, pixelPerfect: true })
       .setVisible(false);
+    volBack.on('pointerover', () => volBack.setScale(backScale * 1.12));
+    volBack.on('pointerout', () => volBack.setScale(backScale));
+    volBack.on('pointerdown', () => {
+      hide(this.volPanel);
+      show(this.mainPanel);
+    });
     this.volPanel = [
+      volBgFill,
       volBg,
       volTitle,
       trackBg,
       trackFill,
       handle,
-      volPct,
+      muteBtnBg,
       muteBtn,
-      volClose,
+      volBack,
     ];
 
     scene.input.setDraggable(handle);
@@ -147,7 +223,6 @@ export class ConfigPanelService {
       handle.x = clampedX;
       currentVolume = (clampedX - trackX) / trackW;
       trackFill.setSize(clampedX - trackX, 6);
-      volPct.setText(`${Math.round(currentVolume * 100)}%`);
       muted = false;
       muteBtn.setText('MUTE');
       this.audioManagerService.unmute();
@@ -157,7 +232,7 @@ export class ConfigPanelService {
       });
     });
 
-    muteBtn.on('pointerdown', () => {
+    muteBtnBg.on('pointerdown', () => {
       if (muted) {
         muted = false;
         muteBtn.setText('MUTE');
@@ -166,7 +241,6 @@ export class ConfigPanelService {
         currentVolume = preMuteVolume;
         handle.x = trackX + preMuteVolume * trackW;
         trackFill.setSize(preMuteVolume * trackW, 6);
-        volPct.setText(`${Math.round(preMuteVolume * 100)}%`);
         this.saveManagerService.save({
           config: { volume: preMuteVolume, isMuted: false },
         });
@@ -181,16 +255,22 @@ export class ConfigPanelService {
       }
     });
 
-    mainBtnVolume.on('pointerdown', () => {
+    mainBtnVolumeBg.on('pointerdown', () => {
+      this.playClick(scene);
       hide(this.mainPanel);
       show(this.volPanel);
     });
-    mainClose.on('pointerdown', () => this.hide());
-    volClose.on('pointerdown', () => this.hide());
+    mainCloseBg.on('pointerdown', () => {
+      this.playClick(scene);
+      this.hide();
+    });
+    volBack.on('pointerdown', () => this.playClick(scene));
+    muteBtnBg.on('pointerdown', () => this.playClick(scene));
   }
 
   openInGame(gameScene: Phaser.Scene): void {
     if (this.isOpen) return;
+    this.onHideCallback = null;
     this.pausedScene = gameScene;
     gameScene.sound.pauseAll();
     gameScene.scene.pause();
@@ -202,6 +282,19 @@ export class ConfigPanelService {
     this.init(scene);
     this.isOpen = true;
     this.mainPanel.forEach(o => o.setVisible(true));
+  }
+
+  get open(): boolean {
+    return this.isOpen;
+  }
+
+  setOnHide(cb: () => void): void {
+    this.onHideCallback = cb;
+  }
+
+  toggle(): void {
+    if (this.isOpen) this.hide();
+    else this.show();
   }
 
   show(): void {
@@ -217,13 +310,14 @@ export class ConfigPanelService {
     if (this.overlayScene) {
       this.overlayScene.scene.stop();
       this.overlayScene = null;
+      this.mainPanel = [];
+      this.volPanel = [];
     }
-    this.mainPanel = [];
-    this.volPanel = [];
     if (this.pausedScene) {
       this.pausedScene.sound.resumeAll();
       this.pausedScene.scene.resume();
       this.pausedScene = null;
     }
+    if (this.onHideCallback) this.onHideCallback();
   }
 }

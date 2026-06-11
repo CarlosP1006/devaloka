@@ -1,5 +1,4 @@
 import { PlayerObject } from '@objects/player/controller/PlayerObject';
-import { SoundVolume } from '@utils/SoundVolume';
 import { SaveManagerService } from '@services/SaveManagerService';
 import { GameInputService } from '@services/GameInputService';
 
@@ -86,7 +85,7 @@ export class PlayerService {
       if (this.stepDistance >= STEP_INTERVAL) {
         this.stepDistance = 0;
         this.scene.sound.play(`${this.biome}-step`, {
-          volume: SoundVolume.PLAYER,
+          volume: 0.9,
         });
       }
     } else {

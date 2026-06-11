@@ -27,6 +27,11 @@ export class ConfigPanelService {
       scene.sound.play('stone-click', { volume: 0.6 });
   }
 
+  private saveConfig(volume: number, isMuted: boolean): void {
+    const { musicMenuIsMuted } = this.saveManagerService.get()?.config ?? {};
+    this.saveManagerService.save({ config: { volume, isMuted, musicMenuIsMuted } });
+  }
+
   init(scene: Phaser.Scene): void {
     this.mainPanel.forEach(o =>
       (o as unknown as Phaser.GameObjects.GameObject).destroy(),
@@ -89,14 +94,23 @@ export class ConfigPanelService {
       .setOrigin(0.5)
       .setDepth(D)
       .setVisible(false);
-    mainBtnVolumeBg.on('pointerover', () => {
-      mainBtnVolumeBg.setScale(itemScaleX * 1.08, itemScaleY * 1.08);
-      mainBtnVolume.setScale(1.08);
-    });
-    mainBtnVolumeBg.on('pointerout', () => {
-      mainBtnVolumeBg.setScale(itemScaleX, itemScaleY);
-      mainBtnVolume.setScale(1);
-    });
+    const addHover = (
+      bg: Phaser.GameObjects.Image,
+      sx: number,
+      sy: number,
+      text: Phaser.GameObjects.Text | null = null,
+      factor = 1.08,
+    ): void => {
+      bg.on('pointerover', () => {
+        bg.setScale(sx * factor, sy * factor);
+        if (text) text.setScale(factor);
+      });
+      bg.on('pointerout', () => {
+        bg.setScale(sx, sy);
+        if (text) text.setScale(1);
+      });
+    };
+    addHover(mainBtnVolumeBg, itemScaleX, itemScaleY, mainBtnVolume);
     const sairScaleX = 0.42;
     const sairScaleY = 0.3;
     const mainCloseBg = scene.add
@@ -116,14 +130,7 @@ export class ConfigPanelService {
       .setOrigin(0.5)
       .setDepth(D)
       .setVisible(false);
-    mainCloseBg.on('pointerover', () => {
-      mainCloseBg.setScale(sairScaleX * 1.08, sairScaleY * 1.08);
-      mainCloseText.setScale(1.08);
-    });
-    mainCloseBg.on('pointerout', () => {
-      mainCloseBg.setScale(sairScaleX, sairScaleY);
-      mainCloseText.setScale(1);
-    });
+    addHover(mainCloseBg, sairScaleX, sairScaleY, mainCloseText);
     this.mainPanel = [
       mainBgFill,
       mainBg,
@@ -174,7 +181,7 @@ export class ConfigPanelService {
       .setInteractive({ useHandCursor: true })
       .setVisible(false);
     const muteBtn = scene.add
-      .text(cx, trackY + 70, muted ? 'UNMUTE' : 'MUTE', {
+      .text(cx, trackY + 70, muted ? 'DESMUTAR' : 'MUTE', {
         fontSize: '15px',
         color: '#00ddff',
         stroke: '#00ddff',
@@ -183,14 +190,7 @@ export class ConfigPanelService {
       .setOrigin(0.5)
       .setDepth(D)
       .setVisible(false);
-    muteBtnBg.on('pointerover', () => {
-      muteBtnBg.setScale(muteScaleX * 1.08, muteScaleY * 1.08);
-      muteBtn.setScale(1.08);
-    });
-    muteBtnBg.on('pointerout', () => {
-      muteBtnBg.setScale(muteScaleX, muteScaleY);
-      muteBtn.setScale(1);
-    });
+    addHover(muteBtnBg, muteScaleX, muteScaleY, muteBtn);
     const backScale = 0.12;
     const volBack = scene.add
       .image(cx - panelW / 2 + 130, cy - panelH / 2 + 118, 'config-back')
@@ -199,9 +199,9 @@ export class ConfigPanelService {
       .setDepth(D)
       .setInteractive({ useHandCursor: true, pixelPerfect: true })
       .setVisible(false);
-    volBack.on('pointerover', () => volBack.setScale(backScale * 1.12));
-    volBack.on('pointerout', () => volBack.setScale(backScale));
+    addHover(volBack, backScale, backScale, null, 1.12);
     volBack.on('pointerdown', () => {
+      this.playClick(scene);
       hide(this.volPanel);
       show(this.mainPanel);
     });
@@ -227,12 +227,11 @@ export class ConfigPanelService {
       muteBtn.setText('MUTE');
       this.audioManagerService.unmute();
       this.audioManagerService.setVolume(currentVolume);
-      this.saveManagerService.save({
-        config: { volume: currentVolume, isMuted: false },
-      });
+      this.saveConfig(currentVolume, false);
     });
 
     muteBtnBg.on('pointerdown', () => {
+      this.playClick(scene);
       if (muted) {
         muted = false;
         muteBtn.setText('MUTE');
@@ -241,17 +240,13 @@ export class ConfigPanelService {
         currentVolume = preMuteVolume;
         handle.x = trackX + preMuteVolume * trackW;
         trackFill.setSize(preMuteVolume * trackW, 6);
-        this.saveManagerService.save({
-          config: { volume: preMuteVolume, isMuted: false },
-        });
+        this.saveConfig(preMuteVolume, false);
       } else {
         preMuteVolume = currentVolume;
         muted = true;
-        muteBtn.setText('UNMUTE');
+        muteBtn.setText('DESMUTAR');
         this.audioManagerService.mute();
-        this.saveManagerService.save({
-          config: { volume: currentVolume, isMuted: true },
-        });
+        this.saveConfig(currentVolume, true);
       }
     });
 
@@ -264,8 +259,6 @@ export class ConfigPanelService {
       this.playClick(scene);
       this.hide();
     });
-    volBack.on('pointerdown', () => this.playClick(scene));
-    muteBtnBg.on('pointerdown', () => this.playClick(scene));
   }
 
   openInGame(gameScene: Phaser.Scene): void {

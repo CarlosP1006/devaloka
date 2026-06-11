@@ -4,12 +4,6 @@ import { ConfigScene } from '@scenes/config/ConfigScene';
 import { SwampLoaderScene } from '@scenes/swamp/SwampLoaderScene';
 import { SpawnSwampRoom } from '@scenes/swamp/rooms/SpawnSwampRoom';
 
-export class Game extends Phaser.Game {
-  constructor(config: Phaser.Types.Core.GameConfig) {
-    super(config);
-  }
-}
-
 window.addEventListener('load', () => {
   const cfg: Phaser.Types.Core.GameConfig = {
     width: 1280,
@@ -41,5 +35,5 @@ window.addEventListener('load', () => {
     },
   };
 
-  new Game(cfg);
+  new Phaser.Game(cfg);
 });

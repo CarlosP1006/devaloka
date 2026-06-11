@@ -1,15 +1,21 @@
 import { Depth } from '@utils/Depth';
-import { GROUND_SCALE, TILE_W, TILE_H } from '@utils/createGroundChunk';
+import {
+  GROUND_SCALE,
+  TILE_W,
+  TILE_H,
+  TILE_SRC_W,
+  TILE_SRC_H,
+} from '@utils/createGroundChunk';
 
 export function createGround(
   scene: Phaser.Scene,
   surfaceKey: string,
-  removeChunks: number[] | undefined,
+  removeChunks?: number[],
 ): { group: Phaser.Physics.Arcade.StaticGroup } {
   const mapWidth = 2560;
   const tex = scene.textures.get(surfaceKey);
   if (!tex.has('ground-tile')) {
-    tex.add('ground-tile', 0, 0, 0, 2322, 739);
+    tex.add('ground-tile', 0, 0, 0, TILE_SRC_W, TILE_SRC_H);
   }
 
   const groundY = scene.scale.height - TILE_H / 2;

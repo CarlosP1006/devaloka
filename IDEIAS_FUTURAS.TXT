@@ -31,6 +31,7 @@
 [x] Config persiste no SaveManager — não zera no Novo Jogo
 
 ## 2026-06-10
+[x] Bug corrigido — ConfigPanelService perdia musicMenuIsMuted ao salvar config (shallow merge interno)
 [x] Renomear AudioManager → AudioManagerService e SaveManager → SaveManagerService em todos os arquivos
 [x] ConfigPanelService extraído como singleton — init/show/hide desacoplados
 [x] GameInputService — ESC abre config e pausa jogo
@@ -68,7 +69,6 @@
 --------------------------------------------------
 ## IDEIAS FUTURAS
 
-- Música de fundo no menu
 - Decoração da SwampRoom — mais props, árvores, detalhes
 - Portal de saída — transição pra próxima fase
 - Sons de combate — pra quando implementar o combate

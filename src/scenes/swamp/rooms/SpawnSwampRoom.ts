@@ -6,7 +6,6 @@ import { SaveManagerService } from '@services/SaveManagerService';
 import { createGround } from '@utils/createGround';
 import { createGroundChunk, TILE_H } from '@utils/createGroundChunk';
 import { Depth } from '@utils/Depth';
-import { SoundVolume } from '@utils/SoundVolume';
 
 export class SpawnSwampRoom extends Phaser.Scene {
   private playerService!: PlayerService;
@@ -14,8 +13,6 @@ export class SpawnSwampRoom extends Phaser.Scene {
   constructor() {
     super({ key: 'SpawnSwampRoom' });
   }
-
-  preload(): void {}
 
   create(): void {
     const mapWidth = 2560;
@@ -134,7 +131,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
 
     this.sound.play('swamp-ambient', {
       loop: true,
-      volume: SoundVolume.AMBIENT,
+      volume: 0.5,
     });
 
     this.time.addEvent({

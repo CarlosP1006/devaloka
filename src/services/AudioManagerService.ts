@@ -17,8 +17,4 @@ export class AudioManagerService {
   unmute(): void {
     this.soundManager.mute = false;
   }
-
-  isMuted(): boolean {
-    return this.soundManager.mute;
-  }
 }

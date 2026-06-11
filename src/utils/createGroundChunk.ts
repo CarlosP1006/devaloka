@@ -1,8 +1,10 @@
 import { Depth } from '@utils/Depth';
 
+export const TILE_SRC_W = 2322;
+export const TILE_SRC_H = 739;
 export const GROUND_SCALE = 0.06;
-export const TILE_W = Math.round(2322 * GROUND_SCALE);
-export const TILE_H = Math.round(739 * GROUND_SCALE);
+export const TILE_W = Math.round(TILE_SRC_W * GROUND_SCALE);
+export const TILE_H = Math.round(TILE_SRC_H * GROUND_SCALE);
 
 function addSegment(
   scene: Phaser.Scene,
@@ -33,12 +35,12 @@ export function createGroundChunk(
 
   const surfaceTex = scene.textures.get(surfaceKey);
   if (!surfaceTex.has('ground-tile')) {
-    surfaceTex.add('ground-tile', 0, 0, 0, 2322, 739);
+    surfaceTex.add('ground-tile', 0, 0, 0, TILE_SRC_W, TILE_SRC_H);
   }
 
   const dirtTex = scene.textures.get(dirtKey);
   if (!dirtTex.has('dirt-tile')) {
-    dirtTex.add('dirt-tile', 0, 0, 0, 2322, 739);
+    dirtTex.add('dirt-tile', 0, 0, 0, TILE_SRC_W, TILE_SRC_H);
   }
 
   for (let i = 0; i < layers; i++) {

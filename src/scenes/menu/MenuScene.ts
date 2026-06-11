@@ -20,7 +20,6 @@ import { container } from '@containers/index';
 import { AudioManagerService } from '@services/AudioManagerService';
 import { SaveManagerService } from '@services/SaveManagerService';
 import { ConfigPanelService } from '@services/ConfigPanelService';
-import { SoundVolume } from '@utils/SoundVolume';
 
 const ROOM_TO_LOADER: Record<string, string> = {
   SpawnSwampRoom: 'SwampLoaderScene',
@@ -33,9 +32,9 @@ export class MenuScene extends Phaser.Scene {
 
   preload(): void {
     this.load.image('start-menu', startMenu);
-    this.load.image('menu-button-start', menuButtonStart);
-    this.load.image('menu-button-new-game', menuButtonNewGame);
-    this.load.image('menu-button-continue', menuButtonContinue);
+    this.load.image('menu-btnStart-start', menuButtonStart);
+    this.load.image('menu-btnStart-new-game', menuButtonNewGame);
+    this.load.image('menu-btnStart-continue', menuButtonContinue);
     this.load.image('devaloka-menu', devalokaMenu);
     this.load.image('config-icon', configIconImg);
     this.load.image('config-panel', configPanelImg);
@@ -69,7 +68,7 @@ export class MenuScene extends Phaser.Scene {
     let musicMuted = savedConfig?.musicMenuIsMuted ?? false;
     const music = this.sound.add('menu-music', {
       loop: true,
-      volume: SoundVolume.MUSIC,
+      volume: 0.5,
     });
     if (!musicMuted) music.play();
 
@@ -123,29 +122,29 @@ export class MenuScene extends Phaser.Scene {
     configBtn.on('pointerout', () => configBtn.setScale(0.13));
 
     const btnNewGame = this.add
-      .image(cx, cy + 60, 'menu-button-new-game')
+      .image(cx, cy + 60, 'menu-btnStart-new-game')
       .setScale(0.35)
       .setInteractive({ useHandCursor: true })
       .setVisible(false);
 
     const btnContinue = this.add
-      .image(cx, cy + 200, 'menu-button-continue')
+      .image(cx, cy + 200, 'menu-btnStart-continue')
       .setScale(0.31)
       .setInteractive({ useHandCursor: true })
       .setVisible(false);
 
-    const button = this.add
-      .image(cx, cy + 150, 'menu-button-start')
+    const btnStart = this.add
+      .image(cx, cy + 150, 'menu-btnStart-start')
       .setScale(0.4)
       .setInteractive({ useHandCursor: true });
 
     const lockMenuBtns = () => {
-      button.disableInteractive();
+      btnStart.disableInteractive();
       btnNewGame.disableInteractive();
       btnContinue.disableInteractive();
     };
     const unlockMenuBtns = () => {
-      button.setInteractive({ useHandCursor: true });
+      btnStart.setInteractive({ useHandCursor: true });
       btnNewGame.setInteractive({ useHandCursor: true });
       btnContinue.setInteractive({ useHandCursor: true });
     };
@@ -155,10 +154,10 @@ export class MenuScene extends Phaser.Scene {
       configPanelService.toggle();
     });
 
-    button.on('pointerover', () => button.setScale(0.44));
-    button.on('pointerout', () => button.setScale(0.4));
-    button.on('pointerdown', () => {
-      button.setVisible(false);
+    btnStart.on('pointerover', () => btnStart.setScale(0.44));
+    btnStart.on('pointerout', () => btnStart.setScale(0.4));
+    btnStart.on('pointerdown', () => {
+      btnStart.setVisible(false);
       btnNewGame.setVisible(true);
       btnContinue.setVisible(true);
     });

@@ -1,5 +1,5 @@
-// LPC Spritesheet layout: 18 columns x 70 rows, 64x64 per frame
-// Frame index = row * 18 + column
+// LPC Spritesheet layout: 13 columns x 54 rows, 64x64 per frame
+// Frame index = row * 13 + column
 // Direction order per animation: row+0=up, row+1=left, row+2=down, row+3=right
 // All frame counts confirmed visually from exported animation files
 

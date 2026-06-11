@@ -2,6 +2,7 @@ import { asClass, AwilixContainer } from 'awilix';
 import { PlayerService } from '@objects/player/services/PlayerService';
 import { AudioManagerService } from '@services/AudioManagerService';
 import { SaveManagerService } from '@services/SaveManagerService';
+import { GlobalSaveService } from '@services/GlobalSaveService';
 import { ConfigPanelService } from '@services/ConfigPanelService';
 import { GameInputService } from '@services/GameInputService';
 
@@ -17,6 +18,10 @@ export function registerServices(container: AwilixContainer): void {
   container.register(
     'saveManagerService',
     asClass(SaveManagerService, { lifetime: 'SINGLETON' }),
+  );
+  container.register(
+    'globalSaveService',
+    asClass(GlobalSaveService, { lifetime: 'SINGLETON' }),
   );
   container.register(
     'configPanelService',

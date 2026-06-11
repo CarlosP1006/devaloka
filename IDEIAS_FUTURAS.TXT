@@ -30,6 +30,19 @@
 [x] Menu de configurações — painel principal + painel de volume com slider e mute/unmute
 [x] Config persiste no SaveManager — não zera no Novo Jogo
 
+## 2026-06-11
+[x] Botão MENU (pedra verde) no painel de config — exclusivo in-game, abre tela de confirmação
+[x] Tela de confirmação "Deseja voltar para o Menu?" com SIM (vermelho) e NÃO (azul)
+[x] SIM volta ao MenuScene parando sons e cenas; NÃO volta ao painel principal
+[x] Imagem menu-confirm-title.png substituindo o texto da tela de confirmação
+[x] Cor do botão MUTE/DESMUTE — azul quando MUTE, vermelho quando DESMUTE
+[x] Refatoração de types — subTypes renomeado para gameTypes, criado globalTypes e declarations/
+[x] GlobalSaveService criado — localStorage devaloka_config para preferências globais
+[x] ConfigPanelService migrado para GlobalSaveService (não usa mais SaveManagerService)
+[x] MenuScene migrada para GlobalSaveService (config) + SaveManagerService (location)
+[x] Novo Jogo não precisa mais re-salvar config — clear() não toca devaloka_config
+[x] CLAUDE.md atualizado — nova estrutura de types, dois localStorage, GlobalSaveService documentado
+
 ## 2026-06-10
 [x] Bug corrigido — ConfigPanelService perdia musicMenuIsMuted ao salvar config (shallow merge interno)
 [x] Auditoria src — SoundVolume.ts removido, ESC unificado no GameInputService, preloads duplicados removidos, classe Game wrapper eliminada, preload vazio removido, parâmetros idiomáticos, button → btnStart
@@ -72,9 +85,6 @@
 --------------------------------------------------
 ## IDEIAS FUTURAS
 
-PRIORIDADE:
-- Botão no painel de config in-game para voltar ao menu principal
-
 - Decoração da SwampRoom — mais props, árvores, detalhes
 - Portal de saída — transição pra próxima fase
 - Sons de combate — pra quando implementar o combate
@@ -90,6 +100,3 @@ PRIORIDADE:
     - baús abertos (por ID único)
     - bosses mortos (por ID)
     - portas destrancadas (por ID)
-
-  DECISÃO PENDENTE: guardar estado das rooms dentro do mesmo objeto do player
-  ou em um segundo localStorage separado ("devaloka_world")

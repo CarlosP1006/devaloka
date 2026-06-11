@@ -93,13 +93,17 @@ src/
     AudioManagerService.ts             # Controla volume global e mute/unmute
     ConfigPanelService.ts              # Painel de config — init / show / openInGame / hide
     GameInputService.ts                # ESC → lança ConfigScene e pausa o jogo
-    SaveManagerService.ts              # localStorage — save (merge parcial), load, clear, get
+    SaveManagerService.ts              # localStorage devaloka_save_N — save, load, clear, get
+    GlobalSaveService.ts               # localStorage devaloka_config — preferências globais (nunca reseta)
   types/
-    global.d.ts                        # Tipos globais (imports de imagens e áudio)
-    GameSaveTypes.ts                   # Tipo mestre do save — agrega todos os subTypes
-    subTypes/
+    GameSaveTypes.ts                   # Tipo mestre do save de jogo — agrega gameTypes/
+    GlobalSaveTypes.ts                 # Tipo mestre do save global — agrega globalTypes/
+    declarations/
+      global.d.ts                      # Declarações de módulos (imports de imagens e áudio)
+    gameTypes/
       PlayerLocationTypes.ts           # room: string, x: number, y: number
-      ConfigTypes.ts                   # volume: number, isMuted: boolean
+    globalTypes/
+      ConfigTypes.ts                   # volume: number, isMuted: boolean, musicMenuIsMuted
   utils/
     createGround.ts                    # Cria o chão base que preenche a sala
     createGroundChunk.ts               # Cria chunk de plataforma elevada com física
@@ -144,7 +148,9 @@ assets/
 
 **AudioManagerService** — singleton. `init(scene)` vincula ao sound manager do Phaser. Controla `setVolume`, `mute`, `unmute`, `isMuted`. Deve ser iniciado na `MenuScene`.
 
-**SaveManagerService** — singleton. Persiste no localStorage (`devaloka_save`). `save(patch)` faz merge parcial com `GameSaveTypes`. `get()` retorna cache em memória sem re-ler. `clear()` apaga tudo.
+**SaveManagerService** — singleton. Persiste no localStorage (`devaloka_save_1` / `_2` / `_3` — slots futuros, atualmente `devaloka_save`). `save(patch)` faz merge parcial com `GameSaveTypes`. `get()` retorna cache em memória sem re-ler. `clear()` apaga o slot ativo. Nunca toca o `devaloka_config`.
+
+**GlobalSaveService** — singleton. Persiste no localStorage (`devaloka_config`). Guarda preferências globais do usuário (`ConfigTypes`: volume, isMuted, musicMenuIsMuted). Nunca é apagado pelo Novo Jogo — é independente de qual slot de save está ativo.
 
 **ConfigPanelService** — singleton. `init(scene)` cria objetos do painel na cena informada (destrói os anteriores). `show()` exibe o painel sem pausar (uso no menu). `openInGame(scene)` pausa sons, pausa cena e lança `ConfigScene` como overlay. `hide()` fecha o painel, para `ConfigScene` e retoma a cena pausada.
 
@@ -152,14 +158,21 @@ assets/
 
 **ConfigScene** — cena overlay transparente, lançada via `gameScene.scene.launch('ConfigScene')`. Cria o dim overlay e chama `configPanelService.initOverlay(this)`. Não aparece na lista de cenas ativas do jogo, apenas quando o config está aberto.
 
-## Sistema de Save (GameSaveTypes)
+## Sistema de Save
 
-Tipo mestre em `src/types/GameSaveTypes.ts` agrega os subTypes de `src/types/subTypes/`. Para adicionar dados novos ao save: criar um subType em `subTypes/`, importar na mestra. Os subTypes nunca são usados diretamente fora da tipagem mestra.
+### localStorage
+- `devaloka_config` — preferências globais (`GlobalSaveService`). Nunca apagado.
+- `devaloka_save_1` / `devaloka_save_2` / `devaloka_save_3` — slots de jogo (`SaveManagerService`). Resetados individualmente no Novo Jogo. (Atualmente só existe o slot 1, sem sufixo `_1` ainda — será migrado ao implementar a tela de seleção de save.)
+
+### Tipagem
+Para adicionar dados ao save de jogo: criar um subType em `src/types/gameTypes/`, importar em `GameSaveTypes.ts`.
+Para adicionar dados globais: criar subType em `src/types/globalTypes/`, importar em `GlobalSaveTypes.ts`.
+Os subTypes nunca são usados diretamente fora da tipagem mestra.
 
 ```
-GameSaveTypes
-  └─ location: PlayerLocationTypes   (room, x, y)
-  └─ config: ConfigTypes             (volume, isMuted)
+GameSaveTypes                          GlobalSaveTypes
+  └─ location: PlayerLocationTypes       └─ config: ConfigTypes
+       (room, x, y)                           (volume, isMuted, musicMenuIsMuted)
 ```
 
 `PlayerService` salva `location` a cada 3s quando o player está no chão. `MenuScene` lê `location.room` e roteia via `ROOM_TO_LOADER` para o loader correto. Cada room lê o save no `create()` para restaurar estado específico.

@@ -1,7 +1,5 @@
-import { PlayerLocationTypes } from './subTypes/PlayerLocationTypes';
-import { ConfigTypes } from './subTypes/ConfigTypes';
+import { PlayerLocationTypes } from './gameTypes/PlayerLocationTypes';
 
 export type GameSaveTypes = {
   location: PlayerLocationTypes;
-  config: ConfigTypes;
 };

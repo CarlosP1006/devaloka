@@ -9,6 +9,7 @@ import configTitleImg from '@assets/menu/images/config-title.png';
 import volumeTitleImg from '@assets/menu/images/volume-title.png';
 import menuItemBgImg from '@assets/menu/images/menu-item-bg.png';
 import configBackImg from '@assets/menu/images/config-back.png';
+import menuConfirmTitleImg from '@assets/menu/images/menu-confirm-title.png';
 import menuMusicOnImg from '@assets/menu/images/menu-music-on.png';
 import menuMusicOffImg from '@assets/menu/images/menu-music-off.png';
 import menuMusicSfx from '@assets/menu/audio/menu-music.ogg';
@@ -19,6 +20,7 @@ import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
 import { container } from '@containers/index';
 import { AudioManagerService } from '@services/AudioManagerService';
 import { SaveManagerService } from '@services/SaveManagerService';
+import { GlobalSaveService } from '@services/GlobalSaveService';
 import { ConfigPanelService } from '@services/ConfigPanelService';
 
 const ROOM_TO_LOADER: Record<string, string> = {
@@ -42,6 +44,7 @@ export class MenuScene extends Phaser.Scene {
     this.load.image('volume-title', volumeTitleImg);
     this.load.image('menu-item-bg', menuItemBgImg);
     this.load.image('config-back', configBackImg);
+    this.load.image('menu-confirm-title', menuConfirmTitleImg);
     this.load.image('menu-music-on', menuMusicOnImg);
     this.load.image('menu-music-off', menuMusicOffImg);
     this.load.spritesheet('player', playerImg, {
@@ -61,7 +64,9 @@ export class MenuScene extends Phaser.Scene {
     audioManagerService.init(this);
     const saveManagerService =
       container.resolve<SaveManagerService>('saveManagerService');
-    const savedConfig = saveManagerService.get()?.config;
+    const globalSaveService =
+      container.resolve<GlobalSaveService>('globalSaveService');
+    const savedConfig = globalSaveService.get()?.config;
     const cx = this.scale.width / 2;
     const cy = this.scale.height / 2;
 
@@ -96,11 +101,11 @@ export class MenuScene extends Phaser.Scene {
       musicBtn.setX(musicMuted ? this.scale.width - 40 : this.scale.width - 34);
       if (musicMuted) music.stop();
       else music.play();
-      const cfg = saveManagerService.get()?.config ?? {
+      const cfg = globalSaveService.get()?.config ?? {
         volume: 0.5,
         isMuted: false,
       };
-      saveManagerService.save({
+      globalSaveService.save({
         config: { ...cfg, musicMenuIsMuted: musicMuted },
       });
     });
@@ -165,9 +170,7 @@ export class MenuScene extends Phaser.Scene {
     btnNewGame.on('pointerover', () => btnNewGame.setScale(0.39));
     btnNewGame.on('pointerout', () => btnNewGame.setScale(0.35));
     btnNewGame.on('pointerdown', () => {
-      const config = saveManagerService.get()?.config;
       saveManagerService.clear();
-      if (config) saveManagerService.save({ config });
       music.stop();
       this.scene.start('SwampLoaderScene');
     });

@@ -1,14 +1,15 @@
 import { AudioManagerService } from '@services/AudioManagerService';
-import { SaveManagerService } from '@services/SaveManagerService';
+import { GlobalSaveService } from '@services/GlobalSaveService';
 import { Depth } from '@utils/Depth';
 
 type Showable = { setVisible: (v: boolean) => void };
 
 export class ConfigPanelService {
   private audioManagerService: AudioManagerService;
-  private saveManagerService: SaveManagerService;
+  private globalSaveService: GlobalSaveService;
   private mainPanel: Showable[] = [];
   private volPanel: Showable[] = [];
+  private menuConfirmPanel: Showable[] = [];
   private pausedScene: Phaser.Scene | null = null;
   private overlayScene: Phaser.Scene | null = null;
   private isOpen = false;
@@ -16,10 +17,10 @@ export class ConfigPanelService {
 
   constructor(
     audioManagerService: AudioManagerService,
-    saveManagerService: SaveManagerService,
+    globalSaveService: GlobalSaveService,
   ) {
     this.audioManagerService = audioManagerService;
-    this.saveManagerService = saveManagerService;
+    this.globalSaveService = globalSaveService;
   }
 
   private playClick(scene: Phaser.Scene): void {
@@ -28,19 +29,26 @@ export class ConfigPanelService {
   }
 
   private saveConfig(volume: number, isMuted: boolean): void {
-    const { musicMenuIsMuted } = this.saveManagerService.get()?.config ?? {};
-    this.saveManagerService.save({ config: { volume, isMuted, musicMenuIsMuted } });
+    const { musicMenuIsMuted } = this.globalSaveService.get()?.config ?? {};
+    this.globalSaveService.save({
+      config: { volume, isMuted, musicMenuIsMuted },
+    });
   }
 
-  init(scene: Phaser.Scene): void {
+  init(scene: Phaser.Scene, inGame = false): void {
     this.mainPanel.forEach(o =>
       (o as unknown as Phaser.GameObjects.GameObject).destroy(),
     );
     this.volPanel.forEach(o =>
       (o as unknown as Phaser.GameObjects.GameObject).destroy(),
     );
+    this.menuConfirmPanel.forEach(o =>
+      (o as unknown as Phaser.GameObjects.GameObject).destroy(),
+    );
     this.mainPanel = [];
     this.volPanel = [];
+    this.menuConfirmPanel = [];
+
     const cx = scene.scale.width / 2;
     const cy = scene.scale.height / 2;
     const panelW = 630;
@@ -50,7 +58,7 @@ export class ConfigPanelService {
     const trackY = cy + 10;
     const D = Depth.CONFIG;
 
-    const savedConfig = this.saveManagerService.get()?.config;
+    const savedConfig = this.globalSaveService.get()?.config;
     let currentVolume = savedConfig?.volume ?? 0.5;
     let preMuteVolume = currentVolume;
     let muted = savedConfig?.isMuted ?? false;
@@ -180,11 +188,12 @@ export class ConfigPanelService {
       .setDepth(D)
       .setInteractive({ useHandCursor: true })
       .setVisible(false);
+    const muteColor = muted ? '#ff3333' : '#00ddff';
     const muteBtn = scene.add
-      .text(cx, trackY + 70, muted ? 'DESMUTAR' : 'MUTE', {
+      .text(cx, trackY + 70, muted ? 'DESMUTE' : 'MUTE', {
         fontSize: '15px',
-        color: '#00ddff',
-        stroke: '#00ddff',
+        color: muteColor,
+        stroke: muteColor,
         strokeThickness: 1.5,
       })
       .setOrigin(0.5)
@@ -224,7 +233,7 @@ export class ConfigPanelService {
       currentVolume = (clampedX - trackX) / trackW;
       trackFill.setSize(clampedX - trackX, 6);
       muted = false;
-      muteBtn.setText('MUTE');
+      muteBtn.setText('MUTE').setColor('#00ddff').setStroke('#00ddff', 1.5);
       this.audioManagerService.unmute();
       this.audioManagerService.setVolume(currentVolume);
       this.saveConfig(currentVolume, false);
@@ -234,7 +243,7 @@ export class ConfigPanelService {
       this.playClick(scene);
       if (muted) {
         muted = false;
-        muteBtn.setText('MUTE');
+        muteBtn.setText('MUTE').setColor('#00ddff').setStroke('#00ddff', 1.5);
         this.audioManagerService.unmute();
         this.audioManagerService.setVolume(preMuteVolume);
         currentVolume = preMuteVolume;
@@ -244,7 +253,10 @@ export class ConfigPanelService {
       } else {
         preMuteVolume = currentVolume;
         muted = true;
-        muteBtn.setText('DESMUTAR');
+        muteBtn
+          .setText('DESMUTE')
+          .setColor('#ff3333')
+          .setStroke('#ff3333', 1.5);
         this.audioManagerService.mute();
         this.saveConfig(currentVolume, true);
       }
@@ -259,6 +271,120 @@ export class ConfigPanelService {
       this.playClick(scene);
       this.hide();
     });
+
+    if (inGame) {
+      const homeScaleX = 0.2;
+      const homeScaleY = 0.17;
+      const mainBtnHomeBg = scene.add
+        .image(cx - panelW / 2 + 145, cy - panelH / 2 + 110, 'menu-item-bg')
+        .setScale(homeScaleX, homeScaleY)
+        .setOrigin(0.5)
+        .setDepth(D)
+        .setInteractive({ useHandCursor: true })
+        .setVisible(false);
+      const mainBtnHome = scene.add
+        .text(cx - panelW / 2 + 145, cy - panelH / 2 + 110, 'MENU', {
+          fontSize: '13px',
+          color: '#00ff88',
+          stroke: '#00ff88',
+          strokeThickness: 0.5,
+        })
+        .setOrigin(0.5)
+        .setDepth(D)
+        .setVisible(false);
+      addHover(mainBtnHomeBg, homeScaleX, homeScaleY, mainBtnHome);
+      this.mainPanel.push(mainBtnHomeBg, mainBtnHome);
+
+      const confirmBgFill = scene.add
+        .rectangle(cx, cy, panelW - 80, panelH - 60, 0x1a1a2e)
+        .setDepth(D)
+        .setVisible(false);
+      const confirmBg = scene.add
+        .image(cx, cy, 'config-panel')
+        .setDisplaySize(panelW, panelH)
+        .setDepth(D)
+        .setVisible(false);
+      const confirmText = scene.add
+        .image(cx, cy - 66, 'menu-confirm-title')
+        .setScale(0.33)
+        .setOrigin(0.5)
+        .setDepth(D)
+        .setVisible(false);
+      const simScaleX = 0.3;
+      const simScaleY = 0.22;
+      const simBg = scene.add
+        .image(cx - 100, cy + 40, 'menu-item-bg')
+        .setScale(simScaleX, simScaleY)
+        .setOrigin(0.5)
+        .setDepth(D)
+        .setInteractive({ useHandCursor: true })
+        .setVisible(false);
+      const simText = scene.add
+        .text(cx - 100, cy + 40, 'SIM', {
+          fontSize: '22px',
+          color: '#ff3333',
+          stroke: '#ff3333',
+          strokeThickness: 1.5,
+        })
+        .setOrigin(0.5)
+        .setDepth(D)
+        .setVisible(false);
+      addHover(simBg, simScaleX, simScaleY, simText);
+      const naoScaleX = 0.3;
+      const naoScaleY = 0.22;
+      const naoBg = scene.add
+        .image(cx + 100, cy + 40, 'menu-item-bg')
+        .setScale(naoScaleX, naoScaleY)
+        .setOrigin(0.5)
+        .setDepth(D)
+        .setInteractive({ useHandCursor: true })
+        .setVisible(false);
+      const naoText = scene.add
+        .text(cx + 100, cy + 40, 'NÃO', {
+          fontSize: '22px',
+          color: '#00ddff',
+          stroke: '#00ddff',
+          strokeThickness: 1.5,
+        })
+        .setOrigin(0.5)
+        .setDepth(D)
+        .setVisible(false);
+      addHover(naoBg, naoScaleX, naoScaleY, naoText);
+      this.menuConfirmPanel = [
+        confirmBgFill,
+        confirmBg,
+        confirmText,
+        simBg,
+        simText,
+        naoBg,
+        naoText,
+      ];
+
+      mainBtnHomeBg.on('pointerdown', () => {
+        this.playClick(scene);
+        hide(this.mainPanel);
+        show(this.menuConfirmPanel);
+      });
+      naoBg.on('pointerdown', () => {
+        this.playClick(scene);
+        hide(this.menuConfirmPanel);
+        show(this.mainPanel);
+      });
+      simBg.on('pointerdown', () => {
+        this.playClick(scene);
+        this.globalSaveService.save({});
+        const gameScene = this.pausedScene!;
+        this.isOpen = false;
+        this.pausedScene = null;
+        this.overlayScene = null;
+        this.mainPanel = [];
+        this.volPanel = [];
+        this.menuConfirmPanel = [];
+        scene.sound.stopAll();
+        scene.scene.stop(gameScene.scene.key);
+        scene.scene.start('MenuScene');
+      });
+    }
   }
 
   openInGame(gameScene: Phaser.Scene): void {
@@ -272,7 +398,7 @@ export class ConfigPanelService {
 
   initOverlay(scene: Phaser.Scene): void {
     this.overlayScene = scene;
-    this.init(scene);
+    this.init(scene, true);
     this.isOpen = true;
     this.mainPanel.forEach(o => o.setVisible(true));
   }
@@ -300,11 +426,13 @@ export class ConfigPanelService {
     this.isOpen = false;
     this.mainPanel.forEach(o => o.setVisible(false));
     this.volPanel.forEach(o => o.setVisible(false));
+    this.menuConfirmPanel.forEach(o => o.setVisible(false));
     if (this.overlayScene) {
       this.overlayScene.scene.stop();
       this.overlayScene = null;
       this.mainPanel = [];
       this.volPanel = [];
+      this.menuConfirmPanel = [];
     }
     if (this.pausedScene) {
       this.pausedScene.sound.resumeAll();

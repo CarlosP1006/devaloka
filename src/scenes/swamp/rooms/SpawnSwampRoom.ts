@@ -41,7 +41,16 @@ export class SpawnSwampRoom extends Phaser.Scene {
     const { group: chunk9 } = createGroundChunk(
       this,
       9,
-      7,
+      6,
+      undefined,
+      'swamp-ground',
+      'swamp-ground-dirt',
+    );
+
+    const { group: chunk13 } = createGroundChunk(
+      this,
+      13,
+      4,
       undefined,
       'swamp-ground',
       'swamp-ground-dirt',
@@ -154,6 +163,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
       groundGroup,
       stoneRuneGroup,
       chunk9,
+      chunk13,
       chunk14,
       chunk15,
       chunk16,

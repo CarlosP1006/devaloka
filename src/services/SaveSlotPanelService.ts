@@ -7,6 +7,7 @@ import { Depth } from '@utils/Depth';
 
 const ROOM_TO_LOADER: Record<string, string> = {
   SpawnSwampRoom: 'SwampLoaderScene',
+  ForestSwampRoom: 'SwampLoaderScene',
 };
 
 export class SaveSlotPanelService {
@@ -147,6 +148,7 @@ export class SaveSlotPanelService {
           'devaloka_save_1';
         this.globalSaveService.save({ activeSlot: key });
         this.saveManagerService.reloadActiveSlot();
+        this.saveManagerService.clear();
         this.saveManagerService.save({
           slotInfo: { playerName: name, playTime: 0, chapter: 'swamp' },
         });

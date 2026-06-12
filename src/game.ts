@@ -3,6 +3,7 @@ import { MenuScene } from '@scenes/menu/MenuScene';
 import { ConfigScene } from '@scenes/config/ConfigScene';
 import { SwampLoaderScene } from '@scenes/swamp/SwampLoaderScene';
 import { SpawnSwampRoom } from '@scenes/swamp/rooms/SpawnSwampRoom';
+import { ForestSwampRoom } from '@scenes/swamp/rooms/ForestSwampRoom';
 
 window.addEventListener('load', () => {
   const cfg: Phaser.Types.Core.GameConfig = {
@@ -10,7 +11,13 @@ window.addEventListener('load', () => {
     height: 720,
     type: Phaser.AUTO,
     parent: 'game',
-    scene: [MenuScene, SwampLoaderScene, SpawnSwampRoom, ConfigScene],
+    scene: [
+      MenuScene,
+      SwampLoaderScene,
+      SpawnSwampRoom,
+      ForestSwampRoom,
+      ConfigScene,
+    ],
     dom: {
       createContainer: true,
     },

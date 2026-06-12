@@ -177,7 +177,7 @@ export class MenuScene extends Phaser.Scene {
       lockMenuBtns();
       saveSlotPanelService.showNewGame(this, unlockMenuBtns, loader => {
         music.stop();
-        this.scene.start(loader);
+        this.scene.start(loader, {});
       });
     });
 
@@ -188,7 +188,7 @@ export class MenuScene extends Phaser.Scene {
       lockMenuBtns();
       saveSlotPanelService.showContinue(this, unlockMenuBtns, loader => {
         music.stop();
-        this.scene.start(loader);
+        this.scene.start(loader, {});
       });
     });
   }

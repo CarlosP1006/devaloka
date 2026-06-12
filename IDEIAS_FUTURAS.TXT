@@ -123,11 +123,29 @@
 [x] ChapterTypes.ts movido de gameTypes/ para declarations/ — gameTypes/ fica só com shapes puros de save
 [x] SLOT_KEYS consolidado em SaveSlotKey.ts — array as const, tipo derivado via (typeof SLOT_KEYS)[number]
 
+## 2026-06-12
+[x] DoorLinks.ts — arquivo central de portas: tag → { loader, targetRoom, spawnX, spawnY }
+[x] createTransitionLine refatorado — recebe só doorTag, consulta DoorLinks, sem targetRoom/targetTag
+[x] SwampLoaderScene — trata dois casos: porta (usa data.targetRoom/spawnX/spawnY) vs menu (usa save)
+[x] Rooms simplificadas — create(data) recebe { spawnX?, spawnY? }, sem spawnPoints internos
+[x] Padrão de tag consolidado: {room}-{capitulo}-room-door-{numero}
+[x] DEV_PRINT_SAVE.ts — util de desenvolvimento, tecla Ç printa save ativo no console
+[x] CLAUDE.md atualizado — sistema de transição documentado com fluxo completo e checklist de nova room
+[x] createTransitionLine — util com zona física invisível, dispara scene.start com targetRoom e fromTag
+[x] ForestSwampRoom criada — chão, linha de transição na borda esquerda (porta 1), spawn por fromTag ou save
+[x] SpawnSwampRoom — linha de transição na borda direita apontando pra ForestSwampRoom (forest-swamp-room-1)
+[x] SwampLoaderScene — roteia pra room correta com base no save (não sempre SpawnSwampRoom)
+[x] ROOM_TO_LOADER atualizado com ForestSwampRoom
+[x] swamp-background renomeado pra spawn-swamp-background — asset exclusivo do SpawnSwampRoom
+[x] sound.stopAll() na transição de rooms — sons da room anterior não vazam
+[x] Bug corrigido — overlap da porta disparava todo frame, destruindo o timer de save antes de executar (triggered flag)
+[x] Bug corrigido — Phaser reutilizava data obsoleto de porta no SwampLoaderScene e nas rooms ao dar Continue (scene.start com {})
+[x] Intervalo de save reduzido de 3s para 1.5s
+
 --------------------------------------------------
 ## IDEIAS FUTURAS
 
 - Decoração da SwampRoom — mais props, árvores, detalhes
-- Portal de saída — transição pra próxima fase
 - Sons de combate — pra quando implementar o combate
 - Combate e inimigos — só após portal funcionando
 

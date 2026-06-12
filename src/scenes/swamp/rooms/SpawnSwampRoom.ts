@@ -5,6 +5,7 @@ import { PlayerService } from '@objects/player/services/PlayerService';
 import { SaveManagerService } from '@services/SaveManagerService';
 import { createGround } from '@utils/createGround';
 import { createGroundChunk, TILE_H } from '@utils/createGroundChunk';
+import { createTransitionLine } from '@utils/createTransitionLine';
 import { Depth } from '@utils/Depth';
 
 export class SpawnSwampRoom extends Phaser.Scene {
@@ -14,7 +15,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
     super({ key: 'SpawnSwampRoom' });
   }
 
-  create(): void {
+  create(data: { spawnX?: number; spawnY?: number }): void {
     const mapWidth = 2560;
     const { group: groundGroup } = createGround(
       this,
@@ -24,7 +25,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
 
     const groundTop = this.scale.height - TILE_H;
     this.add
-      .image(mapWidth / 2, this.scale.height / 2, 'swamp-background')
+      .image(mapWidth / 2, this.scale.height / 2, 'spawn-swamp-background')
       .setDisplaySize(mapWidth, this.scale.height)
       .setDepth(Depth.FAR_BACKGROUND)
       .setAlpha(0.6);
@@ -152,12 +153,9 @@ export class SpawnSwampRoom extends Phaser.Scene {
     const saveManagerService =
       container.resolve<SaveManagerService>('saveManagerService');
     const save = saveManagerService.get();
-    const spawnX =
-      save?.location?.room === 'SpawnSwampRoom' ? save.location.x : 300;
-    const spawnY =
-      save?.location?.room === 'SpawnSwampRoom'
-        ? save.location.y
-        : groundTop - 60;
+    const savedHere = save?.location?.room === 'SpawnSwampRoom';
+    const spawnX = data?.spawnX ?? (savedHere ? save.location?.x ?? 300 : 300);
+    const spawnY = data?.spawnY ?? (savedHere ? save.location?.y ?? groundTop - 60 : groundTop - 60);
     const player = PlayerObject.create(this, spawnX, spawnY);
     this.physics.add.collider(player, [
       groundGroup,
@@ -171,6 +169,16 @@ export class SpawnSwampRoom extends Phaser.Scene {
       chunk18,
       chunk7,
     ]);
+    createTransitionLine(
+      this,
+      mapWidth,
+      groundTop / 2,
+      1,
+      groundTop,
+      player,
+      'spawn-swamp-room-door-1',
+    );
+
     PlayerCamera.setup(this, player, mapWidth);
     this.playerService = container.resolve<PlayerService>('playerService');
     this.playerService.init(player, this, 'swamp');

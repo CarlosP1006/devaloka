@@ -1,9 +1,12 @@
 import { PlayerObject } from '@objects/player/controller/PlayerObject';
 import { SaveManagerService } from '@services/SaveManagerService';
 import { GameInputService } from '@services/GameInputService';
+// CODIGO PARA APAGAR DEPOIS
+import { DEV_PRINT_SAVE } from '@utils/DEV_PRINT_SAVE';
+// CODIGO PARA APAGAR DEPOIS
 
 const STEP_INTERVAL = 80;
-const SAVE_INTERVAL = 3000;
+const SAVE_INTERVAL = 1500;
 
 export class PlayerService {
   private player!: PlayerObject;
@@ -61,6 +64,11 @@ export class PlayerService {
         });
       },
     });
+    // CODIGO PARA APAGAR DEPOIS
+    scene.input.keyboard!.on('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'ç' || e.key === 'Ç') DEV_PRINT_SAVE();
+    });
+    // CODIGO PARA APAGAR DEPOIS
     this.keyA = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyD = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.shiftKey = scene.input.keyboard!.addKey(

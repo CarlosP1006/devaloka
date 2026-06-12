@@ -112,8 +112,11 @@ src/
   utils/
     createGround.ts                    # Cria o chão base que preenche a sala
     createGroundChunk.ts               # Cria chunk de plataforma elevada com física
+    createTransitionLine.ts            # Cria zona de transição entre rooms — consulta DoorLinks
+    DoorLinks.ts                       # Mapa central de portas: tag → { loader, targetRoom, spawnX, spawnY }
     Depth.ts                           # Constantes de profundidade (z-index)
     ButtonHelper.ts                    # Factories de botão de pedra — makeStoneButton, addStoneHover
+    DEV_PRINT_SAVE.ts                  # APAGAR ANTES DO BUILD FINAL — imprime save ativo no console (Ç)
 
 assets/
   menu/images/                         # background, botões do menu
@@ -131,6 +134,7 @@ assets/
 - Arquivos e classes de serviço terminam em `Service` (ex: `SaveManagerService`)
 - Cenas: `{Area}LoaderScene` para loader, `{Descrição}{Area}Room` para rooms (ex: `SpawnSwampRoom`)
 - Injeção de dependência: chave = nome da classe com primeira letra minúscula (ex: `saveManagerService`)
+- Tags de porta: `{room-descricao}-{capitulo}-room-door-{numero}` (ex: `spawn-swamp-room-door-1`)
 
 **Regra de carregamento — global vs por bioma:**
 - `MenuScene` carrega tudo que é global (spritesheet do player, animações, áudio global)
@@ -166,6 +170,36 @@ Não existe alias `@types/` — imports de `src/types/` devem usar caminhos rela
 **SaveSlotPanelService** — singleton. `showNewGame(scene, onClose, onStart)` mostra o painel de criação de save (ou slots cheios se todos ocupados). `showContinue(scene, onClose, onStart)` mostra os slots para continuar. Internamente: `buildBase` cria o fundo do painel, `addBackBtn` o botão VOLTAR, `buildNameInput` o input de nome, `buildContinuePanel` os slots clicáveis, `buildSlotsFullPanel` os slots para excluir, `buildDeleteConfirm` a confirmação de exclusão. Sempre destroir o painel anterior antes de construir um novo.
 
 **ConfigScene** — cena overlay transparente, lançada via `gameScene.scene.launch('ConfigScene')`. Cria o dim overlay e chama `configPanelService.initOverlay(this)`. Não aparece na lista de cenas ativas do jogo, apenas quando o config está aberto.
+
+## Sistema de Transição entre Rooms
+
+### Fluxo completo
+1. Room atual chama `createTransitionLine(scene, x, y, w, h, player, doorTag)`
+2. Quando o player encosta na zona, a função consulta `DoorLinks[doorTag]` e chama `scene.start(loader, { targetRoom, spawnX, spawnY })`
+3. O loader recebe `data.targetRoom` → inicia a room destino passando `{ spawnX, spawnY }`
+4. A room destino usa `data.spawnX / data.spawnY` como posição do player; fallback para save, depois para default
+
+### DoorLinks.ts
+Arquivo central em `src/utils/DoorLinks.ts`. Toda porta do jogo tem uma entrada aqui.
+Nunca definir destino ou spawn dentro da room — sempre via DoorLinks.
+
+```ts
+'spawn-swamp-room-door-1': {
+  loader: 'SwampLoaderScene',
+  targetRoom: 'ForestSwampRoom',
+  spawnX: 47,
+  spawnY: 166,
+}
+```
+
+### Ao adicionar uma nova room
+- Criar a room em `scenes/{bioma}/rooms/`
+- Registrar no `game.ts`
+- Adicionar ao `SWAMP_ROOMS` (ou equivalente) no loader do bioma
+- Adicionar ao `ROOM_TO_LOADER` em `SaveSlotPanelService.ts`
+- Adicionar as tags das portas em `DoorLinks.ts`
+- Chamar `createTransitionLine` na room com a tag correspondente
+- `create(data: { spawnX?: number; spawnY?: number })` — usar `data.spawnX/spawnY` com fallback pro save
 
 ## Sistema de Save
 

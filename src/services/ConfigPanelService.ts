@@ -1,15 +1,16 @@
 import { AudioManagerService } from '@services/AudioManagerService';
 import { GlobalSaveService } from '@services/GlobalSaveService';
 import { Depth } from '@utils/Depth';
+import { addStoneHover } from '@utils/ButtonHelper';
 
-type Showable = { setVisible: (v: boolean) => void };
+type PanelObject = { setVisible: (v: boolean) => unknown; destroy: () => void };
 
 export class ConfigPanelService {
   private audioManagerService: AudioManagerService;
   private globalSaveService: GlobalSaveService;
-  private mainPanel: Showable[] = [];
-  private volPanel: Showable[] = [];
-  private menuConfirmPanel: Showable[] = [];
+  private mainPanel: PanelObject[] = [];
+  private volPanel: PanelObject[] = [];
+  private menuConfirmPanel: PanelObject[] = [];
   private pausedScene: Phaser.Scene | null = null;
   private overlayScene: Phaser.Scene | null = null;
   private isOpen = false;
@@ -36,15 +37,9 @@ export class ConfigPanelService {
   }
 
   init(scene: Phaser.Scene, inGame = false): void {
-    this.mainPanel.forEach(o =>
-      (o as unknown as Phaser.GameObjects.GameObject).destroy(),
-    );
-    this.volPanel.forEach(o =>
-      (o as unknown as Phaser.GameObjects.GameObject).destroy(),
-    );
-    this.menuConfirmPanel.forEach(o =>
-      (o as unknown as Phaser.GameObjects.GameObject).destroy(),
-    );
+    this.mainPanel.forEach(o => o.destroy());
+    this.volPanel.forEach(o => o.destroy());
+    this.menuConfirmPanel.forEach(o => o.destroy());
     this.mainPanel = [];
     this.volPanel = [];
     this.menuConfirmPanel = [];
@@ -63,15 +58,11 @@ export class ConfigPanelService {
     let preMuteVolume = currentVolume;
     let muted = savedConfig?.isMuted ?? false;
 
-    const show = (objects: Showable[]) =>
+    const show = (objects: PanelObject[]) =>
       objects.forEach(o => o.setVisible(true));
-    const hide = (objects: Showable[]) =>
+    const hide = (objects: PanelObject[]) =>
       objects.forEach(o => o.setVisible(false));
 
-    const mainBgFill = scene.add
-      .rectangle(cx, cy, panelW - 80, panelH - 60, 0x1a1a2e)
-      .setDepth(D)
-      .setVisible(false);
     const mainBg = scene.add
       .image(cx, cy, 'config-panel')
       .setDisplaySize(panelW, panelH)
@@ -102,23 +93,7 @@ export class ConfigPanelService {
       .setOrigin(0.5)
       .setDepth(D)
       .setVisible(false);
-    const addHover = (
-      bg: Phaser.GameObjects.Image,
-      sx: number,
-      sy: number,
-      text: Phaser.GameObjects.Text | null = null,
-      factor = 1.08,
-    ): void => {
-      bg.on('pointerover', () => {
-        bg.setScale(sx * factor, sy * factor);
-        if (text) text.setScale(factor);
-      });
-      bg.on('pointerout', () => {
-        bg.setScale(sx, sy);
-        if (text) text.setScale(1);
-      });
-    };
-    addHover(mainBtnVolumeBg, itemScaleX, itemScaleY, mainBtnVolume);
+    addStoneHover(mainBtnVolumeBg, itemScaleX, itemScaleY, mainBtnVolume);
     const sairScaleX = 0.42;
     const sairScaleY = 0.3;
     const mainCloseBg = scene.add
@@ -138,9 +113,8 @@ export class ConfigPanelService {
       .setOrigin(0.5)
       .setDepth(D)
       .setVisible(false);
-    addHover(mainCloseBg, sairScaleX, sairScaleY, mainCloseText);
+    addStoneHover(mainCloseBg, sairScaleX, sairScaleY, mainCloseText);
     this.mainPanel = [
-      mainBgFill,
       mainBg,
       mainTitle,
       mainBtnVolumeBg,
@@ -149,10 +123,6 @@ export class ConfigPanelService {
       mainCloseText,
     ];
 
-    const volBgFill = scene.add
-      .rectangle(cx, cy, panelW - 80, panelH - 60, 0x1a1a2e)
-      .setDepth(D)
-      .setVisible(false);
     const volBg = scene.add
       .image(cx, cy, 'config-panel')
       .setDisplaySize(panelW, panelH)
@@ -199,7 +169,7 @@ export class ConfigPanelService {
       .setOrigin(0.5)
       .setDepth(D)
       .setVisible(false);
-    addHover(muteBtnBg, muteScaleX, muteScaleY, muteBtn);
+    addStoneHover(muteBtnBg, muteScaleX, muteScaleY, muteBtn);
     const backScale = 0.12;
     const volBack = scene.add
       .image(cx - panelW / 2 + 130, cy - panelH / 2 + 118, 'config-back')
@@ -208,14 +178,13 @@ export class ConfigPanelService {
       .setDepth(D)
       .setInteractive({ useHandCursor: true, pixelPerfect: true })
       .setVisible(false);
-    addHover(volBack, backScale, backScale, null, 1.12);
+    addStoneHover(volBack, backScale, backScale, null, 1.12);
     volBack.on('pointerdown', () => {
       this.playClick(scene);
       hide(this.volPanel);
       show(this.mainPanel);
     });
     this.volPanel = [
-      volBgFill,
       volBg,
       volTitle,
       trackBg,
@@ -292,13 +261,9 @@ export class ConfigPanelService {
         .setOrigin(0.5)
         .setDepth(D)
         .setVisible(false);
-      addHover(mainBtnHomeBg, homeScaleX, homeScaleY, mainBtnHome);
+      addStoneHover(mainBtnHomeBg, homeScaleX, homeScaleY, mainBtnHome);
       this.mainPanel.push(mainBtnHomeBg, mainBtnHome);
 
-      const confirmBgFill = scene.add
-        .rectangle(cx, cy, panelW - 80, panelH - 60, 0x1a1a2e)
-        .setDepth(D)
-        .setVisible(false);
       const confirmBg = scene.add
         .image(cx, cy, 'config-panel')
         .setDisplaySize(panelW, panelH)
@@ -329,7 +294,7 @@ export class ConfigPanelService {
         .setOrigin(0.5)
         .setDepth(D)
         .setVisible(false);
-      addHover(simBg, simScaleX, simScaleY, simText);
+      addStoneHover(simBg, simScaleX, simScaleY, simText);
       const naoScaleX = 0.3;
       const naoScaleY = 0.22;
       const naoBg = scene.add
@@ -349,9 +314,8 @@ export class ConfigPanelService {
         .setOrigin(0.5)
         .setDepth(D)
         .setVisible(false);
-      addHover(naoBg, naoScaleX, naoScaleY, naoText);
+      addStoneHover(naoBg, naoScaleX, naoScaleY, naoText);
       this.menuConfirmPanel = [
-        confirmBgFill,
         confirmBg,
         confirmText,
         simBg,

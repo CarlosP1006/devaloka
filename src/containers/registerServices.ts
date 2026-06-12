@@ -5,6 +5,7 @@ import { SaveManagerService } from '@services/SaveManagerService';
 import { GlobalSaveService } from '@services/GlobalSaveService';
 import { ConfigPanelService } from '@services/ConfigPanelService';
 import { GameInputService } from '@services/GameInputService';
+import { SaveSlotPanelService } from '@services/SaveSlotPanelService';
 
 export function registerServices(container: AwilixContainer): void {
   container.register(
@@ -30,5 +31,9 @@ export function registerServices(container: AwilixContainer): void {
   container.register(
     'gameInputService',
     asClass(GameInputService, { lifetime: 'SINGLETON' }),
+  );
+  container.register(
+    'saveSlotPanelService',
+    asClass(SaveSlotPanelService, { lifetime: 'SINGLETON' }),
   );
 }

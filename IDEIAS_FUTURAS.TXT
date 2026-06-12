@@ -30,19 +30,6 @@
 [x] Menu de configurações — painel principal + painel de volume com slider e mute/unmute
 [x] Config persiste no SaveManager — não zera no Novo Jogo
 
-## 2026-06-11
-[x] Botão MENU (pedra verde) no painel de config — exclusivo in-game, abre tela de confirmação
-[x] Tela de confirmação "Deseja voltar para o Menu?" com SIM (vermelho) e NÃO (azul)
-[x] SIM volta ao MenuScene parando sons e cenas; NÃO volta ao painel principal
-[x] Imagem menu-confirm-title.png substituindo o texto da tela de confirmação
-[x] Cor do botão MUTE/DESMUTE — azul quando MUTE, vermelho quando DESMUTE
-[x] Refatoração de types — subTypes renomeado para gameTypes, criado globalTypes e declarations/
-[x] GlobalSaveService criado — localStorage devaloka_config para preferências globais
-[x] ConfigPanelService migrado para GlobalSaveService (não usa mais SaveManagerService)
-[x] MenuScene migrada para GlobalSaveService (config) + SaveManagerService (location)
-[x] Novo Jogo não precisa mais re-salvar config — clear() não toca devaloka_config
-[x] CLAUDE.md atualizado — nova estrutura de types, dois localStorage, GlobalSaveService documentado
-
 ## 2026-06-10
 [x] Bug corrigido — ConfigPanelService perdia musicMenuIsMuted ao salvar config (shallow merge interno)
 [x] Auditoria src — SoundVolume.ts removido, ESC unificado no GameInputService, preloads duplicados removidos, classe Game wrapper eliminada, preload vazio removido, parâmetros idiomáticos, button → btnStart
@@ -81,6 +68,60 @@
 [x] Música de fundo do menu (menu-music.ogg) em loop — para ao entrar no jogo
 [x] Botão megafone para mutar/desmutar música do menu — estado persiste no save (musicMenuIsMuted)
 [x] Bug corrigido — Novo Jogo preserva config (volume, mute, musicMenuIsMuted) ao limpar save
+
+## 2026-06-11
+[x] Botão MENU (pedra verde) no painel de config — exclusivo in-game, abre tela de confirmação
+[x] Tela de confirmação "Deseja voltar para o Menu?" com SIM (vermelho) e NÃO (azul)
+[x] SIM volta ao MenuScene parando sons e cenas; NÃO volta ao painel principal
+[x] Imagem menu-confirm-title.png substituindo o texto da tela de confirmação
+[x] Cor do botão MUTE/DESMUTE — azul quando MUTE, vermelho quando DESMUTE
+[x] Refatoração de types — subTypes renomeado para gameTypes, criado globalTypes e declarations/
+[x] GlobalSaveService criado — localStorage devaloka_config para preferências globais
+[x] ConfigPanelService migrado para GlobalSaveService (não usa mais SaveManagerService)
+[x] MenuScene migrada para GlobalSaveService (config) + SaveManagerService (location)
+[x] Novo Jogo não precisa mais re-salvar config — clear() não toca devaloka_config
+[x] CLAUDE.md atualizado — nova estrutura de types, dois localStorage, GlobalSaveService documentado
+[x] Sistema de 3 slots de save — devaloka_save_1/2/3 com SaveSlotPanelService
+[x] SaveSlotPanelService — buildNameInput, buildContinuePanel, buildSlotsFullPanel, buildDeleteConfirm
+[x] GlobalSaveService.activeSlot — slot ativo persiste entre sessões
+[x] NOVO JOGO abre caixinha com input de nome do jogador e botão CONFIRMAR (pedra azul)
+[x] CONTINUAR abre caixinha com os 3 slots — clique no slot inicia o jogo, X exclui
+[x] Bug corrigido — certas letras (ex: "a") bloqueadas no input pela captura do Phaser (stopPropagation)
+[x] Bug corrigido — slots cheios ao excluir vai para buildNameInput em vez de reconstruir lista cheia
+[x] Imagem new-game-title.png substituindo texto "Nome do jogador:"
+[x] VOLTAR e CONFIRMAR na pedra retangular (menu-item-bg) com cores neon
+[x] dom: { createContainer: true } adicionado ao game config para suporte a input DOM
+[x] ChapterTypes — ChapterKey ('swamp') + CHAPTER_NAMES mapa de tradução (Pântano)
+[x] SlotInfoTypes atualizado com chapter: ChapterKey
+[x] Caixinha de info do slot no Continue — Container Phaser com nome, capítulo e tempo
+[x] Hover na caixinha ilumina borda em ciano
+[x] Click na caixinha inicia o jogo (removido botão JOGAR separado)
+[x] Layout do slot: nome centralizado no topo, capítulo esquerda e tempo direita embaixo
+[x] Slot VAZIO com texto branco visível
+[x] buildSlotsFullPanel usa mesmo container de info que o Continue
+[x] slots-full-title.png substituindo texto vermelho no painel de slots cheios
+[x] Confirmação de exclusão com SIM (vermelho) e NÃO (azul) na pedra
+[x] EXCLUIR na pedra retangular no buildSlotsFullPanel e buildContinuePanel
+[x] playTime tracking no PlayerService — usa Date.now() então conta mesmo com jogo pausado
+[x] Timer salvo a cada 3s junto com location (apenas quando player está no chão)
+[x] formatTime atualizado para HH:MM:SS
+[x] slot-hover.ogg — som de hover no slot do Continue (volume 0.1)
+[x] Som de pedra nos botões INICIAR, NOVO JOGO e CONTINUAR do menu
+[x] Som de pedra no botão de excluir do Continue
+[x] Som de pedra na engrenagem de config do menu
+[x] Auditoria src com opus — código morto, padronização, arquitetura
+[x] ButtonHelper.ts criado — makeStoneButton e addStoneHover para eliminar duplicação de hover/clique
+[x] ConfigPanelService — Showable[] substituído por PanelObject com destroy(), casts removidos
+[x] ConfigPanelService — 3 retângulos de fundo redundantes (*BgFill) removidos
+[x] ConfigPanelService — addHover local substituído por addStoneHover de ButtonHelper
+[x] SaveSlotPanelService — retângulo buildBase removido (coberto pela imagem do painel)
+[x] SaveSlotPanelService — todos os botões de pedra migrados para makeStoneButton
+[x] SaveSlotPanelService — fallback de tempo '0m' padronizado para formatTime(0) → 00:00:00
+[x] SaveSlotPanelService — volume slot-hover corrigido de 0.2 para 0.1
+[x] Imports de serviço-para-serviço padronizados para alias @services/
+[x] CLAUDE.md atualizado — ButtonHelper documentado, SoundVolume removido, estrutura de arquivos corrigida
+[x] ChapterTypes.ts movido de gameTypes/ para declarations/ — gameTypes/ fica só com shapes puros de save
+[x] SLOT_KEYS consolidado em SaveSlotKey.ts — array as const, tipo derivado via (typeof SLOT_KEYS)[number]
 
 --------------------------------------------------
 ## IDEIAS FUTURAS

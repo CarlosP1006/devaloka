@@ -17,6 +17,8 @@ export class PlayerService {
   private stepDistance = 0;
   private saveManagerService: SaveManagerService;
   private gameInputService: GameInputService;
+  private sessionStart = 0;
+  private basePlayTime = 0;
 
   constructor(
     saveManagerService: SaveManagerService,
@@ -31,6 +33,8 @@ export class PlayerService {
     this.scene = scene;
     this.biome = biome;
     this.lastX = player.x;
+    this.sessionStart = Date.now();
+    this.basePlayTime = this.saveManagerService.get()?.slotInfo?.playTime ?? 0;
     this.gameInputService.init(scene);
 
     scene.time.addEvent({
@@ -38,12 +42,22 @@ export class PlayerService {
       loop: true,
       callback: () => {
         if (!this.player.body!.blocked.down) return;
+        const elapsed = Math.floor((Date.now() - this.sessionStart) / 1000);
+        const slotInfo = this.saveManagerService.get()?.slotInfo;
         this.saveManagerService.save({
           location: {
             room: scene.scene.key,
             x: Math.round(this.player.x),
             y: Math.round(this.player.y),
           },
+          ...(slotInfo
+            ? {
+                slotInfo: {
+                  ...slotInfo,
+                  playTime: this.basePlayTime + elapsed,
+                },
+              }
+            : {}),
         });
       },
     });

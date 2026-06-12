@@ -11,6 +11,9 @@ window.addEventListener('load', () => {
     type: Phaser.AUTO,
     parent: 'game',
     scene: [MenuScene, SwampLoaderScene, SpawnSwampRoom, ConfigScene],
+    dom: {
+      createContainer: true,
+    },
     input: {
       keyboard: true,
     },

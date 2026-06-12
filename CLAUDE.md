@@ -80,7 +80,8 @@ src/
         PlayerAnimations.ts            # Mapeamento de frames do spritesheet LPC
         PlayerCamera.ts                # Setup de câmera com bounds do mapa
   scenes/
-    ConfigScene.ts                     # Cena overlay do painel de config (lançada por GameInputService)
+    config/
+      ConfigScene.ts                   # Cena overlay do painel de config (lançada por GameInputService)
     menu/
       MenuScene.ts                     # Cena inicial — assets globais, Novo Jogo / Continuar
     swamp/
@@ -95,20 +96,24 @@ src/
     GameInputService.ts                # ESC → lança ConfigScene e pausa o jogo
     SaveManagerService.ts              # localStorage devaloka_save_N — save, load, clear, get
     GlobalSaveService.ts               # localStorage devaloka_config — preferências globais (nunca reseta)
+    SaveSlotPanelService.ts            # Painéis de Novo Jogo / Continuar / Slots cheios / Confirmar exclusão
   types/
     GameSaveTypes.ts                   # Tipo mestre do save de jogo — agrega gameTypes/
     GlobalSaveTypes.ts                 # Tipo mestre do save global — agrega globalTypes/
     declarations/
       global.d.ts                      # Declarações de módulos (imports de imagens e áudio)
+      SaveSlotKey.ts                   # Tipo literal dos 3 slots — 'devaloka_save_1' | '_2' | '_3'
+      ChapterTypes.ts                  # ChapterKey literal + CHAPTER_NAMES mapa de tradução (PT-BR)
     gameTypes/
       PlayerLocationTypes.ts           # room: string, x: number, y: number
+      SlotInfoTypes.ts                 # playerName, playTime, chapter
     globalTypes/
       ConfigTypes.ts                   # volume: number, isMuted: boolean, musicMenuIsMuted
   utils/
     createGround.ts                    # Cria o chão base que preenche a sala
     createGroundChunk.ts               # Cria chunk de plataforma elevada com física
     Depth.ts                           # Constantes de profundidade (z-index)
-    SoundVolume.ts                     # Constantes de volume por categoria
+    ButtonHelper.ts                    # Factories de botão de pedra — makeStoneButton, addStoneHover
 
 assets/
   menu/images/                         # background, botões do menu
@@ -142,27 +147,31 @@ assets/
 - `@containers/*` → `src/containers/`
 - `@assets/*` → `assets/`
 
+Não existe alias `@types/` — imports de `src/types/` devem usar caminhos relativos.
+
 **Game config** (`src/game.ts`): 1280×720, `Scale.RESIZE`, arcade physics (gravity y: 1000), pixel art.
 
 ## Serviços
 
 **AudioManagerService** — singleton. `init(scene)` vincula ao sound manager do Phaser. Controla `setVolume`, `mute`, `unmute`, `isMuted`. Deve ser iniciado na `MenuScene`.
 
-**SaveManagerService** — singleton. Persiste no localStorage (`devaloka_save_1` / `_2` / `_3` — slots futuros, atualmente `devaloka_save`). `save(patch)` faz merge parcial com `GameSaveTypes`. `get()` retorna cache em memória sem re-ler. `clear()` apaga o slot ativo. Nunca toca o `devaloka_config`.
+**SaveManagerService** — singleton. Persiste no localStorage (`devaloka_save_1` / `_2` / `_3`). `save(patch)` faz merge parcial com `GameSaveTypes`. `get()` retorna cache em memória sem re-ler. `clear()` apaga o slot ativo. Nunca toca o `devaloka_config`.
 
-**GlobalSaveService** — singleton. Persiste no localStorage (`devaloka_config`). Guarda preferências globais do usuário (`ConfigTypes`: volume, isMuted, musicMenuIsMuted). Nunca é apagado pelo Novo Jogo — é independente de qual slot de save está ativo.
+**GlobalSaveService** — singleton. Persiste no localStorage (`devaloka_config`). Guarda preferências globais do usuário (`ConfigTypes`: volume, isMuted, musicMenuIsMuted) e `activeSlot`. Nunca é apagado pelo Novo Jogo — é independente de qual slot de save está ativo.
 
 **ConfigPanelService** — singleton. `init(scene)` cria objetos do painel na cena informada (destrói os anteriores). `show()` exibe o painel sem pausar (uso no menu). `openInGame(scene)` pausa sons, pausa cena e lança `ConfigScene` como overlay. `hide()` fecha o painel, para `ConfigScene` e retoma a cena pausada.
 
 **GameInputService** — singleton. `init(scene)` registra o listener de ESC que chama `configPanelService.openInGame(scene)`.
+
+**SaveSlotPanelService** — singleton. `showNewGame(scene, onClose, onStart)` mostra o painel de criação de save (ou slots cheios se todos ocupados). `showContinue(scene, onClose, onStart)` mostra os slots para continuar. Internamente: `buildBase` cria o fundo do painel, `addBackBtn` o botão VOLTAR, `buildNameInput` o input de nome, `buildContinuePanel` os slots clicáveis, `buildSlotsFullPanel` os slots para excluir, `buildDeleteConfirm` a confirmação de exclusão. Sempre destroir o painel anterior antes de construir um novo.
 
 **ConfigScene** — cena overlay transparente, lançada via `gameScene.scene.launch('ConfigScene')`. Cria o dim overlay e chama `configPanelService.initOverlay(this)`. Não aparece na lista de cenas ativas do jogo, apenas quando o config está aberto.
 
 ## Sistema de Save
 
 ### localStorage
-- `devaloka_config` — preferências globais (`GlobalSaveService`). Nunca apagado.
-- `devaloka_save_1` / `devaloka_save_2` / `devaloka_save_3` — slots de jogo (`SaveManagerService`). Resetados individualmente no Novo Jogo. (Atualmente só existe o slot 1, sem sufixo `_1` ainda — será migrado ao implementar a tela de seleção de save.)
+- `devaloka_config` — preferências globais (`GlobalSaveService`). Nunca apagado. Inclui `activeSlot`.
+- `devaloka_save_1` / `devaloka_save_2` / `devaloka_save_3` — slots de jogo (`SaveManagerService`). Resetados individualmente no Novo Jogo.
 
 ### Tipagem
 Para adicionar dados ao save de jogo: criar um subType em `src/types/gameTypes/`, importar em `GameSaveTypes.ts`.
@@ -171,11 +180,15 @@ Os subTypes nunca são usados diretamente fora da tipagem mestra.
 
 ```
 GameSaveTypes                          GlobalSaveTypes
-  └─ location: PlayerLocationTypes       └─ config: ConfigTypes
-       (room, x, y)                           (volume, isMuted, musicMenuIsMuted)
+  ├─ location: PlayerLocationTypes       └─ config: ConfigTypes
+  │     (room, x, y)                          (volume, isMuted, musicMenuIsMuted)
+  └─ slotInfo: SlotInfoTypes
+        (playerName, playTime, chapter)
 ```
 
-`PlayerService` salva `location` a cada 3s quando o player está no chão. `MenuScene` lê `location.room` e roteia via `ROOM_TO_LOADER` para o loader correto. Cada room lê o save no `create()` para restaurar estado específico.
+`PlayerService` salva `location` e `slotInfo.playTime` a cada 3s quando o player está no chão. `MenuScene` lê `location.room` e roteia via `ROOM_TO_LOADER` para o loader correto. Cada room lê o save no `create()` para restaurar estado específico.
+
+`playTime` usa `Date.now()` para contar tempo real — continua acumulando mesmo quando o jogo está pausado pelo config panel.
 
 ## Player Spritesheet
 
@@ -201,18 +214,6 @@ Direções por animação: `+0=up`, `+1=left`, `+2=down`, `+3=right`.
 | `slash_1h` | 50–53 | 13 | Ataque diagonal baixo |
 | `watering` | 46–49 | 7 | Regar |
 
-## Volume de Sons (SoundVolume)
-
-Sempre consultar `src/utils/SoundVolume.ts` ao adicionar sons na cena. Usar a categoria correta:
-
-- `PLAYER` — passos, pulo, combate e qualquer som do player
-- `ENEMY` — sons de inimigos
-- `AMBIENT` — sons de ambiente da room (vento, água, etc.)
-- `MUSIC` — música de fundo
-- `INTERFACE` — UI, itens, portais, interações com objetos do mundo
-
-Sons com volume específico intencional (ajuste manual) podem usar valor direto sem consultar `SoundVolume`.
-
 ## Profundidade (Depth)
 
 Sempre consultar `src/utils/Depth.ts` ao adicionar objetos na cena. Usar o depth correto:
@@ -224,6 +225,15 @@ Sempre consultar `src/utils/Depth.ts` ao adicionar objetos na cena. Usar o depth
 - `MAIN` — chunks, plataformas, props com física (pedras, objetos interativos)
 - `PLAYER` — player, sempre na frente
 - `CONFIG` — painel de configurações, sempre acima de tudo (valor 100)
+
+## Botões de Pedra (ButtonHelper)
+
+Sempre usar `@utils/ButtonHelper` ao criar botões sobre `menu-item-bg`. Nunca escrever o padrão de hover/clique manualmente.
+
+- `makeStoneButton(scene, x, y, sx, sy, depth, label, color, onClick, fontSize?, strokeThickness?)` — cria image + text, hover (fator 1.08) e stone-click (volume 0.6) automático. Retorna `[bg, txt]`.
+- `addStoneHover(bg, sx, sy, txt?, factor?)` — só hover, sem clique. Usar para botões com handlers complexos ou objetos irregulares (ex: seta `config-back`).
+
+Volumes de sons são definidos diretamente no código (sem arquivo de constantes). Usar valores que façam sentido para a categoria: sons de UI em torno de 0.6, sons de hover suaves em torno de 0.1–0.2, sons de ambiente em torno de 0.5.
 
 ## Sites Úteis
 

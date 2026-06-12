@@ -9,23 +9,22 @@ import configTitleImg from '@assets/menu/images/config-title.png';
 import volumeTitleImg from '@assets/menu/images/volume-title.png';
 import menuItemBgImg from '@assets/menu/images/menu-item-bg.png';
 import configBackImg from '@assets/menu/images/config-back.png';
-import menuConfirmTitleImg from '@assets/menu/images/menu-confirm-title.png';
 import menuMusicOnImg from '@assets/menu/images/menu-music-on.png';
 import menuMusicOffImg from '@assets/menu/images/menu-music-off.png';
+import menuConfirmTitleImg from '@assets/menu/images/menu-confirm-title.png';
+import newGameTitleImg from '@assets/menu/images/new-game-title.png';
+import slotsFullTitleImg from '@assets/menu/images/slots-full-title.png';
 import menuMusicSfx from '@assets/menu/audio/menu-music.ogg';
 import stoneClickSfx from '@assets/menu/audio/stone-click.ogg';
+import slotHoverSfx from '@assets/menu/audio/slot-hover.ogg';
 import playerImg from '@assets/player/images/player.png';
 import playerJump from '@assets/player/audio/player-jump.ogg';
 import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
 import { container } from '@containers/index';
 import { AudioManagerService } from '@services/AudioManagerService';
-import { SaveManagerService } from '@services/SaveManagerService';
 import { GlobalSaveService } from '@services/GlobalSaveService';
 import { ConfigPanelService } from '@services/ConfigPanelService';
-
-const ROOM_TO_LOADER: Record<string, string> = {
-  SpawnSwampRoom: 'SwampLoaderScene',
-};
+import { SaveSlotPanelService } from '@services/SaveSlotPanelService';
 
 export class MenuScene extends Phaser.Scene {
   constructor() {
@@ -44,15 +43,18 @@ export class MenuScene extends Phaser.Scene {
     this.load.image('volume-title', volumeTitleImg);
     this.load.image('menu-item-bg', menuItemBgImg);
     this.load.image('config-back', configBackImg);
-    this.load.image('menu-confirm-title', menuConfirmTitleImg);
     this.load.image('menu-music-on', menuMusicOnImg);
     this.load.image('menu-music-off', menuMusicOffImg);
+    this.load.image('menu-confirm-title', menuConfirmTitleImg);
+    this.load.image('new-game-title', newGameTitleImg);
+    this.load.image('slots-full-title', slotsFullTitleImg);
     this.load.spritesheet('player', playerImg, {
       frameWidth: 64,
       frameHeight: 64,
     });
     this.load.audio('menu-music', menuMusicSfx);
     this.load.audio('stone-click', stoneClickSfx);
+    this.load.audio('slot-hover', slotHoverSfx);
     this.load.audio('player-jump', playerJump);
   }
 
@@ -62,19 +64,17 @@ export class MenuScene extends Phaser.Scene {
       'audioManagerService',
     );
     audioManagerService.init(this);
-    const saveManagerService =
-      container.resolve<SaveManagerService>('saveManagerService');
     const globalSaveService =
       container.resolve<GlobalSaveService>('globalSaveService');
+    const saveSlotPanelService = container.resolve<SaveSlotPanelService>(
+      'saveSlotPanelService',
+    );
     const savedConfig = globalSaveService.get()?.config;
     const cx = this.scale.width / 2;
     const cy = this.scale.height / 2;
 
     let musicMuted = savedConfig?.musicMenuIsMuted ?? false;
-    const music = this.sound.add('menu-music', {
-      loop: true,
-      volume: 0.5,
-    });
+    const music = this.sound.add('menu-music', { loop: true, volume: 0.5 });
     if (!musicMuted) music.play();
 
     this.add
@@ -153,8 +153,10 @@ export class MenuScene extends Phaser.Scene {
       btnNewGame.setInteractive({ useHandCursor: true });
       btnContinue.setInteractive({ useHandCursor: true });
     };
+
     configPanelService.setOnHide(unlockMenuBtns);
     configBtn.on('pointerdown', () => {
+      this.sound.play('stone-click', { volume: 0.6 });
       if (!configPanelService.open) lockMenuBtns();
       configPanelService.toggle();
     });
@@ -162,6 +164,7 @@ export class MenuScene extends Phaser.Scene {
     btnStart.on('pointerover', () => btnStart.setScale(0.44));
     btnStart.on('pointerout', () => btnStart.setScale(0.4));
     btnStart.on('pointerdown', () => {
+      this.sound.play('stone-click', { volume: 0.6 });
       btnStart.setVisible(false);
       btnNewGame.setVisible(true);
       btnContinue.setVisible(true);
@@ -170,19 +173,23 @@ export class MenuScene extends Phaser.Scene {
     btnNewGame.on('pointerover', () => btnNewGame.setScale(0.39));
     btnNewGame.on('pointerout', () => btnNewGame.setScale(0.35));
     btnNewGame.on('pointerdown', () => {
-      saveManagerService.clear();
-      music.stop();
-      this.scene.start('SwampLoaderScene');
+      this.sound.play('stone-click', { volume: 0.6 });
+      lockMenuBtns();
+      saveSlotPanelService.showNewGame(this, unlockMenuBtns, loader => {
+        music.stop();
+        this.scene.start(loader);
+      });
     });
 
     btnContinue.on('pointerover', () => btnContinue.setScale(0.35));
     btnContinue.on('pointerout', () => btnContinue.setScale(0.31));
     btnContinue.on('pointerdown', () => {
-      const save = saveManagerService.get();
-      const room = save?.location?.room ?? 'SpawnSwampRoom';
-      const loader = ROOM_TO_LOADER[room] ?? 'SwampLoaderScene';
-      music.stop();
-      this.scene.start(loader);
+      this.sound.play('stone-click', { volume: 0.6 });
+      lockMenuBtns();
+      saveSlotPanelService.showContinue(this, unlockMenuBtns, loader => {
+        music.stop();
+        this.scene.start(loader);
+      });
     });
   }
 }

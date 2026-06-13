@@ -165,21 +165,40 @@
 [x] Ataque no ar — body mantido ativo durante ataque aéreo (gravity preservada), setOffset(71,71) compensa troca de textura 64→128px, uma espada por pulo (hasAttackedInAir)
 [x] Pulo ajustado — velocityY -780, gravity 1400 (mais rápido, proporcional, altura levemente aumentada)
 [x] Câmera — startFollow(target, false, 1, 1): centralizada, follow instantâneo, sem arredondamento de scroll (elimina micro-stutter)
+[x] swordSprite separado — animação da espada em sprite independente (sem tocar no body do player)
+[x] swordHitbox implementado — Zone com física, sem gravidade, sem colisão com chão/chunks, ativo só durante o ataque, some ao fim da animação via reset(-9999,-9999)
+[x] getSwordHitbox() exposto no PlayerObject — rooms futuramente conectam via physics.add.overlap com inimigos
 
 --------------------------------------------------
 ## IDEIAS FUTURAS
 
 - Decoração da SwampRoom — mais props, árvores, detalhes
 - Sons de combate — pra quando implementar o combate
-- Combate e inimigos — só após portal funcionando
+
+- PRÓXIMOS (amanhã):
+  - Implementar estilingue (arma 2) — animações walk/shoot/hurt com player-sling.png
+  - Sistema de dano base — tipagem não global, manipulável in-game (não hardcodar)
+  - Criar inimigos — sprite, caixa de colisão, HP
+  - Vincular swordHitbox com inimigos via physics.add.overlap
+  - Sistema de HP do player
+  - Enfeitar ForestSwampRoom — props, árvores, atmosfera
+  - Placa de tutorial interativa na SpawnSwampRoom (mecânica a definir)
+  - Sistema de "pegar arma" — espada e estilingue inativos até serem coletados na room
+  - Otimização contínua
 
 - Sistema de Save avançado (pensar antes de implementar):
   OBJETO DO PLAYER:
     - hp, stats
     - inventário (itens adquiridos)
     - progresso (fases desbloqueadas)
+    - armas desbloqueadas
 
   ESTADO PERSISTENTE DAS ROOMS:
     - baús abertos (por ID único)
     - bosses mortos (por ID)
     - portas destrancadas (por ID)
+
+- Sistema de progressão de dano (mais pra frente):
+  - Upar dano base
+  - Sistema de crítico
+  - Stats de armas

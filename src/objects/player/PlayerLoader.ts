@@ -32,7 +32,7 @@ export function loadPlayerAnimations(scene: Phaser.Scene): void {
   scene.anims.create({
     key: 'attack',
     frames: scene.anims.generateFrameNumbers('player-sword-big', { start: 306, end: 311 }),
-    frameRate: 30,
+    frameRate: 35,
     repeat: 0,
   });
 }

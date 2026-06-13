@@ -109,6 +109,7 @@ export class PlayerService {
   update(): void {
     if (this.attacking) {
       this.player.setVelocityX(0);
+      this.player.syncSwordSprite();
       this.currentAnim = '';
       return;
     }

@@ -1,6 +1,14 @@
 import { Depth } from '@utils/Depth';
 
 export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
+  private swordSprite!: Phaser.GameObjects.Sprite;
+  private swordHitbox!: Phaser.GameObjects.Zone;
+
+  private static readonly HIT_W = 75;
+  private static readonly HIT_H = 8;
+  private static readonly HIT_OFFSET_X = 57;
+  private static readonly HIT_OFFSET_Y = -12;
+
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
   }
@@ -14,7 +22,29 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     player.setScale(1.6);
     (player.body as Phaser.Physics.Arcade.Body).setSize(24, 40);
     player.setOffset(20, 20);
+    player.swordSprite = scene.add.sprite(x, y, 'player-sword-big');
+    player.swordSprite.setScale(1.6);
+    player.swordSprite.setDepth(Depth.PLAYER);
+    player.swordSprite.setVisible(false);
+    player.swordHitbox = scene.add.zone(-9999, -9999, PlayerObject.HIT_W, PlayerObject.HIT_H);
+    scene.physics.add.existing(player.swordHitbox);
+    const hb = player.swordHitbox.body as Phaser.Physics.Arcade.Body;
+    hb.setAllowGravity(false);
+    hb.enable = false;
     return player;
+  }
+
+  public syncSwordSprite(): void {
+    this.swordSprite.setPosition(this.x, this.y);
+    const dir = this.flipX ? -1 : 1;
+    const hbX = this.x + PlayerObject.HIT_OFFSET_X * dir;
+    const hbY = this.y + PlayerObject.HIT_OFFSET_Y;
+    this.swordHitbox.setPosition(hbX, hbY);
+    (this.swordHitbox.body as Phaser.Physics.Arcade.Body).reset(hbX, hbY);
+  }
+
+  public getSwordHitbox(): Phaser.GameObjects.Zone {
+    return this.swordHitbox;
   }
 
   public moveLeft(): void {
@@ -53,31 +83,25 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
 
   public attack(): void {
     this.setVelocityX(0);
-    this.setTexture('player-sword-big');
-    const body = this.body as Phaser.Physics.Arcade.Body;
-    if (body.blocked.down) {
-      body.enable = false;
-    } else {
-      const vy = body.velocity.y;
-      this.setOffset(71, 71);
-      body.reset(this.x, this.y);
-      body.velocity.y = vy;
-    }
-    this.anims.play('attack', true);
+    this.setVisible(false);
+    this.swordSprite.setPosition(this.x, this.y);
+    this.swordSprite.setFlipX(this.flipX);
+    this.swordSprite.setVisible(true);
+    (this.swordHitbox.body as Phaser.Physics.Arcade.Body).enable = true;
+    this.syncSwordSprite();
+    this.swordSprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.emit(Phaser.Animations.Events.ANIMATION_COMPLETE);
+    });
+    this.swordSprite.play('attack');
   }
 
   public endAttack(): void {
-    this.setTexture('player');
-    this.setOffset(20, 20);
+    this.swordSprite.setVisible(false);
+    this.setVisible(true);
+    const hb = this.swordHitbox.body as Phaser.Physics.Arcade.Body;
+    hb.enable = false;
+    hb.reset(-9999, -9999);
     const body = this.body as Phaser.Physics.Arcade.Body;
-    if (body.enable) {
-      const vy = body.velocity.y;
-      body.reset(this.x, this.y);
-      body.velocity.y = vy;
-    } else {
-      body.reset(this.x, this.y);
-      body.enable = true;
-    }
     this.anims.play(body.blocked.down ? 'idle' : 'jump', true);
   }
 }

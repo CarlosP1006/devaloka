@@ -141,6 +141,11 @@
 [x] Bug corrigido — overlap da porta disparava todo frame, destruindo o timer de save antes de executar (triggered flag)
 [x] Bug corrigido — Phaser reutilizava data obsoleto de porta no SwampLoaderScene e nas rooms ao dar Continue (scene.start com {})
 [x] Intervalo de save reduzido de 3s para 1.5s
+[x] Arquitetura de 3 spritesheets definida — player.png (base sem arma), player-sword.png (espada), player-sling.png (estilingue)
+[x] PlayerAnimations.ts (LPC) — mapeamento completo de todas as 54 linhas do player base (13 cols, 832×3456)
+[x] PlayerSwordAnimations.ts (LPC_SWORD) — apenas ataques oversize 128×128 com espada (linhas 54-69, 18 cols, 1152×4480)
+[x] PlayerSlingAnimations.ts (LPC_SLING) — apenas walk/shoot/hurt onde estilingue é visível (confirmado por diff pixel-a-pixel)
+[x] Player base wired up — PlayerLoader, PlayerObject e MenuScene usando player.png (key 'player'), sem armas
 
 --------------------------------------------------
 ## IDEIAS FUTURAS

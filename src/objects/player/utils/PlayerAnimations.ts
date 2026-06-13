@@ -1,116 +1,91 @@
-// LPC Spritesheet layout: 13 columns x 54 rows, 64x64 per frame
-// Frame index = row * 13 + column
-// Direction order per animation: row+0=up, row+1=left, row+2=down, row+3=right
-// All frame counts confirmed visually from exported animation files
-
 const COLS = 13;
 
 const row = (r: number) => r * COLS;
 
 export const LPC = {
-  // ── STANDARD LPC (rows 0–20) ──────────────────────────────────────────────
+  // spellcast — lançar magia (7 frames por direção)
+  spellcast_up: Array.from({ length: 7 }, (_, i) => row(0) + i),
+  spellcast_left: Array.from({ length: 7 }, (_, i) => row(1) + i),
+  spellcast_down: Array.from({ length: 7 }, (_, i) => row(2) + i),
+  spellcast_right: Array.from({ length: 7 }, (_, i) => row(3) + i),
 
-  spellcast: {
-    // rows 0–3 | 7 frames
-    up: { start: row(0), end: row(0) + 6 },
-    left: { start: row(1), end: row(1) + 6 },
-    down: { start: row(2), end: row(2) + 6 },
-    right: { start: row(3), end: row(3) + 6 },
-  },
-  thrust: {
-    // rows 4–7 | 8 frames
-    up: { start: row(4), end: row(4) + 7 },
-    left: { start: row(5), end: row(5) + 7 },
-    down: { start: row(6), end: row(6) + 7 },
-    right: { start: row(7), end: row(7) + 7 },
-  },
-  walk: {
-    // rows 8–11 | 9 frames
-    up: { start: row(8), end: row(8) + 8 },
-    left: { start: row(9), end: row(9) + 8 },
-    down: { start: row(10), end: row(10) + 8 },
-    right: { start: row(11), end: row(11) + 8 },
-  },
-  slash: {
-    // rows 12–15 | 6 frames
-    up: { start: row(12), end: row(12) + 5 },
-    left: { start: row(13), end: row(13) + 5 },
-    down: { start: row(14), end: row(14) + 5 },
-    right: { start: row(15), end: row(15) + 5 },
-  },
-  shoot: {
-    // rows 16–19 | 13 frames
-    up: { start: row(16), end: row(16) + 12 },
-    left: { start: row(17), end: row(17) + 12 },
-    down: { start: row(18), end: row(18) + 12 },
-    right: { start: row(19), end: row(19) + 12 },
-  },
-  hurt: {
-    // row 20 | 6 frames | 1 direção (frente)
-    down: { start: row(20), end: row(20) + 5 },
-  },
+  // thrust — ataque frontal (8 frames por direção)
+  thrust_up: Array.from({ length: 8 }, (_, i) => row(4) + i),
+  thrust_left: Array.from({ length: 8 }, (_, i) => row(5) + i),
+  thrust_down: Array.from({ length: 8 }, (_, i) => row(6) + i),
+  thrust_right: Array.from({ length: 8 }, (_, i) => row(7) + i),
 
-  // ── EXTENDED LPC (rows 21+) ───────────────────────────────────────────────
+  // walk — andar (9 frames por direção)
+  walk_up: Array.from({ length: 9 }, (_, i) => row(8) + i),
+  walk_left: Array.from({ length: 9 }, (_, i) => row(9) + i),
+  walk_down: Array.from({ length: 9 }, (_, i) => row(10) + i),
+  walk_right: Array.from({ length: 9 }, (_, i) => row(11) + i),
 
-  climb: {
-    // row 21 | 6 frames | 1 direção
-    side: { start: row(21), end: row(21) + 5 },
-  },
-  idle: {
-    // rows 22–25 | 2 frames
-    up: { start: row(22), end: row(22) + 1 },
-    left: { start: row(23), end: row(23) + 1 },
-    down: { start: row(24), end: row(24) + 1 },
-    right: { start: row(25), end: row(25) + 1 },
-  },
-  jump: {
-    // rows 26–29 | 4 frames
-    up: { start: row(26), end: row(26) + 3 },
-    left: { start: row(27), end: row(27) + 3 },
-    down: { start: row(28), end: row(28) + 3 },
-    right: { start: row(29), end: row(29) + 3 },
-  },
-  sit: {
-    // rows 30–33 | 3 frames
-    up: { start: row(30), end: row(30) + 2 },
-    left: { start: row(31), end: row(31) + 2 },
-    down: { start: row(32), end: row(32) + 2 },
-    right: { start: row(33), end: row(33) + 2 },
-  },
-  emote: {
-    // rows 34–37 | 3 frames
-    up: { start: row(34), end: row(34) + 2 },
-    left: { start: row(35), end: row(35) + 2 },
-    down: { start: row(36), end: row(36) + 2 },
-    right: { start: row(37), end: row(37) + 2 },
-  },
-  run: {
-    // rows 38–41 | 8 frames
-    up: { start: row(38), end: row(38) + 7 },
-    left: { start: row(39), end: row(39) + 7 },
-    down: { start: row(40), end: row(40) + 7 },
-    right: { start: row(41), end: row(41) + 7 },
-  },
-  combat_idle: {
-    // rows 42–45 | 2 frames
-    up: { start: row(42), end: row(42) + 1 },
-    left: { start: row(43), end: row(43) + 1 },
-    down: { start: row(44), end: row(44) + 1 },
-    right: { start: row(45), end: row(45) + 1 },
-  },
-  watering: {
-    // rows 46–49 | 7 frames
-    up: { start: row(46), end: row(46) + 6 },
-    left: { start: row(47), end: row(47) + 6 },
-    down: { start: row(48), end: row(48) + 6 },
-    right: { start: row(49), end: row(49) + 6 },
-  },
-  slash_1h: {
-    // rows 50–53 | 13 frames
-    up: { start: row(50), end: row(50) + 12 },
-    left: { start: row(51), end: row(51) + 12 },
-    down: { start: row(52), end: row(52) + 12 },
-    right: { start: row(53), end: row(53) + 12 },
-  },
-  // backslash_1h e halfslash_1h não estão no spritesheet atual (sem arma equipada)
+  // slash — ataque horizontal (6 frames por direção)
+  slash_up: Array.from({ length: 6 }, (_, i) => row(12) + i),
+  slash_left: Array.from({ length: 6 }, (_, i) => row(13) + i),
+  slash_down: Array.from({ length: 6 }, (_, i) => row(14) + i),
+  slash_right: Array.from({ length: 6 }, (_, i) => row(15) + i),
+
+  // shoot — atirar com arco (13 frames por direção)
+  shoot_up: Array.from({ length: 13 }, (_, i) => row(16) + i),
+  shoot_left: Array.from({ length: 13 }, (_, i) => row(17) + i),
+  shoot_down: Array.from({ length: 13 }, (_, i) => row(18) + i),
+  shoot_right: Array.from({ length: 13 }, (_, i) => row(19) + i),
+
+  // hurt — tomar dano (6 frames, 1 direção)
+  hurt: Array.from({ length: 6 }, (_, i) => row(20) + i),
+
+  // climb — escalar (6 frames, 1 direção)
+  climb: Array.from({ length: 6 }, (_, i) => row(21) + i),
+
+  // idle — parado (2 frames por direção)
+  idle_up: Array.from({ length: 2 }, (_, i) => row(22) + i),
+  idle_left: Array.from({ length: 2 }, (_, i) => row(23) + i),
+  idle_down: Array.from({ length: 2 }, (_, i) => row(24) + i),
+  idle_right: Array.from({ length: 2 }, (_, i) => row(25) + i),
+
+  // jump — pular/cair (5 frames por direção — LPC v3 = 5)
+  jump_up: Array.from({ length: 5 }, (_, i) => row(26) + i),
+  jump_left: Array.from({ length: 5 }, (_, i) => row(27) + i),
+  jump_down: Array.from({ length: 5 }, (_, i) => row(28) + i),
+  jump_right: Array.from({ length: 5 }, (_, i) => row(29) + i),
+
+  // sit — sentar (3 frames por direção)
+  sit_up: Array.from({ length: 3 }, (_, i) => row(30) + i),
+  sit_left: Array.from({ length: 3 }, (_, i) => row(31) + i),
+  sit_down: Array.from({ length: 3 }, (_, i) => row(32) + i),
+  sit_right: Array.from({ length: 3 }, (_, i) => row(33) + i),
+
+  // emote — gesto/emoção (3 frames por direção)
+  emote_up: Array.from({ length: 3 }, (_, i) => row(34) + i),
+  emote_left: Array.from({ length: 3 }, (_, i) => row(35) + i),
+  emote_down: Array.from({ length: 3 }, (_, i) => row(36) + i),
+  emote_right: Array.from({ length: 3 }, (_, i) => row(37) + i),
+
+  // run — correr (8 frames por direção)
+  run_up: Array.from({ length: 8 }, (_, i) => row(38) + i),
+  run_left: Array.from({ length: 8 }, (_, i) => row(39) + i),
+  run_down: Array.from({ length: 8 }, (_, i) => row(40) + i),
+  run_right: Array.from({ length: 8 }, (_, i) => row(41) + i),
+
+  // combat_idle — parado em combate (2 frames por direção)
+  combat_idle_up: Array.from({ length: 2 }, (_, i) => row(42) + i),
+  combat_idle_left: Array.from({ length: 2 }, (_, i) => row(43) + i),
+  combat_idle_down: Array.from({ length: 2 }, (_, i) => row(44) + i),
+  combat_idle_right: Array.from({ length: 2 }, (_, i) => row(45) + i),
+
+  // ── ATAQUES 1 MÃO (corpo sem arma) ──
+
+  // slash_1h — golpe diagonal (13 frames por direção)
+  slash_1h_up: Array.from({ length: 13 }, (_, i) => row(46) + i),
+  slash_1h_left: Array.from({ length: 13 }, (_, i) => row(47) + i),
+  slash_1h_down: Array.from({ length: 13 }, (_, i) => row(48) + i),
+  slash_1h_right: Array.from({ length: 13 }, (_, i) => row(49) + i),
+
+  // halfslash_1h — meio golpe (6 frames por direção)
+  halfslash_1h_up: Array.from({ length: 6 }, (_, i) => row(50) + i),
+  halfslash_1h_left: Array.from({ length: 6 }, (_, i) => row(51) + i),
+  halfslash_1h_down: Array.from({ length: 6 }, (_, i) => row(52) + i),
+  halfslash_1h_right: Array.from({ length: 6 }, (_, i) => row(53) + i),
 };

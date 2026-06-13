@@ -155,7 +155,9 @@ export class SpawnSwampRoom extends Phaser.Scene {
     const save = saveManagerService.get();
     const savedHere = save?.location?.room === 'SpawnSwampRoom';
     const spawnX = data?.spawnX ?? (savedHere ? save.location?.x ?? 300 : 300);
-    const spawnY = data?.spawnY ?? (savedHere ? save.location?.y ?? groundTop - 60 : groundTop - 60);
+    const spawnY =
+      data?.spawnY ??
+      (savedHere ? save.location?.y ?? groundTop - 60 : groundTop - 60);
     const player = PlayerObject.create(this, spawnX, spawnY);
     this.physics.add.collider(player, [
       groundGroup,

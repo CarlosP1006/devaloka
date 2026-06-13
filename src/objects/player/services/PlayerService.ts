@@ -22,6 +22,8 @@ export class PlayerService {
   private gameInputService: GameInputService;
   private sessionStart = 0;
   private basePlayTime = 0;
+  private attacking = false;
+  private hasAttackedInAir = false;
 
   constructor(
     saveManagerService: SaveManagerService,
@@ -69,6 +71,20 @@ export class PlayerService {
       if (e.key === 'ç' || e.key === 'Ç') DEV_PRINT_SAVE();
     });
     // CODIGO PARA APAGAR DEPOIS
+
+    scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (!pointer.leftButtonDown() || this.attacking) return;
+      const onGround = this.player.body!.blocked.down;
+      if (!onGround && this.hasAttackedInAir) return;
+      this.attacking = true;
+      if (!onGround) this.hasAttackedInAir = true;
+      this.player.attack();
+      this.player.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        this.attacking = false;
+        this.player.endAttack();
+      });
+    });
+
     this.keyA = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyD = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.shiftKey = scene.input.keyboard!.addKey(
@@ -80,8 +96,15 @@ export class PlayerService {
   }
 
   update(): void {
+    if (this.attacking) {
+      this.player.setVelocityX(0);
+      return;
+    }
+
     const running = this.shiftKey.isDown;
     const onGround = this.player.body!.blocked.down;
+
+    if (onGround && this.hasAttackedInAir) this.hasAttackedInAir = false;
 
     if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && onGround) {
       this.player.jump();

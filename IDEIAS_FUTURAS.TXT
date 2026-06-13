@@ -147,6 +147,12 @@
 [x] PlayerSlingAnimations.ts (LPC_SLING) — apenas walk/shoot/hurt onde estilingue é visível (confirmado por diff pixel-a-pixel)
 [x] Player base wired up — PlayerLoader, PlayerObject e MenuScene usando player.png (key 'player'), sem armas
 
+## 2026-06-13
+[x] player-sword-big carregado no MenuScene — frameWidth 128px para ataques oversize
+[x] Animação 'attack' registrada no PlayerLoader — backslash_1h_right, frameRate 20, frames 306-311
+[x] PlayerObject.attack() e endAttack() — troca de textura, body desabilitado durante o ataque (sem hitbox acidental)
+[x] PlayerService — mouse esquerdo dispara ataque, flag attacking bloqueia movimento durante a animação
+
 --------------------------------------------------
 ## IDEIAS FUTURAS
 

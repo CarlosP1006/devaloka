@@ -42,12 +42,42 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   public jump(): void {
-    this.setVelocityY(-600);
+    this.setVelocityY(-750);
     this.anims.play('jump', true);
   }
 
   public idle(): void {
     this.setVelocityX(0);
     this.anims.play('idle', true);
+  }
+
+  public attack(): void {
+    this.setVelocityX(0);
+    this.setTexture('player-sword-big');
+    const body = this.body as Phaser.Physics.Arcade.Body;
+    if (body.blocked.down) {
+      body.enable = false;
+    } else {
+      const vy = body.velocity.y;
+      this.setOffset(71, 71);
+      body.reset(this.x, this.y);
+      body.velocity.y = vy;
+    }
+    this.anims.play('attack', true);
+  }
+
+  public endAttack(): void {
+    this.setTexture('player');
+    this.setOffset(20, 20);
+    const body = this.body as Phaser.Physics.Arcade.Body;
+    if (body.enable) {
+      const vy = body.velocity.y;
+      body.reset(this.x, this.y);
+      body.velocity.y = vy;
+    } else {
+      body.reset(this.x, this.y);
+      body.enable = true;
+    }
+    this.anims.play(body.blocked.down ? 'idle' : 'jump', true);
   }
 }

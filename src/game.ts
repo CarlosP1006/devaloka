@@ -30,7 +30,7 @@ window.addEventListener('load', () => {
         gravity: {
           y: 1400,
         },
-        debug: true,
+        debug: false,
       },
     },
     scale: {

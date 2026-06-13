@@ -162,6 +162,9 @@
 [x] Otimização — retângulos invisíveis de física trocados por scene.add.zone em createGround, createGroundChunk e no stoneBody do SpawnSwampRoom (não passam mais pelo pipeline de render)
 [x] Otimização — PlayerService cacheia estado de movimento (currentAnim), só chama o método do player quando o estado muda (reduz trabalho redundante 60×/s)
 [x] Otimização — slot-hover.wav removido (só o .ogg é importado)
+[x] Ataque no ar — body mantido ativo durante ataque aéreo (gravity preservada), setOffset(71,71) compensa troca de textura 64→128px, uma espada por pulo (hasAttackedInAir)
+[x] Pulo ajustado — velocityY -780, gravity 1400 (mais rápido, proporcional, altura levemente aumentada)
+[x] Câmera — startFollow(target, false, 1, 1): centralizada, follow instantâneo, sem arredondamento de scroll (elimina micro-stutter)
 
 --------------------------------------------------
 ## IDEIAS FUTURAS

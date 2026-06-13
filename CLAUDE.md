@@ -88,6 +88,7 @@ src/
       SwampLoaderScene.ts              # Carrega assets do bioma Swamp
       rooms/
         SpawnSwampRoom.ts              # Primeira room do Swamp
+        ForestSwampRoom.ts             # Segunda room do Swamp
     highlands/
       rooms/                           # (futuro)
   services/
@@ -121,9 +122,10 @@ src/
 assets/
   menu/images/                         # background, botões do menu
   player/
-    images/player.png                  # Spritesheet LPC do personagem
+    images/player.png                  # Spritesheet LPC do personagem (base, sem arma)
+    images/player-sword.png            # Spritesheet LPC com espada (rows 54-69 = ataques oversize 128px)
+    images/player-sling.png            # Spritesheet LPC com estilingue (futuro)
     audio/player-jump.ogg
-    data/player.json                   # Config do gerador LPC (backup)
   swamp/
     images/                            # background, ground, árvores, pedras, coruja
     audio/                             # swamp-step.ogg, swamp-ambient.ogg, swamp-owl-call.ogg
@@ -153,7 +155,7 @@ assets/
 
 Não existe alias `@types/` — imports de `src/types/` devem usar caminhos relativos.
 
-**Game config** (`src/game.ts`): 1280×720, `Scale.RESIZE`, arcade physics (gravity y: 1000), pixel art.
+**Game config** (`src/game.ts`): 1280×720, `Scale.RESIZE`, arcade physics (gravity y: 1400), pixel art.
 
 ## Serviços
 
@@ -259,6 +261,68 @@ Sempre consultar `src/utils/Depth.ts` ao adicionar objetos na cena. Usar o depth
 - `MAIN` — chunks, plataformas, props com física (pedras, objetos interativos)
 - `PLAYER` — player, sempre na frente
 - `CONFIG` — painel de configurações, sempre acima de tudo (valor 100)
+
+## Padrões de Performance
+
+Regras estabelecidas após auditoria — aplicar em todo novo código.
+
+### Toda room registra cleanup no SHUTDOWN
+
+Rooms são iniciadas via `scene.start`, e singletons como `PlayerService` registram listeners no `scene.input` da room. Sem cleanup, esses listeners acumulam a cada transição. Obrigatório no `create()` de toda room:
+
+```ts
+this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+  this.input.removeAllListeners();
+  this.input.keyboard?.removeAllListeners();
+});
+```
+
+### Guard em `anims.create`
+
+Animações são registradas no `AnimationManager` **global** do Phaser — não por cena. Rooms podem ser re-entradas e o `create()` roda de novo. Sem o guard, Phaser emite warning e ignora (não duplica), mas é trabalho desnecessário. Sempre:
+
+```ts
+if (!this.anims.exists('minha-anim')) {
+  this.anims.create({ key: 'minha-anim', ... });
+}
+```
+
+### Zone para física sem visual
+
+Para colisão pura (hitbox invisível sem imagem associada), usar `scene.add.zone` em vez de `scene.add.rectangle`. Rectangle é um `GameObject` renderizável — mesmo com `alpha: 0` entra no pipeline de render e passa por cull check todo frame. Zone não renderiza.
+
+```ts
+// ✅ correto
+const zone = scene.add.zone(x, y, w, h);
+group.add(zone);
+
+// ❌ evitar para física pura
+scene.add.rectangle(x, y, w, h, 0, 0); // renderizável mesmo invisível
+```
+
+### Singleton com TimerEvent — guardar referência
+
+Serviços singleton têm `init()` chamado a cada nova room. Timers criados via `scene.time.addEvent` ficam presos na cena antiga se não forem removidos. Sempre guardar a referência e dar `.remove()` antes de recriar:
+
+```ts
+private myTimer: Phaser.Time.TimerEvent | null = null;
+
+init(...): void {
+  if (this.myTimer) this.myTimer.remove();
+  this.myTimer = scene.time.addEvent({ ... });
+}
+```
+
+### Webpack — modo por ambiente
+
+`npm run build` → `mode: production` (minificação + tree-shaking habilitados automaticamente via `argv.mode`). `npm run dev` → `mode: development`. Não hardcodar `mode` no config — já está resolvido via função `(_env, argv) => ({...})` no `webpack.config.js`.
+
+### Assets de imagem — tamanho máximo recomendado
+
+- **Backgrounds** (2560×720): JPG, sem canal alpha. PNG só se tiver transparência real.
+- **Tiles de chão**: dimensionar próximo ao tamanho de display final × 2 (para nitidez). Tiles fonte de 2322×739 exibidos a 6% (≈139px) são ~50× maiores que o necessário.
+- **Props/decoração**: PNG com transparência, tamanho livre — escala via `setScale()`.
+- **Áudio**: OGG para todos os efeitos. Nunca manter `.wav` junto de `.ogg` do mesmo arquivo — manter só o `.ogg`.
 
 ## Botões de Pedra (ButtonHelper)
 

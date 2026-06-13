@@ -20,6 +20,7 @@ import slotHoverSfx from '@assets/menu/audio/slot-hover.ogg';
 import playerImg from '@assets/player/images/player.png';
 import playerSwordImg from '@assets/player/images/player-sword.png';
 import playerJump from '@assets/player/audio/player-jump.ogg';
+import swordSwingSfx from '@assets/player/audio/sword-swing.ogg';
 import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
 import { container } from '@containers/index';
 import { AudioManagerService } from '@services/AudioManagerService';
@@ -61,6 +62,7 @@ export class MenuScene extends Phaser.Scene {
     this.load.audio('stone-click', stoneClickSfx);
     this.load.audio('slot-hover', slotHoverSfx);
     this.load.audio('player-jump', playerJump);
+    this.load.audio('sword-swing', swordSwingSfx);
   }
 
   create(): void {

@@ -148,6 +148,19 @@
 [x] Player base wired up — PlayerLoader, PlayerObject e MenuScene usando player.png (key 'player'), sem armas
 
 ## 2026-06-13
+[x] Som de swing da espada (sword-swing.ogg) — toca ao atacar, para ao fim da animação, volume 20
+[x] getSwingSound() exposto no PlayerService — hook pronto para substituir pelo som de hit quando tiver inimigo
+[x] ESC fecha o config in-game — listener adicionado no ConfigScene (cena ativa durante o overlay)
+[x] WeaponTypes criado — sword e sling com unlocked: boolean e damage: number, aninhados em GameSaveTypes.weapons
+[x] PlayerService guarda ataque por weapons.sword.unlocked — false por padrão até pickup ser implementado
+[x] createGroundChunk retorna images[] — referências das imagens para destruir por trigger
+[x] createCeiling.ts criado — teto com offsetY e removeChunks, retorna group e images
+[x] Texturas forest-swamp-ground-surface, forest-swamp-ground-thorns, forest-swamp-ceiling criadas e integradas
+[x] ForestSwampRoom testada com as novas texturas — ceiling + chunks de espinhos funcionando
+[x] SceneModTypes criado — tipagem de modificações de cenário persistentes, organizada por capítulo → room → flag boolean. Ex: sceneMods.swamp.forestRoom.thornDoorOpen. Adicionar novas modificações seguindo o mesmo padrão.
+[x] Parede de espinhos (ForestSwampRoom) — chunk_thorns_2 criado com createGroundChunk removendo layers 0-8 (buraco onde fica o underground). Parede some se thornDoorOpen=true no save.
+[x] Sistema de trigger de cena — padrão estabelecido: (1) createGroundChunk retorna {group, images}, (2) guardar thornCollider separado do array principal, (3) ao destruir: collider.destroy() + images.forEach(destroy) + group.destroy(true), (4) ao recriar: createGroundChunk + group.refresh() + physics.add.collider. Reutilizável para qualquer objeto destrutível por trigger.
+[x] Botão de teste temporário (ForestSwampRoom) — toggle da parede de espinhos, substituir futuramente pelo baú
 [x] player-sword-big carregado no MenuScene — frameWidth 128px para ataques oversize
 [x] Animação 'attack' registrada no PlayerLoader — backslash_1h_right, frameRate 20, frames 306-311
 [x] PlayerObject.attack() e endAttack() — troca de textura, body desabilitado durante o ataque (sem hitbox acidental)
@@ -183,7 +196,8 @@
   - Sistema de HP do player
   - Enfeitar ForestSwampRoom — props, árvores, atmosfera
   - Placa de tutorial interativa na SpawnSwampRoom (mecânica a definir)
-  - Sistema de "pegar arma" — espada e estilingue inativos até serem coletados na room
+  - Baú da espada na ForestSwampRoom — substituir botão de teste pelo baú real, vincular ao thornDoorOpen
+  - Sistema de "pegar arma" — espada e estilingue inativos até serem coletados na room (weapons.sword.unlocked)
   - Otimização contínua
 
 - Sistema de Save avançado (pensar antes de implementar):

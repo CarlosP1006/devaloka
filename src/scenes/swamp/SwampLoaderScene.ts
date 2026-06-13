@@ -1,6 +1,9 @@
 import swampGroundRoots from '@assets/swamp/images/swamp-ground-roots.png';
 import swampBackground from '@assets/swamp/images/spawn-swamp-background.png';
 import swampGroundDirt from '@assets/swamp/images/swamp-ground-dirt.png';
+import forestGroundSurface from '@assets/swamp/images/forest-swamp-ground-surface.png';
+import forestGroundThorns from '@assets/swamp/images/forest-swamp-ground-thorns.png';
+import forestCeiling from '@assets/swamp/images/forest-swamp-ceiling.png';
 import swampTreeTwisted from '@assets/swamp/images/swamp-tree-twisted.png';
 import swampTreeLarge from '@assets/swamp/images/swamp-tree-large.png';
 import swampStoneRune from '@assets/swamp/images/swamp-stone-rune.png';
@@ -22,6 +25,9 @@ export class SwampLoaderScene extends Phaser.Scene {
     this.load.image('swamp-ground', swampGroundRoots);
     this.load.image('spawn-swamp-background', swampBackground);
     this.load.image('swamp-ground-dirt', swampGroundDirt);
+    this.load.image('forest-swamp-ground-surface', forestGroundSurface);
+    this.load.image('forest-swamp-ground-thorns', forestGroundThorns);
+    this.load.image('forest-swamp-ceiling', forestCeiling);
     this.load.image('swamp-tree-twisted', swampTreeTwisted);
     this.load.image('swamp-tree-large', swampTreeLarge);
     this.load.image('swamp-stone-rune', swampStoneRune);
@@ -34,17 +40,31 @@ export class SwampLoaderScene extends Phaser.Scene {
     this.load.audio('swamp-owl-call', swampOwlCall);
   }
 
-  create(data: { targetRoom?: string; spawnX?: number; spawnY?: number }): void {
+  create(data: {
+    targetRoom?: string;
+    spawnX?: number;
+    spawnY?: number;
+  }): void {
     const saveManagerService =
       container.resolve<SaveManagerService>('saveManagerService');
     if (data?.targetRoom && SWAMP_ROOMS.has(data.targetRoom)) {
       saveManagerService.save({
-        location: { room: data.targetRoom, x: data.spawnX ?? 0, y: data.spawnY ?? 0 },
+        location: {
+          room: data.targetRoom,
+          x: data.spawnX ?? 0,
+          y: data.spawnY ?? 0,
+        },
       });
-      this.scene.start(data.targetRoom, { spawnX: data.spawnX, spawnY: data.spawnY });
+      this.scene.start(data.targetRoom, {
+        spawnX: data.spawnX,
+        spawnY: data.spawnY,
+      });
       return;
     }
     const room = saveManagerService.get()?.location?.room;
-    this.scene.start(room && SWAMP_ROOMS.has(room) ? room : 'SpawnSwampRoom', {});
+    this.scene.start(
+      room && SWAMP_ROOMS.has(room) ? room : 'SpawnSwampRoom',
+      {},
+    );
   }
 }

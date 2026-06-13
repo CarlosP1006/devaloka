@@ -34,6 +34,7 @@ export class PlayerService {
   private hasAttackedInAir = false;
   private saveTimer: Phaser.Time.TimerEvent | null = null;
   private currentAnim: MoveState = '';
+  private swingSound: Phaser.Sound.BaseSound | null = null;
 
   constructor(
     saveManagerService: SaveManagerService,
@@ -85,12 +86,17 @@ export class PlayerService {
 
     scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (!pointer.leftButtonDown() || this.attacking) return;
+      if (!this.saveManagerService.get()?.weapons?.sword?.unlocked) return;
       const onGround = this.player.body!.blocked.down;
       if (!onGround && this.hasAttackedInAir) return;
       this.attacking = true;
       if (!onGround) this.hasAttackedInAir = true;
+      this.swingSound = this.scene.sound.add('sword-swing', { volume: 20 });
+      this.swingSound.play();
       this.player.attack();
       this.player.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        this.swingSound?.stop();
+        this.swingSound = null;
         this.attacking = false;
         this.player.endAttack();
       });
@@ -104,6 +110,10 @@ export class PlayerService {
     this.spaceKey = scene.input.keyboard!.addKey(
       Phaser.Input.Keyboard.KeyCodes.SPACE,
     );
+  }
+
+  getSwingSound(): Phaser.Sound.BaseSound | null {
+    return this.swingSound;
   }
 
   update(): void {

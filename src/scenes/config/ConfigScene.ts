@@ -22,5 +22,6 @@ export class ConfigScene extends Phaser.Scene {
     const configPanelService =
       container.resolve<ConfigPanelService>('configPanelService');
     configPanelService.initOverlay(this);
+    this.input.keyboard!.on('keydown-ESC', () => configPanelService.hide());
   }
 }

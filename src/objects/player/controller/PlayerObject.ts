@@ -7,7 +7,7 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   private static readonly HIT_W = 75;
   private static readonly HIT_H = 8;
   private static readonly HIT_OFFSET_X = 57;
-  private static readonly HIT_OFFSET_Y = -12;
+  private static readonly HIT_OFFSET_Y = -3;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');

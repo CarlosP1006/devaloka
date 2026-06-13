@@ -4,6 +4,7 @@ import { PlayerCamera } from '@objects/player/utils/PlayerCamera';
 import { PlayerService } from '@objects/player/services/PlayerService';
 import { SaveManagerService } from '@services/SaveManagerService';
 import { createGround } from '@utils/createGround';
+import { createCeiling } from '@utils/createCeiling';
 import { createTransitionLine } from '@utils/createTransitionLine';
 import { createGroundChunk, TILE_H } from '@utils/createGroundChunk';
 
@@ -55,14 +56,51 @@ export class ForestSwampRoom extends Phaser.Scene {
     const { group: chunk2 } = createGroundChunk(
       this,
       2,
+      8,
+      undefined,
+      'swamp-ground',
+      'swamp-ground-dirt',
+    );
+
+    const { group: chunk_thorns_2 } = createGroundChunk(
+      this,
+      2,
+      12,
+      [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      'forest-swamp-ground-surface',
+      'forest-swamp-ground-thorns',
+    );
+
+    const { group: chunk3 } = createGroundChunk(
+      this,
+      3,
       4,
       undefined,
       'swamp-ground',
       'swamp-ground-dirt',
     );
 
+    const { group: chunk4 } = createGroundChunk(
+      this,
+      4,
+      4,
+      undefined,
+      'swamp-ground',
+      'swamp-ground-dirt',
+    );
+
+    const { group: ceilingGroup } = createCeiling(this, 'forest-swamp-ceiling');
     const player = PlayerObject.create(this, spawnX, spawnY);
-    this.physics.add.collider(player, [groundGroup, chunk0, chunk1, chunk2]);
+    this.physics.add.collider(player, [
+      groundGroup,
+      chunk0,
+      chunk1,
+      chunk2,
+      chunk_thorns_2,
+      chunk3,
+      chunk4,
+      ceilingGroup,
+    ]);
 
     createTransitionLine(
       this,

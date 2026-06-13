@@ -28,10 +28,14 @@ export function createGroundChunk(
   removeLayers: number[] | undefined,
   surfaceKey: string,
   dirtKey: string,
-): { group: Phaser.Physics.Arcade.StaticGroup } {
+): {
+  group: Phaser.Physics.Arcade.StaticGroup;
+  images: Phaser.GameObjects.Image[];
+} {
   const centerX = TILE_W * chunkX + TILE_W / 2;
   const groundTop = scene.scale.height - TILE_H;
   const removeSet = new Set(removeLayers ?? []);
+  const images: Phaser.GameObjects.Image[] = [];
 
   const surfaceTex = scene.textures.get(surfaceKey);
   if (!surfaceTex.has('ground-tile')) {
@@ -45,27 +49,31 @@ export function createGroundChunk(
 
   for (let i = 0; i < layers; i++) {
     if (!removeSet.has(i)) {
-      scene.add
-        .image(
-          centerX,
-          groundTop + TILE_H / 2 - i * TILE_H,
-          dirtKey,
-          'dirt-tile',
-        )
-        .setScale(GROUND_SCALE)
-        .setDepth(Depth.MAIN);
+      images.push(
+        scene.add
+          .image(
+            centerX,
+            groundTop + TILE_H / 2 - i * TILE_H,
+            dirtKey,
+            'dirt-tile',
+          )
+          .setScale(GROUND_SCALE)
+          .setDepth(Depth.MAIN),
+      );
     }
   }
 
-  scene.add
-    .image(
-      centerX,
-      groundTop + TILE_H / 2 - layers * TILE_H,
-      surfaceKey,
-      'ground-tile',
-    )
-    .setScale(GROUND_SCALE)
-    .setDepth(Depth.MAIN);
+  images.push(
+    scene.add
+      .image(
+        centerX,
+        groundTop + TILE_H / 2 - layers * TILE_H,
+        surfaceKey,
+        'ground-tile',
+      )
+      .setScale(GROUND_SCALE)
+      .setDepth(Depth.MAIN),
+  );
 
   const group = scene.physics.add.staticGroup();
   let segStart: number | null = null;
@@ -85,5 +93,5 @@ export function createGroundChunk(
     addSegment(scene, group, centerX, groundTop, segStart, layers);
   }
 
-  return { group };
+  return { group, images };
 }

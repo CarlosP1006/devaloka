@@ -23,19 +23,32 @@ export function createGround(
   const removeSet = new Set(removeChunks ?? []);
   const group = scene.physics.add.staticGroup();
 
+  const addSpan = (startIdx: number, endIdx: number) => {
+    const startX = TILE_W / 2 + startIdx * TILE_W;
+    const endX = TILE_W / 2 + endIdx * TILE_W;
+    const width = endX - startX + TILE_W;
+    const centerX = (startX + endX) / 2;
+    const zone = scene.add.zone(centerX, groundY, width, TILE_H);
+    group.add(zone);
+  };
+
   let index = 0;
+  let spanStart: number | null = null;
   for (let x = TILE_W / 2; x < mapWidth + TILE_W; x += TILE_W) {
-    if (!removeSet.has(index)) {
+    const present = !removeSet.has(index);
+    if (present) {
       scene.add
         .image(x, groundY, surfaceKey, 'ground-tile')
         .setScale(GROUND_SCALE)
         .setDepth(Depth.GROUND_DEFAULT);
-
-      const body = scene.add.rectangle(x, groundY, TILE_W, TILE_H, 0, 0);
-      group.add(body);
+      if (spanStart === null) spanStart = index;
+    } else if (spanStart !== null) {
+      addSpan(spanStart, index - 1);
+      spanStart = null;
     }
     index++;
   }
+  if (spanStart !== null) addSpan(spanStart, index - 1);
 
   return { group };
 }

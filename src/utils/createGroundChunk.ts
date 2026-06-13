@@ -17,8 +17,8 @@ function addSegment(
   const segH = (endIdx - startIdx + 1) * TILE_H;
   const segCenterY =
     groundTop + TILE_H / 2 - ((startIdx + endIdx) * TILE_H) / 2;
-  const body = scene.add.rectangle(centerX, segCenterY, TILE_W, segH, 0, 0);
-  group.add(body);
+  const zone = scene.add.zone(centerX, segCenterY, TILE_W, segH);
+  group.add(zone);
 }
 
 export function createGroundChunk(

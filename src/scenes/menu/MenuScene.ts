@@ -49,8 +49,14 @@ export class MenuScene extends Phaser.Scene {
     this.load.image('menu-confirm-title', menuConfirmTitleImg);
     this.load.image('new-game-title', newGameTitleImg);
     this.load.image('slots-full-title', slotsFullTitleImg);
-    this.load.spritesheet('player', playerImg, { frameWidth: 64, frameHeight: 64 });
-    this.load.spritesheet('player-sword-big', playerSwordImg, { frameWidth: 128, frameHeight: 128 });
+    this.load.spritesheet('player', playerImg, {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
+    this.load.spritesheet('player-sword-big', playerSwordImg, {
+      frameWidth: 128,
+      frameHeight: 128,
+    });
     this.load.audio('menu-music', menuMusicSfx);
     this.load.audio('stone-click', stoneClickSfx);
     this.load.audio('slot-hover', slotHoverSfx);
@@ -58,7 +64,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    loadPlayerAnimations(this);
+    if (!this.anims.exists('idle')) loadPlayerAnimations(this);
     const audioManagerService = container.resolve<AudioManagerService>(
       'audioManagerService',
     );

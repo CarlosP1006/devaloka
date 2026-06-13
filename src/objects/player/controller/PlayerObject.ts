@@ -42,7 +42,7 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   public jump(): void {
-    this.setVelocityY(-750);
+    this.setVelocityY(-780);
     this.anims.play('jump', true);
   }
 

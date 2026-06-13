@@ -8,6 +8,14 @@ import { DEV_PRINT_SAVE } from '@utils/DEV_PRINT_SAVE';
 const STEP_INTERVAL = 80;
 const SAVE_INTERVAL = 1500;
 
+type MoveState =
+  | ''
+  | 'moveLeft'
+  | 'moveRight'
+  | 'runLeft'
+  | 'runRight'
+  | 'idle';
+
 export class PlayerService {
   private player!: PlayerObject;
   private scene!: Phaser.Scene;
@@ -24,6 +32,8 @@ export class PlayerService {
   private basePlayTime = 0;
   private attacking = false;
   private hasAttackedInAir = false;
+  private saveTimer: Phaser.Time.TimerEvent | null = null;
+  private currentAnim: MoveState = '';
 
   constructor(
     saveManagerService: SaveManagerService,
@@ -42,7 +52,8 @@ export class PlayerService {
     this.basePlayTime = this.saveManagerService.get()?.slotInfo?.playTime ?? 0;
     this.gameInputService.init(scene);
 
-    scene.time.addEvent({
+    if (this.saveTimer) this.saveTimer.remove();
+    this.saveTimer = scene.time.addEvent({
       delay: SAVE_INTERVAL,
       loop: true,
       callback: () => {
@@ -98,6 +109,7 @@ export class PlayerService {
   update(): void {
     if (this.attacking) {
       this.player.setVelocityX(0);
+      this.currentAnim = '';
       return;
     }
 
@@ -109,16 +121,17 @@ export class PlayerService {
     if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && onGround) {
       this.player.jump();
       this.scene.sound.play('player-jump', { volume: 0.35 });
+      this.currentAnim = '';
     }
 
-    if (this.keyA.isDown) {
-      if (running) this.player.runLeft();
-      else this.player.moveLeft();
-    } else if (this.keyD.isDown) {
-      if (running) this.player.runRight();
-      else this.player.moveRight();
-    } else if (onGround) {
-      this.player.idle();
+    let state: MoveState = '';
+    if (this.keyA.isDown) state = running ? 'runLeft' : 'moveLeft';
+    else if (this.keyD.isDown) state = running ? 'runRight' : 'moveRight';
+    else if (onGround) state = 'idle';
+
+    if (state && state !== this.currentAnim) {
+      this.currentAnim = state;
+      this.player[state]();
     }
 
     const currentX = this.player.x;

@@ -15,7 +15,8 @@ const copyPluginCfg = new copyPlugin({
 
 const tsconfigPathsPluginCfg = new TsconfigPathsPlugin();
 
-module.exports = {
+module.exports = (_env, argv) => ({
+  mode: argv && argv.mode === 'production' ? 'production' : 'development',
   entry: './src/game.ts',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -25,32 +26,22 @@ module.exports = {
     rules: [
       {
         test: /\.(png|jpe?g|svg)/i,
-        loader: 'file-loader',
-        options: {
-          name: 'assets/[name].[ext]',
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/[name][ext]',
         },
       },
       {
         test: /\.(ogg|wav|mp3)$/i,
-        loader: 'file-loader',
-        options: {
-          name: 'assets/audio/[name].[ext]',
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/audio/[name][ext]',
         },
       },
       {
         test: /\.ts$/,
         include: path.resolve(__dirname, 'src'),
         loader: 'ts-loader',
-      },
-      {
-        test: require.resolve('phaser'),
-        loader: 'expose-loader',
-        options: {
-          exposes: {
-            globalName: 'Phaser',
-            override: true,
-          },
-        },
       },
     ],
   },
@@ -74,4 +65,4 @@ module.exports = {
     extensions: ['.ts', '.js'],
     plugins: [tsconfigPathsPluginCfg],
   },
-};
+});

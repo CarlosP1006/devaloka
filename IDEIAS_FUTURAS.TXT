@@ -152,6 +152,16 @@
 [x] Animação 'attack' registrada no PlayerLoader — backslash_1h_right, frameRate 20, frames 306-311
 [x] PlayerObject.attack() e endAttack() — troca de textura, body desabilitado durante o ataque (sem hitbox acidental)
 [x] PlayerService — mouse esquerdo dispara ataque, flag attacking bloqueia movimento durante a animação
+[x] Otimização — webpack.config.js virou função (_env, argv): mode production no build, development no dev (minificação + tree-shaking habilitados no build final)
+[x] Otimização — expose-loader removido do webpack (window.Phaser não era usado; loader nem estava instalado)
+[x] Otimização — file-loader migrado para Asset Modules nativos do webpack 5 (type: asset/resource); dependência file-loader removida do package.json
+[x] Otimização — PlayerService guarda saveTimer e remove o TimerEvent anterior no init (evita acúmulo de timers a cada transição Spawn↔Forest)
+[x] Otimização — cleanup de listeners de input/keyboard no SHUTDOWN de SpawnSwampRoom e ForestSwampRoom
+[x] Otimização — guards anti-recriação de animações (loadPlayerAnimations só se !anims.exists('idle'); owl-blink só se não existir)
+[x] Otimização — createGround agora gera 1 collider único (StaticGroup com zone) span por região contínua, em vez de ~19 colliders por tile
+[x] Otimização — retângulos invisíveis de física trocados por scene.add.zone em createGround, createGroundChunk e no stoneBody do SpawnSwampRoom (não passam mais pelo pipeline de render)
+[x] Otimização — PlayerService cacheia estado de movimento (currentAnim), só chama o método do player quando o estado muda (reduz trabalho redundante 60×/s)
+[x] Otimização — slot-hover.wav removido (só o .ogg é importado)
 
 --------------------------------------------------
 ## IDEIAS FUTURAS

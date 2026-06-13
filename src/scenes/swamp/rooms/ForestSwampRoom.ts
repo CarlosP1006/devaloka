@@ -77,6 +77,11 @@ export class ForestSwampRoom extends Phaser.Scene {
     PlayerCamera.setup(this, player, mapWidth);
     this.playerService = container.resolve<PlayerService>('playerService');
     this.playerService.init(player, this, 'swamp');
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.input.removeAllListeners();
+      this.input.keyboard?.removeAllListeners();
+    });
   }
 
   update(): void {

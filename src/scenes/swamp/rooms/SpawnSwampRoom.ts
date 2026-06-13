@@ -121,18 +121,20 @@ export class SpawnSwampRoom extends Phaser.Scene {
       .setDepth(Depth.MAIN);
 
     const stoneRuneGroup = this.physics.add.staticGroup();
-    const stoneBody = this.add.rectangle(120, groundTop + 36, 235, 450, 0, 0);
+    const stoneBody = this.add.zone(120, groundTop + 36, 235, 450);
     stoneBody.setOrigin(0.5, 1);
     stoneRuneGroup.add(stoneBody);
 
-    this.anims.create({
-      key: 'owl-blink',
-      frames: [
-        { key: 'swamp-owl', frame: 0, duration: 5000 },
-        { key: 'swamp-owl', frame: 1, duration: 500 },
-      ],
-      repeat: -1,
-    });
+    if (!this.anims.exists('owl-blink')) {
+      this.anims.create({
+        key: 'owl-blink',
+        frames: [
+          { key: 'swamp-owl', frame: 0, duration: 5000 },
+          { key: 'swamp-owl', frame: 1, duration: 500 },
+        ],
+        repeat: -1,
+      });
+    }
     this.add
       .sprite(2210, groundTop - 268, 'swamp-owl')
       .setScale(0.15)
@@ -162,7 +164,6 @@ export class SpawnSwampRoom extends Phaser.Scene {
     this.physics.add.collider(player, [
       groundGroup,
       stoneRuneGroup,
-
       chunk10,
       chunk13,
       chunk14,
@@ -185,6 +186,11 @@ export class SpawnSwampRoom extends Phaser.Scene {
     PlayerCamera.setup(this, player, mapWidth);
     this.playerService = container.resolve<PlayerService>('playerService');
     this.playerService.init(player, this, 'swamp');
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.input.removeAllListeners();
+      this.input.keyboard?.removeAllListeners();
+    });
   }
 
   update(): void {

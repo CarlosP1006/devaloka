@@ -11,8 +11,8 @@ export function getTileSize(scene: Phaser.Scene): {
   groundTop: number;
 } {
   const tileH = scene.scale.height / TOTAL_TILES_VERTICAL;
+  const tileW = Math.round(TILE_SRC_W * 0.06);
   const groundScale = tileH / TILE_SRC_H;
-  const tileW = Math.round(TILE_SRC_W * groundScale);
   const groundTop = scene.scale.height - tileH;
   return { tileH, tileW, groundScale, groundTop };
 }
@@ -45,7 +45,7 @@ export function createGroundChunk(
   group: Phaser.Physics.Arcade.StaticGroup;
   images: Phaser.GameObjects.Image[];
 } {
-  const { tileH, tileW, groundScale, groundTop } = getTileSize(scene);
+  const { tileH, tileW, groundTop } = getTileSize(scene);
   const centerX = tileW * chunkX + tileW / 2;
   const removeSet = new Set(removeLayers ?? []);
   const images: Phaser.GameObjects.Image[] = [];
@@ -70,7 +70,7 @@ export function createGroundChunk(
             dirtKey,
             'dirt-tile',
           )
-          .setScale(groundScale)
+          .setDisplaySize(tileW, tileH)
           .setDepth(Depth.MAIN),
       );
     }
@@ -84,7 +84,7 @@ export function createGroundChunk(
         surfaceKey,
         'ground-tile',
       )
-      .setScale(groundScale)
+      .setDisplaySize(tileW, tileH)
       .setDepth(Depth.MAIN),
   );
 

@@ -1,9 +1,5 @@
 import { Depth } from '@utils/Depth';
-import {
-  getTileSize,
-  TILE_SRC_W,
-  TILE_SRC_H,
-} from '@utils/createGroundChunk';
+import { getTileSize, TILE_SRC_W, TILE_SRC_H } from '@utils/createGroundChunk';
 
 export function createGround(
   scene: Phaser.Scene,
@@ -11,7 +7,7 @@ export function createGround(
   removeChunks?: number[],
 ): { group: Phaser.Physics.Arcade.StaticGroup } {
   const mapWidth = 2560;
-  const { tileH, tileW, groundScale } = getTileSize(scene);
+  const { tileH, tileW } = getTileSize(scene);
   const tex = scene.textures.get(surfaceKey);
   if (!tex.has('ground-tile')) {
     tex.add('ground-tile', 0, 0, 0, TILE_SRC_W, TILE_SRC_H);
@@ -38,7 +34,7 @@ export function createGround(
     if (present) {
       scene.add
         .image(x, groundY, surfaceKey, 'ground-tile')
-        .setScale(groundScale)
+        .setDisplaySize(tileW, tileH)
         .setDepth(Depth.GROUND_DEFAULT);
       if (spanStart === null) spanStart = index;
     } else if (spanStart !== null) {

@@ -183,6 +183,11 @@
 [x] getSwordHitbox() exposto no PlayerObject — rooms futuramente conectam via physics.add.overlap com inimigos
 
 ## 2026-06-14
+[x] tileW fixado em 139px (Math.round(2322 * 0.06)) — X nunca muda entre resoluções, só tileH é dinâmico
+[x] setDisplaySize(tileW, tileH) em todos os tiles — largura fixa, altura dinâmica, sem distorção e sem gaps
+[x] Regra de posicionamento documentada no CLAUDE.md — X fixo em pixels, Y sempre via tileH/groundTop
+
+## 2026-06-14
 [x] Sistema de escala responsiva — TOTAL_TILES_VERTICAL=14, tileH=screenHeight/14 (float), tileW=Math.round(...), rooms preenchem qualquer resolução sem barra preta
 [x] getTileSize(scene) criado em createGroundChunk.ts — exporta tileH, tileW, groundScale, groundTop dinâmicos
 [x] createGroundChunk, createGround, createCeiling refatorados para usar getTileSize em vez de constantes fixas

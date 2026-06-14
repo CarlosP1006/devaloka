@@ -12,6 +12,14 @@ Sempre que algo novo for concluído durante a sessão — mesmo que pequeno (um 
 
 Ao registrar o `[x]`, **sempre verificar a seção `## IDEIAS FUTURAS`** (abaixo da linha divisória) e remover o item correspondente se ele estiver listado lá como pendente.
 
+## IMPORTANTE — ESLint após alterações
+
+Sempre que fizer qualquer alteração em arquivos `.ts` ou `.js`, rodar o ESLint fix ao final — uma única vez, independente de quantas alterações foram feitas:
+
+```bash
+npm run lint:fix
+```
+
 ## IMPORTANTE — Commits
 
 Nunca executar `git commit`. Quando o usuário pedir um commit, apenas sugerir a mensagem no formato `tipo: descrição` (ex: `feat: ...`, `fix: ...`, `refactor: ...`). A mensagem deve cobrir tudo que foi feito desde o último commit pedido, ou tudo que foi feito na conversa até aquele momento.
@@ -261,6 +269,25 @@ Sempre consultar `src/utils/Depth.ts` ao adicionar objetos na cena. Usar o depth
 - `MAIN` — chunks, plataformas, props com física (pedras, objetos interativos)
 - `PLAYER` — player, sempre na frente
 - `CONFIG` — painel de configurações, sempre acima de tudo (valor 100)
+
+## Sistema de Escala Responsiva
+
+`TOTAL_TILES_VERTICAL = 14` em `createGroundChunk.ts`. Em qualquer tela: `tileH = screenHeight / 14` (dinâmico), `tileW = 139px` (fixo).
+
+**Regra de posicionamento em rooms:**
+- **X: sempre valor fixo em pixels** — o mapa tem 2560px de largura, maior que qualquer tela, então X não precisa escalar
+- **Y: sempre relativo a `tileH` ou `groundTop`** — nunca hardcodar Y em pixels, senão quebra em resoluções diferentes
+
+```ts
+// ✅ correto
+const { tileH, groundTop } = getTileSize(this);
+objeto.setPosition(450, groundTop - 3 * tileH);
+
+// ❌ errado
+objeto.setPosition(450, 300); // Y hardcoded quebra em outras resoluções
+```
+
+Para adicionar props/objetos em rooms: defina X livremente, ajuste Y usando `groundTop` e múltiplos de `tileH`. Ao criar uma nova room, chamar `getTileSize(this)` no início do `create()`.
 
 ## Padrões de Performance
 

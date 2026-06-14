@@ -1,11 +1,5 @@
 import { Depth } from '@utils/Depth';
-import {
-  GROUND_SCALE,
-  TILE_W,
-  TILE_H,
-  TILE_SRC_W,
-  TILE_SRC_H,
-} from '@utils/createGroundChunk';
+import { getTileSize, TILE_SRC_W, TILE_SRC_H } from '@utils/createGroundChunk';
 
 export function createCeiling(
   scene: Phaser.Scene,
@@ -16,34 +10,35 @@ export function createCeiling(
   images: Phaser.GameObjects.Image[];
 } {
   const mapWidth = 2560;
+  const { tileH, tileW } = getTileSize(scene);
   const tex = scene.textures.get(surfaceKey);
   if (!tex.has('ceiling-tile')) {
     tex.add('ceiling-tile', 0, 0, 0, TILE_SRC_W, TILE_SRC_H);
   }
 
-  const ceilingY = TILE_H / 2 - 9;
+  const ceilingY = tileH / 2 + 1;
   const removeSet = new Set(removeChunks ?? []);
   const group = scene.physics.add.staticGroup();
   const images: Phaser.GameObjects.Image[] = [];
 
   const addSpan = (startIdx: number, endIdx: number) => {
-    const startX = TILE_W / 2 + startIdx * TILE_W;
-    const endX = TILE_W / 2 + endIdx * TILE_W;
-    const width = endX - startX + TILE_W;
+    const startX = tileW / 2 + startIdx * tileW;
+    const endX = tileW / 2 + endIdx * tileW;
+    const width = endX - startX + tileW;
     const centerX = (startX + endX) / 2;
-    const zone = scene.add.zone(centerX, ceilingY, width, TILE_H);
+    const zone = scene.add.zone(centerX, ceilingY, width, tileH);
     group.add(zone);
   };
 
   let index = 0;
   let spanStart: number | null = null;
-  for (let x = TILE_W / 2; x < mapWidth + TILE_W; x += TILE_W) {
+  for (let x = tileW / 2; x < mapWidth + tileW; x += tileW) {
     const present = !removeSet.has(index);
     if (present) {
       images.push(
         scene.add
           .image(x, ceilingY, surfaceKey, 'ceiling-tile')
-          .setScale(GROUND_SCALE)
+          .setDisplaySize(tileW + 1, tileH)
           .setDepth(Depth.GROUND_DEFAULT),
       );
       if (spanStart === null) spanStart = index;

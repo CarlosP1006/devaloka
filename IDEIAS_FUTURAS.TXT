@@ -182,6 +182,13 @@
 [x] swordHitbox implementado — Zone com física, sem gravidade, sem colisão com chão/chunks, ativo só durante o ataque, some ao fim da animação via reset(-9999,-9999)
 [x] getSwordHitbox() exposto no PlayerObject — rooms futuramente conectam via physics.add.overlap com inimigos
 
+## 2026-06-14
+[x] Sistema de escala responsiva — TOTAL_TILES_VERTICAL=14, tileH=screenHeight/14 (float), tileW=Math.round(...), rooms preenchem qualquer resolução sem barra preta
+[x] getTileSize(scene) criado em createGroundChunk.ts — exporta tileH, tileW, groundScale, groundTop dinâmicos
+[x] createGroundChunk, createGround, createCeiling refatorados para usar getTileSize em vez de constantes fixas
+[x] ForestSwampRoom e SpawnSwampRoom atualizadas — layer counts e removeLayers intocados, só tile size é dinâmico
+[x] ceilingY = tileH/2 + 1 — teto encostado na borda superior sem pixel preto sobrando, calibrado e fixado
+
 --------------------------------------------------
 ## IDEIAS FUTURAS
 

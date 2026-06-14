@@ -2,9 +2,20 @@ import { Depth } from '@utils/Depth';
 
 export const TILE_SRC_W = 2322;
 export const TILE_SRC_H = 739;
-export const GROUND_SCALE = 0.06;
-export const TILE_W = Math.round(TILE_SRC_W * GROUND_SCALE);
-export const TILE_H = Math.round(TILE_SRC_H * GROUND_SCALE);
+export const TOTAL_TILES_VERTICAL = 14;
+
+export function getTileSize(scene: Phaser.Scene): {
+  tileH: number;
+  tileW: number;
+  groundScale: number;
+  groundTop: number;
+} {
+  const tileH = scene.scale.height / TOTAL_TILES_VERTICAL;
+  const groundScale = tileH / TILE_SRC_H;
+  const tileW = Math.round(TILE_SRC_W * groundScale);
+  const groundTop = scene.scale.height - tileH;
+  return { tileH, tileW, groundScale, groundTop };
+}
 
 function addSegment(
   scene: Phaser.Scene,
@@ -13,11 +24,13 @@ function addSegment(
   groundTop: number,
   startIdx: number,
   endIdx: number,
+  tileH: number,
+  tileW: number,
 ): void {
-  const segH = (endIdx - startIdx + 1) * TILE_H;
+  const segH = (endIdx - startIdx + 1) * tileH;
   const segCenterY =
-    groundTop + TILE_H / 2 - ((startIdx + endIdx) * TILE_H) / 2;
-  const zone = scene.add.zone(centerX, segCenterY, TILE_W, segH);
+    groundTop + tileH / 2 - ((startIdx + endIdx) * tileH) / 2;
+  const zone = scene.add.zone(centerX, segCenterY, tileW, segH);
   group.add(zone);
 }
 
@@ -32,8 +45,8 @@ export function createGroundChunk(
   group: Phaser.Physics.Arcade.StaticGroup;
   images: Phaser.GameObjects.Image[];
 } {
-  const centerX = TILE_W * chunkX + TILE_W / 2;
-  const groundTop = scene.scale.height - TILE_H;
+  const { tileH, tileW, groundScale, groundTop } = getTileSize(scene);
+  const centerX = tileW * chunkX + tileW / 2;
   const removeSet = new Set(removeLayers ?? []);
   const images: Phaser.GameObjects.Image[] = [];
 
@@ -53,11 +66,11 @@ export function createGroundChunk(
         scene.add
           .image(
             centerX,
-            groundTop + TILE_H / 2 - i * TILE_H,
+            groundTop + tileH / 2 - i * tileH,
             dirtKey,
             'dirt-tile',
           )
-          .setScale(GROUND_SCALE)
+          .setScale(groundScale)
           .setDepth(Depth.MAIN),
       );
     }
@@ -67,11 +80,11 @@ export function createGroundChunk(
     scene.add
       .image(
         centerX,
-        groundTop + TILE_H / 2 - layers * TILE_H,
+        groundTop + tileH / 2 - layers * tileH,
         surfaceKey,
         'ground-tile',
       )
-      .setScale(GROUND_SCALE)
+      .setScale(groundScale)
       .setDepth(Depth.MAIN),
   );
 
@@ -84,13 +97,13 @@ export function createGroundChunk(
     if (present && segStart === null) {
       segStart = i;
     } else if (!present && segStart !== null) {
-      addSegment(scene, group, centerX, groundTop, segStart, i - 1);
+      addSegment(scene, group, centerX, groundTop, segStart, i - 1, tileH, tileW);
       segStart = null;
     }
   }
 
   if (segStart !== null) {
-    addSegment(scene, group, centerX, groundTop, segStart, layers);
+    addSegment(scene, group, centerX, groundTop, segStart, layers, tileH, tileW);
   }
 
   return { group, images };

@@ -4,7 +4,7 @@ import { PlayerCamera } from '@objects/player/utils/PlayerCamera';
 import { PlayerService } from '@objects/player/services/PlayerService';
 import { SaveManagerService } from '@services/SaveManagerService';
 import { createGround } from '@utils/createGround';
-import { createGroundChunk, TILE_H } from '@utils/createGroundChunk';
+import { createGroundChunk, getTileSize } from '@utils/createGroundChunk';
 import { createTransitionLine } from '@utils/createTransitionLine';
 import { Depth } from '@utils/Depth';
 
@@ -17,13 +17,13 @@ export class SpawnSwampRoom extends Phaser.Scene {
 
   create(data: { spawnX?: number; spawnY?: number }): void {
     const mapWidth = 2560;
+    const { groundTop } = getTileSize(this);
     const { group: groundGroup } = createGround(
       this,
       'swamp-ground',
       undefined,
     );
 
-    const groundTop = this.scale.height - TILE_H;
     this.add
       .image(mapWidth / 2, this.scale.height / 2, 'spawn-swamp-background')
       .setDisplaySize(mapWidth, this.scale.height)

@@ -6,7 +6,7 @@ import { SaveManagerService } from '@services/SaveManagerService';
 import { createGround } from '@utils/createGround';
 import { createCeiling } from '@utils/createCeiling';
 import { createTransitionLine } from '@utils/createTransitionLine';
-import { createGroundChunk, TILE_H, TILE_W } from '@utils/createGroundChunk';
+import { createGroundChunk, getTileSize } from '@utils/createGroundChunk';
 
 const mapWidth = 2560;
 
@@ -18,8 +18,8 @@ export class ForestSwampRoom extends Phaser.Scene {
   }
 
   create(data: { spawnX?: number; spawnY?: number }): void {
+    const { tileH, tileW, groundTop } = getTileSize(this);
     const { group: groundGroup } = createGround(this, 'swamp-ground', undefined);
-    const groundTop = this.scale.height - TILE_H;
 
     const saveManagerService = container.resolve<SaveManagerService>('saveManagerService');
     const save = saveManagerService.get();
@@ -50,8 +50,8 @@ export class ForestSwampRoom extends Phaser.Scene {
     this.physics.add.collider(player, [groundGroup, chunk0, chunk1, chunk2, chunk3, chunk4, ceilingGroup]);
     if (thornGroup) thornCollider = this.physics.add.collider(player, thornGroup);
 
-    const btnX = TILE_W * 2 + TILE_W / 2;
-    const btnY = groundTop - 10 * TILE_H;
+    const btnX = tileW * 2 + tileW / 2;
+    const btnY = groundTop - 10 * tileH;
     const btn = this.add.text(btnX, btnY, thornDoorOpen ? '[parede: aberta]' : '[parede: fechada]', {
       fontSize: '14px', color: '#ffff00', backgroundColor: '#333333', padding: { x: 8, y: 4 },
     }).setOrigin(0.5).setDepth(100).setInteractive({ useHandCursor: true });

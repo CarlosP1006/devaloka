@@ -146,7 +146,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
       volume: 0.5,
     });
 
-    this.time.addEvent({
+    const owlTimer = this.time.addEvent({
       delay: 15000,
       loop: true,
       callback: () => this.sound.play('swamp-owl-call', { volume: 0.1 }),
@@ -188,6 +188,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
     this.playerService.init(player, this, 'swamp');
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      owlTimer.remove();
       this.input.removeAllListeners();
       this.input.keyboard?.removeAllListeners();
     });

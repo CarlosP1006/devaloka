@@ -53,6 +53,9 @@ export class PlayerService {
     this.basePlayTime = this.saveManagerService.get()?.slotInfo?.playTime ?? 0;
     this.gameInputService.init(scene);
 
+    if (this.swingSound) this.swingSound.destroy();
+    this.swingSound = scene.sound.add('sword-swing', { volume: 20 });
+
     if (this.saveTimer) this.saveTimer.remove();
     this.saveTimer = scene.time.addEvent({
       delay: SAVE_INTERVAL,
@@ -91,12 +94,10 @@ export class PlayerService {
       if (!onGround && this.hasAttackedInAir) return;
       this.attacking = true;
       if (!onGround) this.hasAttackedInAir = true;
-      this.swingSound = this.scene.sound.add('sword-swing', { volume: 20 });
-      this.swingSound.play();
+      this.swingSound!.play();
       this.player.attack();
       this.player.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         this.swingSound?.stop();
-        this.swingSound = null;
         this.attacking = false;
         this.player.endAttack();
       });
@@ -119,7 +120,7 @@ export class PlayerService {
   update(): void {
     if (this.attacking) {
       this.player.setVelocityX(0);
-      this.player.syncSwordSprite();
+      if (!this.player.body!.blocked.down) this.player.syncSwordSprite();
       this.currentAnim = '';
       return;
     }

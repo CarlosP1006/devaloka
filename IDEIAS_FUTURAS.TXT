@@ -197,6 +197,9 @@
 [x] ItemRevealScene — overlay de novo item com moldura, ícone, texto centralizado com quebra de linha e botão SAIR na pedra
 [x] showNewItem utility (src/utils/showNewItem.ts) — pausa jogo, lança ItemRevealScene com parâmetros configuráveis (itemKey, scaleX, scaleY, description, maxChars, onClose)
 [x] Clique no baú fechado abre painel com ícone da Cimitarra do Pântano em azul neon (#00ddff)
+[x] Auditoria Opus — som de espada criado uma vez no init() e reutilizado (sem acúmulo de instâncias), volume 20 mantido
+[x] Auditoria Opus — owl timer com referência guardada e removido no SHUTDOWN da SpawnSwampRoom
+[x] Auditoria Opus — syncSwordSprite só chamado no ar durante ataque (no chão Y é estável, evita body.reset() inútil a cada frame)
 [x] Mecânica completa do baú — 3 flags em 1 clique: chestSwordTaken, thornDoorOpen, weapons.sword.unlocked — todas persistidas no save
 [x] Baú carrega estado correto ao reentrar na room — aberto sem interação se já coletado, fechado e clicável se não
 [x] Botão de teste da parede de espinhos removido da ForestSwampRoom

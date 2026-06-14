@@ -23,6 +23,7 @@ import itemFrame from '@assets/player/images/item-frame.png';
 import swordIcon from '@assets/player/images/sword-icon.png';
 import playerJump from '@assets/player/audio/player-jump.ogg';
 import swordSwingSfx from '@assets/player/audio/sword-swing.ogg';
+import itemRevealSfx from '@assets/player/audio/item-reveal.ogg';
 import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
 import { container } from '@containers/index';
 import { AudioManagerService } from '@services/AudioManagerService';
@@ -67,6 +68,7 @@ export class MenuScene extends Phaser.Scene {
     this.load.image('sword-icon', swordIcon);
     this.load.audio('player-jump', playerJump);
     this.load.audio('sword-swing', swordSwingSfx);
+    this.load.audio('item-reveal', itemRevealSfx);
   }
 
   create(): void {

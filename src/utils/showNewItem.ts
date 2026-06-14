@@ -13,6 +13,7 @@ export function showNewItem(
   const description = opts.description.slice(0, MAX_CHARS);
 
   gameScene.sound.pauseAll();
+  gameScene.sound.play('item-reveal', { volume: 0.8 });
   gameScene.scene.pause();
   gameScene.scene.launch('ItemRevealScene', {
     resumeKey: gameScene.scene.key,

@@ -186,13 +186,20 @@
 [x] tileW fixado em 139px (Math.round(2322 * 0.06)) — X nunca muda entre resoluções, só tileH é dinâmico
 [x] setDisplaySize(tileW, tileH) em todos os tiles — largura fixa, altura dinâmica, sem distorção e sem gaps
 [x] Regra de posicionamento documentada no CLAUDE.md — X fixo em pixels, Y sempre via tileH/groundTop
-
-## 2026-06-14
 [x] Sistema de escala responsiva — TOTAL_TILES_VERTICAL=14, tileH=screenHeight/14 (float), tileW=Math.round(...), rooms preenchem qualquer resolução sem barra preta
 [x] getTileSize(scene) criado em createGroundChunk.ts — exporta tileH, tileW, groundScale, groundTop dinâmicos
 [x] createGroundChunk, createGround, createCeiling refatorados para usar getTileSize em vez de constantes fixas
 [x] ForestSwampRoom e SpawnSwampRoom atualizadas — layer counts e removeLayers intocados, só tile size é dinâmico
 [x] ceilingY = tileH/2 + 1 — teto encostado na borda superior sem pixel preto sobrando, calibrado e fixado
+[x] Baú de espada criado na ForestSwampRoom — chest-swamp-closed.png e chest-swamp-open.png cortados via ImageMagick
+[x] Hover no baú com contorno branco (postFX.addGlow) — desaparece no pointerout
+[x] Ícone da espada (sword-icon.png) e moldura de item (item-frame.png) criados e carregados no MenuScene
+[x] ItemRevealScene — overlay de novo item com moldura, ícone, texto centralizado com quebra de linha e botão SAIR na pedra
+[x] showNewItem utility (src/utils/showNewItem.ts) — pausa jogo, lança ItemRevealScene com parâmetros configuráveis (itemKey, scaleX, scaleY, description, maxChars, onClose)
+[x] Clique no baú fechado abre painel com ícone da Cimitarra do Pântano em azul neon (#00ddff)
+[x] Mecânica completa do baú — 3 flags em 1 clique: chestSwordTaken, thornDoorOpen, weapons.sword.unlocked — todas persistidas no save
+[x] Baú carrega estado correto ao reentrar na room — aberto sem interação se já coletado, fechado e clicável se não
+[x] Botão de teste da parede de espinhos removido da ForestSwampRoom
 
 --------------------------------------------------
 ## IDEIAS FUTURAS
@@ -208,8 +215,7 @@
   - Sistema de HP do player
   - Enfeitar ForestSwampRoom — props, árvores, atmosfera
   - Placa de tutorial interativa na SpawnSwampRoom (mecânica a definir)
-  - Baú da espada na ForestSwampRoom — substituir botão de teste pelo baú real, vincular ao thornDoorOpen
-  - Sistema de "pegar arma" — espada e estilingue inativos até serem coletados na room (weapons.sword.unlocked)
+  - Sistema de "pegar arma" — estilingue inativo até ser coletado na room (weapons.sling.unlocked)
   - Otimização contínua
 
 - Sistema de Save avançado (pensar antes de implementar):

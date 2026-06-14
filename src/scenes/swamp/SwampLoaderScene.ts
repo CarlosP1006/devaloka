@@ -8,6 +8,8 @@ import swampTreeTwisted from '@assets/swamp/images/swamp-tree-twisted.png';
 import swampTreeLarge from '@assets/swamp/images/swamp-tree-large.png';
 import swampStoneRune from '@assets/swamp/images/swamp-stone-rune.png';
 import swampOwl from '@assets/swamp/images/swamp-owl.png';
+import chestClosed from '@assets/swamp/images/chest-swamp-closed.png';
+import chestOpen from '@assets/swamp/images/chest-swamp-open.png';
 import swampStep from '@assets/swamp/audio/swamp-step.ogg';
 import swampAmbient from '@assets/swamp/audio/swamp-ambient.ogg';
 import swampOwlCall from '@assets/swamp/audio/swamp-owl-call.ogg';
@@ -35,6 +37,8 @@ export class SwampLoaderScene extends Phaser.Scene {
       frameWidth: 338,
       frameHeight: 369,
     });
+    this.load.image('chest-swamp-closed', chestClosed);
+    this.load.image('chest-swamp-open', chestOpen);
     this.load.audio('swamp-step', swampStep);
     this.load.audio('swamp-ambient', swampAmbient);
     this.load.audio('swamp-owl-call', swampOwlCall);

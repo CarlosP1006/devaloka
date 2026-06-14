@@ -1,6 +1,7 @@
 import 'phaser';
 import { MenuScene } from '@scenes/menu/MenuScene';
 import { ConfigScene } from '@scenes/config/ConfigScene';
+import { ItemRevealScene } from '@scenes/item/ItemRevealScene';
 import { SwampLoaderScene } from '@scenes/swamp/SwampLoaderScene';
 import { SpawnSwampRoom } from '@scenes/swamp/rooms/SpawnSwampRoom';
 import { ForestSwampRoom } from '@scenes/swamp/rooms/ForestSwampRoom';
@@ -17,6 +18,7 @@ window.addEventListener('load', () => {
       SpawnSwampRoom,
       ForestSwampRoom,
       ConfigScene,
+      ItemRevealScene,
     ],
     dom: {
       createContainer: true,

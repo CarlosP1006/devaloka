@@ -28,8 +28,7 @@ function addSegment(
   tileW: number,
 ): void {
   const segH = (endIdx - startIdx + 1) * tileH;
-  const segCenterY =
-    groundTop + tileH / 2 - ((startIdx + endIdx) * tileH) / 2;
+  const segCenterY = groundTop + tileH / 2 - ((startIdx + endIdx) * tileH) / 2;
   const zone = scene.add.zone(centerX, segCenterY, tileW, segH);
   group.add(zone);
 }
@@ -97,13 +96,31 @@ export function createGroundChunk(
     if (present && segStart === null) {
       segStart = i;
     } else if (!present && segStart !== null) {
-      addSegment(scene, group, centerX, groundTop, segStart, i - 1, tileH, tileW);
+      addSegment(
+        scene,
+        group,
+        centerX,
+        groundTop,
+        segStart,
+        i - 1,
+        tileH,
+        tileW,
+      );
       segStart = null;
     }
   }
 
   if (segStart !== null) {
-    addSegment(scene, group, centerX, groundTop, segStart, layers, tileH, tileW);
+    addSegment(
+      scene,
+      group,
+      centerX,
+      groundTop,
+      segStart,
+      layers,
+      tileH,
+      tileW,
+    );
   }
 
   return { group, images };

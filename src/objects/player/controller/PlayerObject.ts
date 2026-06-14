@@ -26,7 +26,12 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     player.swordSprite.setScale(1.6);
     player.swordSprite.setDepth(Depth.PLAYER);
     player.swordSprite.setVisible(false);
-    player.swordHitbox = scene.add.zone(-9999, -9999, PlayerObject.HIT_W, PlayerObject.HIT_H);
+    player.swordHitbox = scene.add.zone(
+      -9999,
+      -9999,
+      PlayerObject.HIT_W,
+      PlayerObject.HIT_H,
+    );
     scene.physics.add.existing(player.swordHitbox);
     const hb = player.swordHitbox.body as Phaser.Physics.Arcade.Body;
     hb.setAllowGravity(false);

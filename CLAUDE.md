@@ -12,14 +12,6 @@ Sempre que algo novo for concluído durante a sessão — mesmo que pequeno (um 
 
 Ao registrar o `[x]`, **sempre verificar a seção `## IDEIAS FUTURAS`** (abaixo da linha divisória) e remover o item correspondente se ele estiver listado lá como pendente.
 
-## IMPORTANTE — ESLint após alterações
-
-Sempre que fizer qualquer alteração em arquivos `.ts` ou `.js`, rodar o ESLint fix ao final — uma única vez, independente de quantas alterações foram feitas:
-
-```bash
-npm run lint:fix
-```
-
 ## IMPORTANTE — Commits
 
 Nunca executar `git commit`. Quando o usuário pedir um commit, apenas sugerir a mensagem no formato `tipo: descrição` (ex: `feat: ...`, `fix: ...`, `refactor: ...`). A mensagem deve cobrir tudo que foi feito desde o último commit pedido, ou tudo que foi feito na conversa até aquele momento.

@@ -1,6 +1,7 @@
 import { PlayerObject } from '@objects/player/controller/PlayerObject';
 import { SaveManagerService } from '@services/SaveManagerService';
 import { GameInputService } from '@services/GameInputService';
+import { getTileSize } from '@utils/createGroundChunk';
 // CODIGO PARA APAGAR DEPOIS
 import { DEV_PRINT_SAVE } from '@utils/DEV_PRINT_SAVE';
 // CODIGO PARA APAGAR DEPOIS
@@ -64,11 +65,14 @@ export class PlayerService {
         if (!this.player.body!.blocked.down) return;
         const elapsed = Math.floor((Date.now() - this.sessionStart) / 1000);
         const slotInfo = this.saveManagerService.get()?.slotInfo;
+        const { groundTop, tileH } = getTileSize(scene);
+        const yTile = (groundTop - this.player.y) / tileH;
         this.saveManagerService.save({
           location: {
             room: scene.scene.key,
             x: Math.round(this.player.x),
             y: Math.round(this.player.y),
+            yTile,
           },
           ...(slotInfo
             ? {

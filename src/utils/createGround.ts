@@ -7,13 +7,13 @@ export function createGround(
   removeChunks?: number[],
 ): { group: Phaser.Physics.Arcade.StaticGroup } {
   const mapWidth = 2560;
-  const { tileH, tileW } = getTileSize(scene);
+  const { tileH, tileW, groundTop } = getTileSize(scene);
   const tex = scene.textures.get(surfaceKey);
   if (!tex.has('ground-tile')) {
     tex.add('ground-tile', 0, 0, 0, TILE_SRC_W, TILE_SRC_H);
   }
 
-  const groundY = scene.scale.height - tileH / 2;
+  const groundY = groundTop + tileH / 2;
 
   const removeSet = new Set(removeChunks ?? []);
   const group = scene.physics.add.staticGroup();

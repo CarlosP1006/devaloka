@@ -17,7 +17,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
 
   create(data: { spawnX?: number; spawnY?: number }): void {
     const mapWidth = 2560;
-    const { groundTop } = getTileSize(this);
+    const { groundTop, tileH } = getTileSize(this);
     const { group: groundGroup } = createGround(
       this,
       'swamp-ground',
@@ -25,8 +25,8 @@ export class SpawnSwampRoom extends Phaser.Scene {
     );
 
     this.add
-      .image(mapWidth / 2, this.scale.height / 2, 'spawn-swamp-background')
-      .setDisplaySize(mapWidth, this.scale.height)
+      .image(mapWidth / 2, (groundTop + tileH) / 2, 'spawn-swamp-background')
+      .setDisplaySize(mapWidth, groundTop + tileH)
       .setDepth(Depth.FAR_BACKGROUND)
       .setAlpha(0.6);
 
@@ -103,7 +103,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
     );
 
     this.add
-      .image(2057, groundTop - 156, 'swamp-tree-large')
+      .image(2057, groundTop - 186, 'swamp-tree-large')
       .setOrigin(0.5, 1)
       .setScale(0.82)
       .setDepth(Depth.BACKGROUND_2);
@@ -136,7 +136,7 @@ export class SpawnSwampRoom extends Phaser.Scene {
       });
     }
     this.add
-      .sprite(2210, groundTop - 268, 'swamp-owl')
+      .sprite(2210, groundTop - 298, 'swamp-owl')
       .setScale(0.15)
       .setDepth(Depth.MAIN)
       .play('owl-blink');
@@ -157,9 +157,12 @@ export class SpawnSwampRoom extends Phaser.Scene {
     const save = saveManagerService.get();
     const savedHere = save?.location?.room === 'SpawnSwampRoom';
     const spawnX = data?.spawnX ?? (savedHere ? save.location?.x ?? 300 : 300);
-    const spawnY =
-      data?.spawnY ??
-      (savedHere ? save.location?.y ?? groundTop - 60 : groundTop - 60);
+    const savedY = savedHere
+      ? save.location?.yTile !== undefined
+        ? groundTop - save.location.yTile * tileH
+        : save.location?.y ?? groundTop - 60
+      : groundTop - 60;
+    const spawnY = data?.spawnY ?? savedY;
     const player = PlayerObject.create(this, spawnX, spawnY);
     this.physics.add.collider(player, [
       groundGroup,

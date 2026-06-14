@@ -3,17 +3,18 @@ import { Depth } from '@utils/Depth';
 export const TILE_SRC_W = 2322;
 export const TILE_SRC_H = 739;
 export const TOTAL_TILES_VERTICAL = 14;
+export const LOGICAL_HEIGHT = 720;
 
-export function getTileSize(scene: Phaser.Scene): {
+export function getTileSize(_scene: Phaser.Scene): {
   tileH: number;
   tileW: number;
   groundScale: number;
   groundTop: number;
 } {
-  const tileH = scene.scale.height / TOTAL_TILES_VERTICAL;
+  const tileH = LOGICAL_HEIGHT / TOTAL_TILES_VERTICAL;
   const tileW = Math.round(TILE_SRC_W * 0.06);
   const groundScale = tileH / TILE_SRC_H;
-  const groundTop = scene.scale.height - tileH;
+  const groundTop = LOGICAL_HEIGHT - tileH;
   return { tileH, tileW, groundScale, groundTop };
 }
 

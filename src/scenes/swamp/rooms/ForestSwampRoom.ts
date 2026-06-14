@@ -33,9 +33,12 @@ export class ForestSwampRoom extends Phaser.Scene {
 
     const savedHere = save?.location?.room === 'ForestSwampRoom';
     const spawnX = data?.spawnX ?? (savedHere ? save.location?.x ?? 300 : 300);
-    const spawnY =
-      data?.spawnY ??
-      (savedHere ? save.location?.y ?? groundTop - 60 : groundTop - 60);
+    const savedY = savedHere
+      ? save.location?.yTile !== undefined
+        ? groundTop - save.location.yTile * tileH
+        : save.location?.y ?? groundTop - 60
+      : groundTop - 60;
+    const spawnY = data?.spawnY ?? savedY;
 
     const { group: chunk0 } = createGroundChunk(
       this,

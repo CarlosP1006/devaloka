@@ -197,6 +197,11 @@
 [x] ItemRevealScene — overlay de novo item com moldura, ícone, texto centralizado com quebra de linha e botão SAIR na pedra
 [x] showNewItem utility (src/utils/showNewItem.ts) — pausa jogo, lança ItemRevealScene com parâmetros configuráveis (itemKey, scaleX, scaleY, description, maxChars, onClose)
 [x] Clique no baú fechado abre painel com ícone da Cimitarra do Pântano em azul neon (#00ddff)
+[x] Sistema de resolução multi-tela resolvido — camera zoom (screenHeight/720) fixa coordenadas lógicas em 720p, tudo escala automaticamente em qualquer resolução
+[x] getTileSize agora retorna valores constantes baseados em LOGICAL_HEIGHT=720 — independente da resolução física
+[x] PlayerCamera.setup aplica zoom proporcional + bounds lógicos fixos
+[x] createGround corrigido pra usar groundTop+tileH/2 em vez de scene.scale.height
+[x] yTile salvo no save do player — posição relativa ao ground em tile units, resolve reload em resolução diferente
 [x] Auditoria Opus — som de espada criado uma vez no init() e reutilizado (sem acúmulo de instâncias), volume 20 mantido
 [x] Auditoria Opus — owl timer com referência guardada e removido no SHUTDOWN da SpawnSwampRoom
 [x] Auditoria Opus — syncSwordSprite só chamado no ar durante ataque (no chão Y é estável, evita body.reset() inútil a cada frame)

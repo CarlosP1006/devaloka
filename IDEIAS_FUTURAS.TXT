@@ -208,6 +208,8 @@
 [x] Mecânica completa do baú — 3 flags em 1 clique: chestSwordTaken, thornDoorOpen, weapons.sword.unlocked — todas persistidas no save
 [x] Baú carrega estado correto ao reentrar na room — aberto sem interação se já coletado, fechado e clicável se não
 [x] Botão de teste da parede de espinhos removido da ForestSwampRoom
+[x] Caixa de colisão do player reduzida — setSize(22,38) + setOffset(21,21): 1px por lado nas laterais, 2px em altura — evita prender nas quinas dos chunks
+[x] tileH arredondado pra inteiro (Math.floor) — superfícies de física em pixel exato, sem sobreposição sub-pixel nas bordas dos chunks
 
 --------------------------------------------------
 ## IDEIAS FUTURAS

@@ -11,7 +11,7 @@ export function getTileSize(_scene: Phaser.Scene): {
   groundScale: number;
   groundTop: number;
 } {
-  const tileH = LOGICAL_HEIGHT / TOTAL_TILES_VERTICAL;
+  const tileH = Math.floor(LOGICAL_HEIGHT / TOTAL_TILES_VERTICAL);
   const tileW = Math.round(TILE_SRC_W * 0.06);
   const groundScale = tileH / TILE_SRC_H;
   const groundTop = LOGICAL_HEIGHT - tileH;

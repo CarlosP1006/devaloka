@@ -20,8 +20,8 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     player.setCollideWorldBounds(true);
     player.setDepth(Depth.PLAYER);
     player.setScale(1.6);
-    (player.body as Phaser.Physics.Arcade.Body).setSize(24, 40);
-    player.setOffset(20, 20);
+    (player.body as Phaser.Physics.Arcade.Body).setSize(22, 38);
+    player.setOffset(21, 21);
     player.swordSprite = scene.add.sprite(x, y, 'player-sword-big');
     player.swordSprite.setScale(1.6);
     player.swordSprite.setDepth(Depth.PLAYER);

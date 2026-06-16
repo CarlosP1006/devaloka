@@ -217,14 +217,18 @@
 - Decoração da SwampRoom — mais props, árvores, detalhes
 - Sons de combate — pra quando implementar o combate
 
-- PRÓXIMOS (amanhã):
+- PRIORIDADE (amanhã, nessa ordem):
+  1. Placas de tutorial — SpawnSwampRoom (mecânica a definir)
+  2. Enfeitar SpawnSwampRoom — revisar se falta algo
+  3. Enfeitar ForestSwampRoom — props, árvores, atmosfera
+  4. Inimigos e sistema de combate:
+     - Criar inimigos — sprite, caixa de colisão, HP
+     - Vincular swordHitbox com inimigos via physics.add.overlap
+     - Sistema de HP do player
+     - Sistema de dano base — tipagem não global, manipulável in-game
+
+- Backlog:
   - Implementar estilingue (arma 2) — animações walk/shoot/hurt com player-sling.png
-  - Sistema de dano base — tipagem não global, manipulável in-game (não hardcodar)
-  - Criar inimigos — sprite, caixa de colisão, HP
-  - Vincular swordHitbox com inimigos via physics.add.overlap
-  - Sistema de HP do player
-  - Enfeitar ForestSwampRoom — props, árvores, atmosfera
-  - Placa de tutorial interativa na SpawnSwampRoom (mecânica a definir)
   - Sistema de "pegar arma" — estilingue inativo até ser coletado na room (weapons.sling.unlocked)
   - Otimização contínua
 

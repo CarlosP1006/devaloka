@@ -17,6 +17,8 @@ import slotsFullTitleImg from '@assets/menu/images/slots-full-title.png';
 import menuMusicSfx from '@assets/menu/audio/menu-music.ogg';
 import stoneClickSfx from '@assets/menu/audio/stone-click.ogg';
 import slotHoverSfx from '@assets/menu/audio/slot-hover.ogg';
+import shieldSwordImg from '@assets/player/images/shield-sword.png';
+import shieldSwordBreakImg from '@assets/player/images/shield-sword-break.png';
 import playerImg from '@assets/player/images/player.png';
 import playerSwordImg from '@assets/player/images/player-sword.png';
 import itemFrame from '@assets/player/images/item-frame.png';
@@ -53,6 +55,11 @@ export class MenuScene extends Phaser.Scene {
     this.load.image('menu-confirm-title', menuConfirmTitleImg);
     this.load.image('new-game-title', newGameTitleImg);
     this.load.image('slots-full-title', slotsFullTitleImg);
+    this.load.image('shield-sword', shieldSwordImg);
+    this.load.spritesheet('shield-sword-break', shieldSwordBreakImg, {
+      frameWidth: 290,
+      frameHeight: 287,
+    });
     this.load.spritesheet('player', playerImg, {
       frameWidth: 64,
       frameHeight: 64,
@@ -72,7 +79,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    if (!this.anims.exists('idle')) loadPlayerAnimations(this);
+if (!this.anims.exists('idle')) loadPlayerAnimations(this);
     const audioManagerService = container.resolve<AudioManagerService>(
       'audioManagerService',
     );

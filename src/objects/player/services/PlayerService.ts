@@ -36,6 +36,7 @@ export class PlayerService {
   private saveTimer: Phaser.Time.TimerEvent | null = null;
   private currentAnim: MoveState = '';
   private swingSound: Phaser.Sound.BaseSound | null = null;
+  private shieldActive = false;
 
   constructor(
     saveManagerService: SaveManagerService,
@@ -52,10 +53,16 @@ export class PlayerService {
     this.lastX = player.x;
     this.sessionStart = Date.now();
     this.basePlayTime = this.saveManagerService.get()?.slotInfo?.playTime ?? 0;
+    this.shieldActive = false;
+    this.player.resetShield();
     this.gameInputService.init(scene);
+    if (!(scene.game.canvas as any).__contextMenuBlocked) {
+      scene.game.canvas.addEventListener('contextmenu', e => e.preventDefault());
+      (scene.game.canvas as any).__contextMenuBlocked = true;
+    }
 
     if (this.swingSound) this.swingSound.destroy();
-    this.swingSound = scene.sound.add('sword-swing', { volume: 20 });
+    this.swingSound = scene.sound.add('sword-swing', { volume: 8 });
 
     if (this.saveTimer) this.saveTimer.remove();
     this.saveTimer = scene.time.addEvent({
@@ -92,6 +99,13 @@ export class PlayerService {
     // CODIGO PARA APAGAR DEPOIS
 
     scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (pointer.rightButtonDown() && !this.shieldActive) {
+        this.shieldActive = true;
+        this.player.activateShield(() => {
+          this.shieldActive = false;
+        });
+        return;
+      }
       if (!pointer.leftButtonDown() || this.attacking) return;
       if (!this.saveManagerService.get()?.weapons?.sword?.unlocked) return;
       const onGround = this.player.body!.blocked.down;
@@ -122,6 +136,7 @@ export class PlayerService {
   }
 
   update(): void {
+    this.player.syncShield();
     if (this.attacking) {
       this.player.setVelocityX(0);
       if (!this.player.body!.blocked.down) this.player.syncSwordSprite();

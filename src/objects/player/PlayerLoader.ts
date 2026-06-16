@@ -43,7 +43,7 @@ export function loadPlayerAnimations(scene: Phaser.Scene): void {
       start: 306,
       end: 311,
     }),
-    frameRate: 35,
+    frameRate: 18,
     repeat: 0,
   });
 }

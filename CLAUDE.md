@@ -352,6 +352,48 @@ Sempre usar `@utils/ButtonHelper` ao criar botões sobre `menu-item-bg`. Nunca e
 
 Volumes de sons são definidos diretamente no código (sem arquivo de constantes). Usar valores que façam sentido para a categoria: sons de UI em torno de 0.6, sons de hover suaves em torno de 0.1–0.2, sons de ambiente em torno de 0.5.
 
+## Escudo Mágico (Shield Sword)
+
+Mecânica planejada tipo Quen (The Witcher 3). Visual já implementado, mecânica aguarda inimigos.
+
+**Assets:**
+- `shield-sword` — esfera inteira, imagem única, `setDisplaySize(110, 110)`, `setAlpha(0.23)`
+- `shield-sword-break` — spritesheet de quebra, 3 frames, `frameWidth: 290`, `frameHeight: 287`, `setAlpha(0.45)`, 150ms por frame
+
+**Hitbox:**
+- Zone circular: `body.setCircle(45)`, sem gravidade
+- Ativa apenas durante os 2s da esfera principal — desativa antes das quebras
+- Posição padrão: -9999,-9999 (invisível no debug quando inativa)
+
+**Timing (valores finais):**
+- Esfera principal: 2000ms
+- Frames de quebra: 150ms cada (total ~450ms), puramente visuais sem hitbox
+
+**Mecânica planejada:**
+- Ativação: botão direito do mouse, qualquer momento com barra cheia e jogo não pausado
+- Quebra reseta o cooldown
+- Inimigo acerta escudo → escudo quebra + inimigo stunado brevemente
+- Player acerta enquanto escudo ativo → 1º hit é 100% crítico garantido + inimigo acorda
+- Som de vidro quebrando (a adicionar)
+
+**Cooldown:** a definir — por tempo fixo ou por ataques conectados.
+
+## Tabela de Interações de Hitbox
+
+Mapa de quais hitboxes interagem entre si. Atualizar sempre que uma nova hitbox for adicionada ou uma interação for implementada.
+
+| Hitbox | Interage com | Tipo | Status |
+|---|---|---|---|
+| `player body` | chão, chunks, paredes | collider | ✅ implementado |
+| `swordHitbox` | inimigos (body) | overlap | 🔲 aguarda inimigos |
+| `shieldHitbox` | projéteis inimigos, hitbox de ataque inimigo | overlap | 🔲 aguarda inimigos |
+| `enemy body` | chão, chunks, paredes | collider | 🔲 aguarda inimigos |
+| `enemy body` | player body | overlap | 🔲 aguarda inimigos |
+| `enemy attackHitbox` | player body | overlap | 🔲 aguarda inimigos |
+| `enemy attackHitbox` | shieldHitbox | overlap | 🔲 aguarda inimigos |
+
+**Regra:** nada interage a menos que um `collider` ou `overlap` seja registrado explicitamente. Não adicionar interações não mapeadas aqui.
+
 ## Sites Úteis
 
 - **remove.bg** — remover fundo de imagens (PNG transparente)

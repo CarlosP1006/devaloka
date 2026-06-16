@@ -3,6 +3,9 @@ import { Depth } from '@utils/Depth';
 export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   private swordSprite!: Phaser.GameObjects.Sprite;
   private swordHitbox!: Phaser.GameObjects.Zone;
+  private shieldSprite!: Phaser.GameObjects.Sprite;
+  private shieldHitbox!: Phaser.GameObjects.Zone;
+  private shieldOn = false;
 
   private static readonly HIT_W = 75;
   private static readonly HIT_H = 8;
@@ -26,6 +29,17 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     player.swordSprite.setScale(1.6);
     player.swordSprite.setDepth(Depth.PLAYER);
     player.swordSprite.setVisible(false);
+    player.shieldSprite = scene.add.sprite(x, y, 'shield-sword');
+    player.shieldSprite.setDisplaySize(110, 110);
+    player.shieldSprite.setDepth(Depth.PLAYER + 1);
+    player.shieldSprite.setAlpha(0.23);
+    player.shieldSprite.setVisible(false);
+    player.shieldHitbox = scene.add.zone(-9999, -9999, 90, 90);
+    scene.physics.add.existing(player.shieldHitbox);
+    const shb = player.shieldHitbox.body as Phaser.Physics.Arcade.Body;
+    shb.setAllowGravity(false);
+    shb.setCircle(45);
+    shb.enable = false;
     player.swordHitbox = scene.add.zone(
       -9999,
       -9999,
@@ -37,6 +51,62 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     hb.setAllowGravity(false);
     hb.enable = false;
     return player;
+  }
+
+  public activateShield(onDone: () => void): void {
+    const show = (key: string, frame?: number, alpha = 0.23) => {
+      this.shieldSprite.setTexture(key, frame);
+      this.shieldSprite.setDisplaySize(110, 110);
+      this.shieldSprite.setAlpha(alpha);
+      this.shieldSprite.setVisible(true);
+    };
+    show('shield-sword');
+    this.shieldOn = true;
+    (this.shieldHitbox.body as Phaser.Physics.Arcade.Body).enable = true;
+    this.scene.time.delayedCall(2000, () => {
+      this.shieldOn = false;
+      (this.shieldHitbox.body as Phaser.Physics.Arcade.Body).enable = false;
+      this.shieldHitbox.setPosition(-9999, -9999);
+      (this.shieldHitbox.body as Phaser.Physics.Arcade.Body).reset(-9999, -9999);
+      const breakFrames = [0, 1, 2];
+      let i = 0;
+      const nextBreak = () => {
+        if (i >= breakFrames.length) {
+          this.shieldSprite.setVisible(false);
+          this.shieldSprite.setTexture('shield-sword');
+          this.shieldSprite.setDisplaySize(110, 110);
+          onDone();
+          return;
+        }
+        show('shield-sword-break', breakFrames[i], 0.45);
+        i++;
+        this.scene.time.delayedCall(150, nextBreak);
+      };
+      nextBreak();
+    });
+  }
+
+  public resetShield(): void {
+    this.shieldOn = false;
+    this.shieldSprite.setVisible(false);
+    this.shieldSprite.setTexture('shield-sword');
+    this.shieldSprite.setDisplaySize(110, 110);
+    const shb = this.shieldHitbox.body as Phaser.Physics.Arcade.Body;
+    shb.enable = false;
+    shb.reset(-9999, -9999);
+    this.shieldHitbox.setPosition(-9999, -9999);
+  }
+
+  public syncShield(): void {
+    this.shieldSprite.setPosition(this.x, this.y);
+    if (!this.shieldOn) return;
+    const shb = this.shieldHitbox.body as Phaser.Physics.Arcade.Body;
+    this.shieldHitbox.setPosition(this.x, this.y);
+    shb.reset(this.x, this.y);
+  }
+
+  public getShieldHitbox(): Phaser.GameObjects.Zone {
+    return this.shieldHitbox;
   }
 
   public syncSwordSprite(): void {

@@ -16,6 +16,7 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   private static readonly HIT_H = 8;
   private static readonly HIT_OFFSET_X = 57;
   private static readonly HIT_OFFSET_Y = -3;
+  private static readonly SHIELD_SIZE = 110;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
@@ -35,7 +36,10 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     player.swordSprite.setDepth(Depth.PLAYER);
     player.swordSprite.setVisible(false);
     player.shieldSprite = scene.add.sprite(x, y, 'shield-sword');
-    player.shieldSprite.setDisplaySize(110, 110);
+    player.shieldSprite.setDisplaySize(
+      PlayerObject.SHIELD_SIZE,
+      PlayerObject.SHIELD_SIZE,
+    );
     player.shieldSprite.setDepth(Depth.PLAYER + 1);
     player.shieldSprite.setAlpha(0.23);
     player.shieldSprite.setVisible(false);
@@ -61,7 +65,10 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   public activateShield(onDone: () => void): void {
     const show = (key: string, frame?: number, alpha = 0.23) => {
       this.shieldSprite.setTexture(key, frame);
-      this.shieldSprite.setDisplaySize(110, 110);
+      this.shieldSprite.setDisplaySize(
+        PlayerObject.SHIELD_SIZE,
+        PlayerObject.SHIELD_SIZE,
+      );
       this.shieldSprite.setAlpha(alpha);
       this.shieldSprite.setVisible(true);
     };
@@ -72,14 +79,20 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
       this.shieldOn = false;
       (this.shieldHitbox.body as Phaser.Physics.Arcade.Body).enable = false;
       this.shieldHitbox.setPosition(-9999, -9999);
-      (this.shieldHitbox.body as Phaser.Physics.Arcade.Body).reset(-9999, -9999);
+      (this.shieldHitbox.body as Phaser.Physics.Arcade.Body).reset(
+        -9999,
+        -9999,
+      );
       const breakFrames = [0, 1, 2];
       let i = 0;
       const nextBreak = () => {
         if (i >= breakFrames.length) {
           this.shieldSprite.setVisible(false);
           this.shieldSprite.setTexture('shield-sword');
-          this.shieldSprite.setDisplaySize(110, 110);
+          this.shieldSprite.setDisplaySize(
+            PlayerObject.SHIELD_SIZE,
+            PlayerObject.SHIELD_SIZE,
+          );
           onDone();
           return;
         }
@@ -163,8 +176,14 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     if (this.previewing) return;
     this.previewing = true;
     const groups = [
-      { name: 'shoot_left',  frames: [13,14,15,16,17,18,19,20,21,22,23,24,25] },
-      { name: 'shoot_right', frames: [39,40,41,42,43,44,45,46,47,48,49,50,51] },
+      {
+        name: 'shoot_left',
+        frames: [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
+      },
+      {
+        name: 'shoot_right',
+        frames: [39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51],
+      },
     ];
     const all: { frame: number; label: string }[] = [];
     groups.forEach(g =>
@@ -206,7 +225,10 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     this.shieldOn = false;
     this.shieldSprite.setVisible(false);
     this.shieldSprite.setTexture('shield-sword');
-    this.shieldSprite.setDisplaySize(110, 110);
+    this.shieldSprite.setDisplaySize(
+      PlayerObject.SHIELD_SIZE,
+      PlayerObject.SHIELD_SIZE,
+    );
     const shb = this.shieldHitbox.body as Phaser.Physics.Arcade.Body;
     shb.enable = false;
     shb.reset(-9999, -9999);
@@ -214,7 +236,9 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   public syncShield(): void {
-    this.shieldSprite.setPosition(this.x, this.y);
+    if (this.shieldSprite.visible) {
+      this.shieldSprite.setPosition(this.x, this.y);
+    }
     if (!this.shieldOn) return;
     const shb = this.shieldHitbox.body as Phaser.Physics.Arcade.Body;
     this.shieldHitbox.setPosition(this.x, this.y);

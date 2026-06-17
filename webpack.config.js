@@ -10,7 +10,9 @@ const htmlPluginCfg = new htmlPlugin({
 });
 
 const copyPluginCfg = new copyPlugin({
-  patterns: [{ from: 'maps/*.json', to: 'maps/[name].json', noErrorOnMissing: true }],
+  patterns: [
+    { from: 'maps/*.json', to: 'maps/[name].json', noErrorOnMissing: true },
+  ],
 });
 
 const tsconfigPathsPluginCfg = new TsconfigPathsPlugin();
@@ -58,9 +60,7 @@ module.exports = (_env, argv) => ({
     },
   },
   stats: 'errors-warnings',
-  ignoreWarnings: [
-    { module: /awilix/, message: /Critical dependency/ },
-  ],
+  ignoreWarnings: [{ module: /awilix/, message: /Critical dependency/ }],
   resolve: {
     extensions: ['.ts', '.js'],
     plugins: [tsconfigPathsPluginCfg],

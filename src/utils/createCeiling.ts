@@ -1,5 +1,10 @@
 import { Depth } from '@utils/Depth';
-import { getTileSize, TILE_SRC_W, TILE_SRC_H } from '@utils/createGroundChunk';
+import {
+  getTileSize,
+  TILE_SRC_W,
+  TILE_SRC_H,
+  MAP_WIDTH,
+} from '@utils/createGroundChunk';
 
 export function createCeiling(
   scene: Phaser.Scene,
@@ -9,7 +14,6 @@ export function createCeiling(
   group: Phaser.Physics.Arcade.StaticGroup;
   images: Phaser.GameObjects.Image[];
 } {
-  const mapWidth = 2560;
   const { tileH, tileW } = getTileSize(scene);
   const tex = scene.textures.get(surfaceKey);
   if (!tex.has('ceiling-tile')) {
@@ -32,7 +36,7 @@ export function createCeiling(
 
   let index = 0;
   let spanStart: number | null = null;
-  for (let x = tileW / 2; x < mapWidth + tileW; x += tileW) {
+  for (let x = tileW / 2; x < MAP_WIDTH + tileW; x += tileW) {
     const present = !removeSet.has(index);
     if (present) {
       images.push(

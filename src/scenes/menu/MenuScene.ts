@@ -84,7 +84,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
-if (!this.anims.exists('idle')) loadPlayerAnimations(this);
+    if (!this.anims.exists('idle')) loadPlayerAnimations(this);
     const audioManagerService = container.resolve<AudioManagerService>(
       'audioManagerService',
     );

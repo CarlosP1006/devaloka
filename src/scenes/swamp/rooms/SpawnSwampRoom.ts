@@ -4,7 +4,11 @@ import { PlayerCamera } from '@objects/player/utils/PlayerCamera';
 import { PlayerService } from '@objects/player/services/PlayerService';
 import { SaveManagerService } from '@services/SaveManagerService';
 import { createGround } from '@utils/createGround';
-import { createGroundChunk, getTileSize } from '@utils/createGroundChunk';
+import {
+  createGroundChunk,
+  getTileSize,
+  MAP_WIDTH,
+} from '@utils/createGroundChunk';
 import { createTransitionLine } from '@utils/createTransitionLine';
 import { Depth } from '@utils/Depth';
 
@@ -16,7 +20,6 @@ export class SpawnSwampRoom extends Phaser.Scene {
   }
 
   create(data: { spawnX?: number; spawnY?: number }): void {
-    const mapWidth = 2560;
     const { groundTop, tileH } = getTileSize(this);
     const { group: groundGroup } = createGround(
       this,
@@ -25,8 +28,8 @@ export class SpawnSwampRoom extends Phaser.Scene {
     );
 
     this.add
-      .image(mapWidth / 2, (groundTop + tileH) / 2, 'spawn-swamp-background')
-      .setDisplaySize(mapWidth, groundTop + tileH)
+      .image(MAP_WIDTH / 2, (groundTop + tileH) / 2, 'spawn-swamp-background')
+      .setDisplaySize(MAP_WIDTH, groundTop + tileH)
       .setDepth(Depth.FAR_BACKGROUND)
       .setAlpha(0.6);
 
@@ -164,9 +167,10 @@ export class SpawnSwampRoom extends Phaser.Scene {
       : groundTop - 60;
     const spawnY = data?.spawnY ?? savedY;
     const player = PlayerObject.create(this, spawnX, spawnY);
-    this.physics.add.collider(player, [
+    const collidables = [
       groundGroup,
       stoneRuneGroup,
+      chunk7,
       chunk10,
       chunk13,
       chunk14,
@@ -174,11 +178,11 @@ export class SpawnSwampRoom extends Phaser.Scene {
       chunk16,
       chunk17,
       chunk18,
-      chunk7,
-    ]);
+    ];
+    this.physics.add.collider(player, collidables);
     createTransitionLine(
       this,
-      mapWidth,
+      MAP_WIDTH,
       groundTop / 2,
       1,
       groundTop,
@@ -186,21 +190,10 @@ export class SpawnSwampRoom extends Phaser.Scene {
       'spawn-swamp-room-door-1',
     );
 
-    PlayerCamera.setup(this, player, mapWidth);
+    PlayerCamera.setup(this, player, MAP_WIDTH);
     this.playerService = container.resolve<PlayerService>('playerService');
     this.playerService.init(player, this, 'swamp');
-    this.playerService.registerSlingColliders([
-      groundGroup,
-      stoneRuneGroup,
-      chunk7,
-      chunk10,
-      chunk13,
-      chunk14,
-      chunk15,
-      chunk16,
-      chunk17,
-      chunk18,
-    ]);
+    this.playerService.registerSlingColliders(collidables);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       owlTimer.remove();

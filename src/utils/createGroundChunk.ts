@@ -4,6 +4,7 @@ export const TILE_SRC_W = 2322;
 export const TILE_SRC_H = 739;
 export const TOTAL_TILES_VERTICAL = 14;
 export const LOGICAL_HEIGHT = 720;
+export const MAP_WIDTH = 2560;
 
 export function getTileSize(_scene: Phaser.Scene): {
   tileH: number;

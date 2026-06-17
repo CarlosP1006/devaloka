@@ -45,10 +45,12 @@ export class PlayerService {
   private shieldActive = false;
   private slingActive = false;
   private slingFiring = false;
+  private slingUnlocked = false;
   private slingGraphics: Phaser.GameObjects.Graphics | null = null;
   private slingGroup: Phaser.Physics.Arcade.Group | null = null;
   private slingBarGfx: Phaser.GameObjects.Graphics | null = null;
   private slingLastShot = 0;
+  private readonly _wp = new Phaser.Math.Vector2();
 
   constructor(
     saveManagerService: SaveManagerService,
@@ -93,10 +95,9 @@ export class PlayerService {
     }
     this.slingLastShot =
       this.saveManagerService.get()?.weapons?.sling?.lastShot ?? 0;
-    this.slingBarGfx = scene.add
-      .graphics()
-      .setDepth(Depth.CONFIG)
-      .setScrollFactor(0);
+    this.slingUnlocked =
+      this.saveManagerService.get()?.weapons?.sling?.unlocked ?? true;
+    this.slingBarGfx = scene.add.graphics().setDepth(Depth.CONFIG);
 
     this.gameInputService.init(scene);
     if (!blockedCanvases.has(scene.game.canvas)) {
@@ -120,7 +121,7 @@ export class PlayerService {
     }
 
     if (this.swingSound) this.swingSound.destroy();
-    this.swingSound = scene.sound.add('sword-swing', { volume: 8 });
+    this.swingSound = scene.sound.add('sword-swing', { volume: 1 });
 
     if (this.saveTimer) this.saveTimer.remove();
     this.saveTimer = scene.time.addEvent({
@@ -187,11 +188,12 @@ export class PlayerService {
     });
 
     scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      const save = this.saveManagerService.get();
       if (
         pointer.rightButtonDown() &&
         !this.shieldActive &&
         !this.slingActive &&
-        this.saveManagerService.get()?.weapons?.shield?.unlocked
+        save?.weapons?.shield?.unlocked
       ) {
         this.shieldActive = true;
         this.player.activateShield(() => {
@@ -201,11 +203,10 @@ export class PlayerService {
       }
       if (!pointer.leftButtonDown()) return;
       if (this.slingActive) {
-        const unlocked =
-          this.saveManagerService.get()?.weapons?.sling?.unlocked ?? true;
-        if (!unlocked) return;
+        if (!(save?.weapons?.sling?.unlocked ?? true)) return;
         if (Date.now() - this.slingLastShot < SLING_COOLDOWN) return;
-        const wp = this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y);
+        this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y, this._wp);
+        const wp = this._wp;
         const facingRight = this.player.isSlingRight;
         const tipX = this.player.x + (facingRight ? 22 : -22);
         const tipY = this.player.y - 14;
@@ -222,7 +223,7 @@ export class PlayerService {
           body.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
         }
         this.slingLastShot = Date.now();
-        const sling = this.saveManagerService.get()?.weapons?.sling;
+        const sling = save?.weapons?.sling;
         this.saveManagerService.save({
           weapons: {
             sling: {
@@ -248,7 +249,7 @@ export class PlayerService {
         return;
       }
       if (this.attacking) return;
-      if (!this.saveManagerService.get()?.weapons?.sword?.unlocked) return;
+      if (!save?.weapons?.sword?.unlocked) return;
       const onGround = this.player.body!.blocked.down;
       if (!onGround && this.hasAttackedInAir) return;
       this.attacking = true;
@@ -302,20 +303,23 @@ export class PlayerService {
 
   update(): void {
     this.player.syncShield();
-    this.slingGroup?.getChildren().forEach(c => {
-      const s = c as Phaser.Physics.Arcade.Sprite;
-      if (!s.active) return;
-      if (s.x < -50 || s.x > 2610 || s.y < -100 || s.y > 820) {
-        this.slingGroup!.killAndHide(s);
-        const b = s.body as Phaser.Physics.Arcade.Body;
-        b.stop();
-        b.enable = false;
-      }
-    });
-    if (this.slingBarGfx && this.saveManagerService.get()?.weapons?.sling?.unlocked) {
-      const zoom = this.scene.cameras.main.zoom || 1;
-      const bx = -80 / zoom;
-      const by = -20 / zoom;
+    if (this.slingGroup && this.slingGroup.countActive(true) > 0) {
+      this.slingGroup.getChildren().forEach(c => {
+        const s = c as Phaser.Physics.Arcade.Sprite;
+        if (!s.active) return;
+        if (s.x < -50 || s.x > 2610 || s.y < -100 || s.y > 820) {
+          this.slingGroup!.killAndHide(s);
+          const b = s.body as Phaser.Physics.Arcade.Body;
+          b.stop();
+          b.enable = false;
+        }
+      });
+    }
+    if (this.slingBarGfx && this.slingUnlocked) {
+      const cam = this.scene.cameras.main;
+      const zoom = cam.zoom || 1;
+      const bx = cam.scrollX + 5 / zoom;
+      const by = cam.scrollY + 5 / zoom;
       const fill = Math.min(
         (Date.now() - this.slingLastShot) / SLING_COOLDOWN,
         1,
@@ -334,9 +338,9 @@ export class PlayerService {
     if (this.slingActive) {
       this.player.setVelocityX(0);
       const pointer = this.scene.input.activePointer;
-      const wp = this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y);
-      const wx = wp.x;
-      const wy = wp.y;
+      this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y, this._wp);
+      const wx = this._wp.x;
+      const wy = this._wp.y;
       this.player.changeSlingDirection(wx > this.player.x);
       if (this.slingGraphics) {
         const facingRight = this.player.isSlingRight;

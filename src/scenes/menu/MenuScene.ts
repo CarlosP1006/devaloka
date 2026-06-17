@@ -84,6 +84,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.scene.stop('HUDScene');
     if (!this.anims.exists('idle')) loadPlayerAnimations(this);
     const audioManagerService = container.resolve<AudioManagerService>(
       'audioManagerService',

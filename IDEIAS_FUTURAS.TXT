@@ -231,7 +231,12 @@
 [x] Bug corrigido — player não fica invisível durante ataque (swordSprite 128px cobre visualmente o sprite base)
 [x] Bug corrigido — pedra do estilingue grudava após colisão (killAndHide não desativa body) — body.enable=false + body.stop() no collider e no bounds cleanup
 [x] Bug corrigido — deep merge no SaveManagerService — weapons.sword não era apagado ao salvar weapons.sling (shallow spread virava overwrite do objeto inteiro)
-[x] Barra de cooldown do estilingue — amarela, canto superior esquerdo, 15 segundos, persiste no localStorage, setScrollFactor(0) com coords -80/zoom,-20/zoom
+[x] Barra de cooldown do estilingue migrada para HUDScene dedicada — câmera própria (zoom=1, sem scroll), pixels de tela direto, posição consistente em qualquer tela/room
+[x] ShieldTypes criado — unlocked: boolean separado de SwordTypes, WeaponTypes atualizado
+[x] Baú da ForestSwampRoom desbloqueia espada e escudo juntos — save: weapons.sword.unlocked + weapons.shield.unlocked
+[x] Descrição do baú atualizada — "Cimitarra Protetora", menciona botão direito para escudo
+[x] SwordTypes simplificado — apenas unlocked: boolean (damage removido)
+[x] MAP_WIDTH exportado de createGroundChunk.ts — SpawnSwampRoom, createGround e createCeiling importam dele
 
 --------------------------------------------------
 ## IDEIAS FUTURAS

@@ -2,7 +2,6 @@ import { PlayerObject } from '@objects/player/controller/PlayerObject';
 import { SaveManagerService } from '@services/SaveManagerService';
 import { GameInputService } from '@services/GameInputService';
 import { getTileSize } from '@utils/createGroundChunk';
-import { Depth } from '@utils/Depth';
 // CODIGO PARA APAGAR DEPOIS
 import { DEV_PRINT_SAVE } from '@utils/DEV_PRINT_SAVE';
 // CODIGO PARA APAGAR DEPOIS
@@ -12,8 +11,6 @@ const blockedCanvases = new WeakSet<HTMLCanvasElement>();
 const STEP_INTERVAL = 80;
 const SAVE_INTERVAL = 1500;
 const SLING_COOLDOWN = 15000;
-const SLING_BAR_W = 150;
-const SLING_BAR_H = 10;
 
 type MoveState =
   | ''
@@ -48,7 +45,6 @@ export class PlayerService {
   private slingUnlocked = false;
   private slingGraphics: Phaser.GameObjects.Graphics | null = null;
   private slingGroup: Phaser.Physics.Arcade.Group | null = null;
-  private slingBarGfx: Phaser.GameObjects.Graphics | null = null;
   private slingLastShot = 0;
   private readonly _wp = new Phaser.Math.Vector2();
 
@@ -89,15 +85,13 @@ export class PlayerService {
       maxSize: 5,
     });
 
-    if (this.slingBarGfx) {
-      this.slingBarGfx.destroy();
-      this.slingBarGfx = null;
-    }
     this.slingLastShot =
       this.saveManagerService.get()?.weapons?.sling?.lastShot ?? 0;
     this.slingUnlocked =
       this.saveManagerService.get()?.weapons?.sling?.unlocked ?? true;
-    this.slingBarGfx = scene.add.graphics().setDepth(Depth.CONFIG);
+    if (!scene.scene.isActive('HUDScene')) {
+      scene.scene.launch('HUDScene');
+    }
 
     this.gameInputService.init(scene);
     if (!blockedCanvases.has(scene.game.canvas)) {
@@ -279,6 +273,14 @@ export class PlayerService {
     );
   }
 
+  isSlingBarVisible(): boolean {
+    return this.slingUnlocked;
+  }
+
+  getSlingBarFill(): number {
+    return Math.min((Date.now() - this.slingLastShot) / SLING_COOLDOWN, 1);
+  }
+
   getSwingSound(): Phaser.Sound.BaseSound | null {
     return this.swingSound;
   }
@@ -314,21 +316,6 @@ export class PlayerService {
           b.enable = false;
         }
       });
-    }
-    if (this.slingBarGfx && this.slingUnlocked) {
-      const cam = this.scene.cameras.main;
-      const zoom = cam.zoom || 1;
-      const bx = cam.scrollX + 5 / zoom;
-      const by = cam.scrollY + 5 / zoom;
-      const fill = Math.min(
-        (Date.now() - this.slingLastShot) / SLING_COOLDOWN,
-        1,
-      );
-      this.slingBarGfx.clear();
-      this.slingBarGfx.fillStyle(0x333333, 1);
-      this.slingBarGfx.fillRect(bx, by, SLING_BAR_W, SLING_BAR_H);
-      this.slingBarGfx.fillStyle(0xffdd00, 1);
-      this.slingBarGfx.fillRect(bx, by, SLING_BAR_W * fill, SLING_BAR_H);
     }
     if (this.player.isPreviewing) return;
     if (this.slingFiring) {

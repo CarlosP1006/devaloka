@@ -2,6 +2,29 @@ import { GameSaveTypes } from '../types/GameSaveTypes';
 import { SaveSlotKey } from '../types/declarations/SaveSlotKey';
 import { GlobalSaveService } from '@services/GlobalSaveService';
 
+function deepMerge<T extends object>(base: T, patch: Partial<T>): T {
+  const result = { ...base } as T;
+  (Object.keys(patch) as Array<keyof T>).forEach(k => {
+    const pv = patch[k];
+    const bv = base[k];
+    if (
+      pv !== null &&
+      pv !== undefined &&
+      typeof pv === 'object' &&
+      !Array.isArray(pv) &&
+      bv !== null &&
+      bv !== undefined &&
+      typeof bv === 'object' &&
+      !Array.isArray(bv)
+    ) {
+      (result as any)[k] = deepMerge(bv as object, pv as object);
+    } else if (pv !== undefined) {
+      (result as any)[k] = pv;
+    }
+  });
+  return result;
+}
+
 export class SaveManagerService {
   private globalSaveService: GlobalSaveService;
   private current: GameSaveTypes | null = null;
@@ -44,7 +67,7 @@ export class SaveManagerService {
   save(patch: Partial<GameSaveTypes>): void {
     const key = this.getKey();
     if (!key) return;
-    this.current = { ...(this.current ?? {}), ...patch };
+    this.current = deepMerge(this.current ?? ({} as GameSaveTypes), patch);
     localStorage.setItem(key, JSON.stringify(this.current));
   }
 

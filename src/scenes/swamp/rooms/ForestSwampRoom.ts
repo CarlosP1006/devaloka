@@ -144,7 +144,7 @@ export class ForestSwampRoom extends Phaser.Scene {
           itemScaleX: 0.2,
           itemScaleY: 0.2,
           description:
-            'Você encontrou a Cimitarra! Pressione o botão esquerdo do mouse para atacar seus inimigos',
+            'Você encontrou a Cimitarra Protetora! Ataque com o botão esquerdo e invoque um escudo mágico com o direito.',
           onClose: () => {
             saveManagerService.save({
               sceneMods: {
@@ -152,7 +152,10 @@ export class ForestSwampRoom extends Phaser.Scene {
                   forestRoom: { chestSwordTaken: true, thornDoorOpen: true },
                 },
               },
-              weapons: { sword: { unlocked: true, damage: 10 } },
+              weapons: {
+                sword: { unlocked: true },
+                shield: { unlocked: true },
+              },
             });
             chestImg.setTexture('chest-swamp-open');
             chestImg.setY(chestOpenY);

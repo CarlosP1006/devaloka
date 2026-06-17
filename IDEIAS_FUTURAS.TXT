@@ -229,6 +229,9 @@
 [x] Bug corrigido — escudo não bloqueava mais o CTRL do estilingue
 [x] Bug corrigido — ataque com swordSprite não cria caixa de colisão enorme (setTexture no player causava resize do body) — mantido swordSprite separado
 [x] Bug corrigido — player não fica invisível durante ataque (swordSprite 128px cobre visualmente o sprite base)
+[x] Bug corrigido — pedra do estilingue grudava após colisão (killAndHide não desativa body) — body.enable=false + body.stop() no collider e no bounds cleanup
+[x] Bug corrigido — deep merge no SaveManagerService — weapons.sword não era apagado ao salvar weapons.sling (shallow spread virava overwrite do objeto inteiro)
+[x] Barra de cooldown do estilingue — amarela, canto superior esquerdo, 15 segundos, persiste no localStorage, setScrollFactor(0) com coords -80/zoom,-20/zoom
 
 --------------------------------------------------
 ## IDEIAS FUTURAS
@@ -236,14 +239,20 @@
 - Decoração da SwampRoom — mais props, árvores, detalhes
 - Sons de combate — pra quando implementar o combate
 
-- Estilingue — cooldown fixo pra disparar (resolve bug de sumir ao spammar CTRL+click)
 - Estilingue — projétil visual e mecânica de dano (aguarda inimigos)
 
 - PRIORIDADE (amanhã, nessa ordem):
-  1. Placas de tutorial — SpawnSwampRoom (mecânica a definir)
-  2. Enfeitar SpawnSwampRoom — revisar se falta algo
-  3. Enfeitar ForestSwampRoom — props, árvores, atmosfera
-  4. Inimigos e sistema de combate:
+  1. Sons e partículas:
+     - Som de ativar escudo
+     - Som de quebra do escudo
+     - Som de puxar a corda do estilingue (ao equipar/mirar)
+     - Som de tiro do estilingue
+     - Som de colisão da pedra
+     - Partículas de colisão da pedra
+  2. Placas de tutorial — SpawnSwampRoom (mecânica a definir)
+  3. Enfeitar SpawnSwampRoom — revisar se falta algo
+  4. Enfeitar ForestSwampRoom — props, árvores, atmosfera
+  5. Inimigos e sistema de combate:
      - Criar inimigos — sprite, caixa de colisão, HP
      - Vincular swordHitbox com inimigos via physics.add.overlap
      - Sistema de HP do player

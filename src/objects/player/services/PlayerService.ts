@@ -2,6 +2,7 @@ import { PlayerObject } from '@objects/player/controller/PlayerObject';
 import { SaveManagerService } from '@services/SaveManagerService';
 import { GameInputService } from '@services/GameInputService';
 import { getTileSize } from '@utils/createGroundChunk';
+import { Depth } from '@utils/Depth';
 // CODIGO PARA APAGAR DEPOIS
 import { DEV_PRINT_SAVE } from '@utils/DEV_PRINT_SAVE';
 // CODIGO PARA APAGAR DEPOIS
@@ -10,6 +11,9 @@ const blockedCanvases = new WeakSet<HTMLCanvasElement>();
 
 const STEP_INTERVAL = 80;
 const SAVE_INTERVAL = 1500;
+const SLING_COOLDOWN = 15000;
+const SLING_BAR_W = 150;
+const SLING_BAR_H = 10;
 
 type MoveState =
   | ''
@@ -43,6 +47,8 @@ export class PlayerService {
   private slingFiring = false;
   private slingGraphics: Phaser.GameObjects.Graphics | null = null;
   private slingGroup: Phaser.Physics.Arcade.Group | null = null;
+  private slingBarGfx: Phaser.GameObjects.Graphics | null = null;
+  private slingLastShot = 0;
 
   constructor(
     saveManagerService: SaveManagerService,
@@ -80,6 +86,18 @@ export class PlayerService {
       defaultKey: 'sling-stone',
       maxSize: 5,
     });
+
+    if (this.slingBarGfx) {
+      this.slingBarGfx.destroy();
+      this.slingBarGfx = null;
+    }
+    this.slingLastShot =
+      this.saveManagerService.get()?.weapons?.sling?.lastShot ?? 0;
+    this.slingBarGfx = scene.add
+      .graphics()
+      .setDepth(Depth.CONFIG)
+      .setScrollFactor(0);
+
     this.gameInputService.init(scene);
     if (!blockedCanvases.has(scene.game.canvas)) {
       scene.game.canvas.addEventListener('contextmenu', e =>
@@ -172,7 +190,8 @@ export class PlayerService {
       if (
         pointer.rightButtonDown() &&
         !this.shieldActive &&
-        !this.slingActive
+        !this.slingActive &&
+        this.saveManagerService.get()?.weapons?.shield?.unlocked
       ) {
         this.shieldActive = true;
         this.player.activateShield(() => {
@@ -185,6 +204,7 @@ export class PlayerService {
         const unlocked =
           this.saveManagerService.get()?.weapons?.sling?.unlocked ?? true;
         if (!unlocked) return;
+        if (Date.now() - this.slingLastShot < SLING_COOLDOWN) return;
         const wp = this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y);
         const facingRight = this.player.isSlingRight;
         const tipX = this.player.x + (facingRight ? 22 : -22);
@@ -201,6 +221,17 @@ export class PlayerService {
           body.setAllowGravity(false);
           body.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
         }
+        this.slingLastShot = Date.now();
+        const sling = this.saveManagerService.get()?.weapons?.sling;
+        this.saveManagerService.save({
+          weapons: {
+            sling: {
+              unlocked: sling?.unlocked ?? true,
+              damage: sling?.damage ?? 0,
+              lastShot: this.slingLastShot,
+            },
+          },
+        });
         this.slingActive = false;
         this.slingFiring = true;
         this.currentAnim = '';
@@ -281,6 +312,20 @@ export class PlayerService {
         b.enable = false;
       }
     });
+    if (this.slingBarGfx && this.saveManagerService.get()?.weapons?.sling?.unlocked) {
+      const zoom = this.scene.cameras.main.zoom || 1;
+      const bx = -80 / zoom;
+      const by = -20 / zoom;
+      const fill = Math.min(
+        (Date.now() - this.slingLastShot) / SLING_COOLDOWN,
+        1,
+      );
+      this.slingBarGfx.clear();
+      this.slingBarGfx.fillStyle(0x333333, 1);
+      this.slingBarGfx.fillRect(bx, by, SLING_BAR_W, SLING_BAR_H);
+      this.slingBarGfx.fillStyle(0xffdd00, 1);
+      this.slingBarGfx.fillRect(bx, by, SLING_BAR_W * fill, SLING_BAR_H);
+    }
     if (this.player.isPreviewing) return;
     if (this.slingFiring) {
       this.player.setVelocityX(0);

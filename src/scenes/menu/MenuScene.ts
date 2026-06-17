@@ -21,6 +21,7 @@ import shieldSwordImg from '@assets/player/images/shield-sword.png';
 import shieldSwordBreakImg from '@assets/player/images/shield-sword-break.png';
 import playerImg from '@assets/player/images/player.png';
 import playerSwordImg from '@assets/player/images/player-sword.png';
+import playerSlingImg from '@assets/player/images/player-sling.png';
 import itemFrame from '@assets/player/images/item-frame.png';
 import swordIcon from '@assets/player/images/sword-icon.png';
 import playerJump from '@assets/player/audio/player-jump.ogg';
@@ -61,6 +62,10 @@ export class MenuScene extends Phaser.Scene {
       frameHeight: 287,
     });
     this.load.spritesheet('player', playerImg, {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
+    this.load.spritesheet('player-sling', playerSlingImg, {
       frameWidth: 64,
       frameHeight: 64,
     });

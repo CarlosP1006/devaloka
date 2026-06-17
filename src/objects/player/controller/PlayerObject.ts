@@ -1,4 +1,5 @@
 import { Depth } from '@utils/Depth';
+import { LPC_SLING } from '@objects/player/utils/PlayerSlingAnimations';
 
 export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   private swordSprite!: Phaser.GameObjects.Sprite;
@@ -6,6 +7,10 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   private shieldSprite!: Phaser.GameObjects.Sprite;
   private shieldHitbox!: Phaser.GameObjects.Zone;
   private shieldOn = false;
+  private previewing = false;
+  private slinging = false;
+  private slingRight = true;
+  private slingAimVersion = 0;
 
   private static readonly HIT_W = 75;
   private static readonly HIT_H = 8;
@@ -86,6 +91,117 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
+  get isPreviewing(): boolean {
+    return this.previewing;
+  }
+
+  get isSlinging(): boolean {
+    return this.slinging;
+  }
+
+  get isSlingRight(): boolean {
+    return this.slingRight;
+  }
+
+  public equipSling(facingRight: boolean): void {
+    if (this.slinging) return;
+    this.slinging = true;
+    this.slingRight = facingRight;
+    this.anims.stop();
+    this.setTexture('player-sling');
+    this.setFlipX(false);
+    this.slingAimVersion++;
+    const version = this.slingAimVersion;
+    const aimFrames = facingRight
+      ? LPC_SLING.shoot_right.aim
+      : LPC_SLING.shoot_left.aim;
+    let i = 0;
+    const step = () => {
+      if (!this.slinging || this.slingAimVersion !== version) return;
+      this.setFrame(aimFrames[i]);
+      i++;
+      if (i < aimFrames.length) this.scene.time.delayedCall(50, step);
+    };
+    step();
+  }
+
+  public changeSlingDirection(facingRight: boolean): void {
+    if (!this.slinging || this.slingRight === facingRight) return;
+    this.slingRight = facingRight;
+    this.slingAimVersion++;
+    this.setFlipX(false);
+    const aimFrames = facingRight
+      ? LPC_SLING.shoot_right.aim
+      : LPC_SLING.shoot_left.aim;
+    this.setFrame(aimFrames[aimFrames.length - 1]);
+  }
+
+  public shootSling(onDone: () => void): void {
+    const releaseFrames = this.slingRight
+      ? LPC_SLING.shoot_right.release
+      : LPC_SLING.shoot_left.release;
+    let i = 0;
+    const step = () => {
+      this.setFrame(releaseFrames[i]);
+      i++;
+      if (i < releaseFrames.length) {
+        this.scene.time.delayedCall(80, step);
+      } else {
+        onDone();
+      }
+    };
+    step();
+  }
+
+  public unequipSling(): void {
+    this.slinging = false;
+    this.slingAimVersion++;
+    this.setTexture('player');
+  }
+
+  public previewSlingAnims(onDone: () => void): void {
+    if (this.previewing) return;
+    this.previewing = true;
+    const groups = [
+      { name: 'shoot_left',  frames: [13,14,15,16,17,18,19,20,21,22,23,24,25] },
+      { name: 'shoot_right', frames: [39,40,41,42,43,44,45,46,47,48,49,50,51] },
+    ];
+    const all: { frame: number; label: string }[] = [];
+    groups.forEach(g =>
+      g.frames.forEach((f, i) =>
+        all.push({ frame: f, label: `${g.name}  ${i + 1}/${g.frames.length}` }),
+      ),
+    );
+
+    this.anims.stop();
+    this.setTexture('player-sling');
+    const label = this.scene.add
+      .text(this.x, this.y - 80, '', {
+        fontSize: '14px',
+        color: '#ffffff',
+        backgroundColor: '#000000',
+        padding: { x: 6, y: 4 },
+      })
+      .setDepth(200)
+      .setOrigin(0.5);
+
+    let i = 0;
+    const next = () => {
+      if (i >= all.length) {
+        this.previewing = false;
+        this.setTexture('player');
+        label.destroy();
+        onDone();
+        return;
+      }
+      this.setFrame(all[i].frame);
+      label.setText(all[i].label);
+      i++;
+      this.scene.time.delayedCall(1000, next);
+    };
+    next();
+  }
+
   public resetShield(): void {
     this.shieldOn = false;
     this.shieldSprite.setVisible(false);
@@ -147,7 +263,7 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   public jump(): void {
-    this.setVelocityY(-780);
+    this.setVelocityY(-810);
     this.anims.play('jump', true);
   }
 

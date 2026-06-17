@@ -189,6 +189,18 @@ export class SpawnSwampRoom extends Phaser.Scene {
     PlayerCamera.setup(this, player, mapWidth);
     this.playerService = container.resolve<PlayerService>('playerService');
     this.playerService.init(player, this, 'swamp');
+    this.playerService.registerSlingColliders([
+      groundGroup,
+      stoneRuneGroup,
+      chunk7,
+      chunk10,
+      chunk13,
+      chunk14,
+      chunk15,
+      chunk16,
+      chunk17,
+      chunk18,
+    ]);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       owlTimer.remove();

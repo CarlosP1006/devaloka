@@ -216,12 +216,28 @@
 [x] Spritesheet de quebra (shield-sword-break.png) criado — 3 frames 290x287px, alpha 0.45 nos frames de quebra
 [x] Tabela de interações de hitbox adicionada ao CLAUDE.md
 [x] Mecânica do escudo (tipo Quen) planejada — cooldown, ativação com botão direito, duração 1.5~2s, quebra por dano ou tempo, crítico garantido no primeiro ataque
+[x] player-sling-cut.png criado — 4 linhas × 13 colunas com apenas as animações de shoot do estilingue
+[x] PlayerSlingAnimations.ts mapeado corretamente — shoot_left (linha 2) e shoot_right (linha 4)
+[x] previewSlingAnims corrigido — flag isPreviewing bloqueia movimento durante preview, impede empilhamento, WeakSet remove any do canvas
+[x] Mecânica base do estilingue — CTRL equipa/desequipa, mouse determina direção, click atira, bloqueado no ar, animação aim (frames 1-8) e release (9-13)
+[x] player-sling.png ajustado +5px via ImageMagick — corrige levitação visual sem afetar caixa de colisão
+[x] Velocidade da animação de tiro do estilingue ajustada — release 80ms/frame (era 50ms)
+[x] Altura do pulo aumentada levemente — velocityY -810 (era -780)
+[x] Estilingue com projétil — pedra cinza gerada via generateTexture, velocidade 1000, linha reta sem gravidade, some ao colidir com física ou sair da tela
+[x] registerSlingColliders — PlayerService recebe grupos físicos das rooms e registra colliders internamente
+[x] Bug corrigido — player bloqueado durante animação de release do estilingue (slingFiring flag)
+[x] Bug corrigido — escudo não bloqueava mais o CTRL do estilingue
+[x] Bug corrigido — ataque com swordSprite não cria caixa de colisão enorme (setTexture no player causava resize do body) — mantido swordSprite separado
+[x] Bug corrigido — player não fica invisível durante ataque (swordSprite 128px cobre visualmente o sprite base)
 
 --------------------------------------------------
 ## IDEIAS FUTURAS
 
 - Decoração da SwampRoom — mais props, árvores, detalhes
 - Sons de combate — pra quando implementar o combate
+
+- Estilingue — cooldown fixo pra disparar (resolve bug de sumir ao spammar CTRL+click)
+- Estilingue — projétil visual e mecânica de dano (aguarda inimigos)
 
 - PRIORIDADE (amanhã, nessa ordem):
   1. Placas de tutorial — SpawnSwampRoom (mecânica a definir)

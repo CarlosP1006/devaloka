@@ -183,6 +183,17 @@ export class ForestSwampRoom extends Phaser.Scene {
     PlayerCamera.setup(this, player, mapWidth);
     this.playerService = container.resolve<PlayerService>('playerService');
     this.playerService.init(player, this, 'swamp');
+    const slingTargets: Phaser.Physics.Arcade.StaticGroup[] = [
+      groundGroup,
+      chunk0,
+      chunk1,
+      chunk2,
+      chunk3,
+      chunk4,
+      ceilingGroup,
+    ];
+    if (thornGroup) slingTargets.push(thornGroup);
+    this.playerService.registerSlingColliders(slingTargets);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.input.removeAllListeners();

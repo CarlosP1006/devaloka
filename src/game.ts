@@ -32,7 +32,7 @@ window.addEventListener('load', () => {
         gravity: {
           y: 1400,
         },
-        debug: false,
+        debug: false, //ativa - desativa caixa de colisão
       },
     },
     scale: {

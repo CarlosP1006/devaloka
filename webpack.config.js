@@ -2,6 +2,7 @@ const path = require('path');
 const htmlPlugin = require('html-webpack-plugin');
 const copyPlugin = require('copy-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const htmlPluginCfg = new htmlPlugin({
   template: path.resolve(__dirname, 'src/index.html'),
@@ -59,6 +60,15 @@ module.exports = (_env, argv) => ({
     client: {
       overlay: { warnings: false, errors: true },
     },
+  },
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          mangle: false,
+        },
+      }),
+    ],
   },
   stats: 'errors-warnings',
   ignoreWarnings: [{ module: /awilix/, message: /Critical dependency/ }],

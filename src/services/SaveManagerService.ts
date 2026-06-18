@@ -17,9 +17,12 @@ function deepMerge<T extends object>(base: T, patch: Partial<T>): T {
       typeof bv === 'object' &&
       !Array.isArray(bv)
     ) {
-      (result as any)[k] = deepMerge(bv as object, pv as object);
+      (result as Record<keyof T, unknown>)[k] = deepMerge(
+        bv as object,
+        pv as object,
+      );
     } else if (pv !== undefined) {
-      (result as any)[k] = pv;
+      (result as Record<keyof T, unknown>)[k] = pv;
     }
   });
   return result;

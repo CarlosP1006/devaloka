@@ -211,6 +211,9 @@
 [x] Caixa de colisão do player reduzida — setSize(22,38) + setOffset(21,21): 1px por lado nas laterais, 2px em altura — evita prender nas quinas dos chunks
 [x] tileH arredondado pra inteiro (Math.floor) — superfícies de física em pixel exato, sem sobreposição sub-pixel nas bordas dos chunks
 
+## 2026-06-18
+[x] Deploy no GitHub Pages — Action automática no push da main, jogo acessível em https://CarlosP1006.github.io/devaloka/
+
 ## 2026-06-16
 [x] Escudo visual (shield-sword.png) adicionado ao player — centralizado, alpha 0.23, displaySize 110x110, segue o player todo frame via syncShield()
 [x] Spritesheet de quebra (shield-sword-break.png) criado — 3 frames 290x287px, alpha 0.45 nos frames de quebra

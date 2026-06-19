@@ -213,6 +213,13 @@
 
 ## 2026-06-18
 [x] Deploy no GitHub Pages — Action automática no push da main, jogo acessível em https://CarlosP1006.github.io/devaloka/
+[x] Fix hot reload — publicPath './' quebrava WebSocket do devServer; agora usa '/' no dev e './' só no build de produção
+[x] Som de ativação do escudo (shield-activate) — toca ao pressionar botão direito, volume 0.1
+[x] Som de quebra do escudo (shield-break) — toca ao início da animação de quebra, volume 0.1
+[x] Som de puxar estilingue (sling-pull) — toca ao equipar com CTRL, para ao soltar ou atirar, volume 0.2
+[x] Som de disparo do estilingue (sling-release) — toca ao atirar, volume 0.3
+[x] Som de colisão da pedra (sling-hit) — toca ao colidir com física, volume 0.3
+[x] Partículas de colisão da pedra — burst de 4 partículas cinzas no ponto de impacto, caixa de colisão da pedra reduzida para 2x2px
 
 ## 2026-06-16
 [x] Escudo visual (shield-sword.png) adicionado ao player — centralizado, alpha 0.23, displaySize 110x110, segue o player todo frame via syncShield()
@@ -249,14 +256,7 @@
 
 - Estilingue — projétil visual e mecânica de dano (aguarda inimigos)
 
-- PRIORIDADE (amanhã, nessa ordem):
-  1. Sons e partículas:
-     - Som de ativar escudo
-     - Som de quebra do escudo
-     - Som de puxar a corda do estilingue (ao equipar/mirar)
-     - Som de tiro do estilingue
-     - Som de colisão da pedra
-     - Partículas de colisão da pedra
+- PRIORIDADE (nessa ordem):
   2. Placas de tutorial — SpawnSwampRoom (mecânica a definir)
   3. Enfeitar SpawnSwampRoom — revisar se falta algo
   4. Enfeitar ForestSwampRoom — props, árvores, atmosfera

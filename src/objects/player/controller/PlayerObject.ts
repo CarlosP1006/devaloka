@@ -62,7 +62,7 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
     return player;
   }
 
-  public activateShield(onDone: () => void): void {
+  public activateShield(onDone: () => void, onBreak?: () => void): void {
     const show = (key: string, frame?: number, alpha = 0.23) => {
       this.shieldSprite.setTexture(key, frame);
       this.shieldSprite.setDisplaySize(
@@ -83,6 +83,7 @@ export class PlayerObject extends Phaser.Physics.Arcade.Sprite {
         -9999,
         -9999,
       );
+      onBreak?.();
       const breakFrames = [0, 1, 2];
       let i = 0;
       const nextBreak = () => {

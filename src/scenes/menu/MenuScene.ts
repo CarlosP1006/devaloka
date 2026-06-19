@@ -27,6 +27,11 @@ import swordIcon from '@assets/player/images/sword-icon.png';
 import playerJump from '@assets/player/audio/player-jump.ogg';
 import swordSwingSfx from '@assets/player/audio/sword-swing.ogg';
 import itemRevealSfx from '@assets/player/audio/item-reveal.ogg';
+import shieldActivateSfx from '@assets/player/audio/shield-activate.ogg';
+import shieldBreakSfx from '@assets/player/audio/shield-break.ogg';
+import slingPullSfx from '@assets/player/audio/sling-pull.ogg';
+import slingReleaseSfx from '@assets/player/audio/sling-release.ogg';
+import slingHitSfx from '@assets/player/audio/sling-hit.ogg';
 import { loadPlayerAnimations } from '@objects/player/PlayerLoader';
 import { container } from '@containers/index';
 import { AudioManagerService } from '@services/AudioManagerService';
@@ -81,6 +86,11 @@ export class MenuScene extends Phaser.Scene {
     this.load.audio('player-jump', playerJump);
     this.load.audio('sword-swing', swordSwingSfx);
     this.load.audio('item-reveal', itemRevealSfx);
+    this.load.audio('shield-activate', shieldActivateSfx);
+    this.load.audio('shield-break', shieldBreakSfx);
+    this.load.audio('sling-pull', slingPullSfx);
+    this.load.audio('sling-release', slingReleaseSfx);
+    this.load.audio('sling-hit', slingHitSfx);
   }
 
   create(): void {

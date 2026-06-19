@@ -39,6 +39,12 @@ export class PlayerService {
   private saveTimer: Phaser.Time.TimerEvent | null = null;
   private currentAnim: MoveState = '';
   private swingSound: Phaser.Sound.BaseSound | null = null;
+  private shieldSound: Phaser.Sound.BaseSound | null = null;
+  private shieldBreakSound: Phaser.Sound.BaseSound | null = null;
+  private slingPullSound: Phaser.Sound.BaseSound | null = null;
+  private slingReleaseSound: Phaser.Sound.BaseSound | null = null;
+  private slingHitSound: Phaser.Sound.BaseSound | null = null;
+  private slingParticles: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
   private shieldActive = false;
   private slingActive = false;
   private slingFiring = false;
@@ -85,6 +91,17 @@ export class PlayerService {
       maxSize: 5,
     });
 
+    if (this.slingParticles) this.slingParticles.destroy();
+    this.slingParticles = scene.add.particles(0, 0, 'sling-stone', {
+      speed: { min: 40, max: 120 },
+      angle: { min: 0, max: 360 },
+      scale: { start: 0.5, end: 0 },
+      alpha: { start: 1, end: 0 },
+      lifespan: 300,
+      gravityY: 400,
+      emitting: false,
+    });
+
     this.slingLastShot =
       this.saveManagerService.get()?.weapons?.sling?.lastShot ?? 0;
     this.slingUnlocked =
@@ -116,6 +133,21 @@ export class PlayerService {
 
     if (this.swingSound) this.swingSound.destroy();
     this.swingSound = scene.sound.add('sword-swing', { volume: 1 });
+
+    if (this.shieldSound) this.shieldSound.destroy();
+    this.shieldSound = scene.sound.add('shield-activate', { volume: 0.1 });
+
+    if (this.shieldBreakSound) this.shieldBreakSound.destroy();
+    this.shieldBreakSound = scene.sound.add('shield-break', { volume: 0.1 });
+
+    if (this.slingPullSound) this.slingPullSound.destroy();
+    this.slingPullSound = scene.sound.add('sling-pull', { volume: 0.2 });
+
+    if (this.slingReleaseSound) this.slingReleaseSound.destroy();
+    this.slingReleaseSound = scene.sound.add('sling-release', { volume: 0.3 });
+
+    if (this.slingHitSound) this.slingHitSound.destroy();
+    this.slingHitSound = scene.sound.add('sling-hit', { volume: 0.3 });
 
     if (this.saveTimer) this.saveTimer.remove();
     this.saveTimer = scene.time.addEvent({
@@ -168,12 +200,14 @@ export class PlayerService {
       this.player.equipSling(wp0.x > this.player.x);
       this.slingGraphics = scene.add.graphics();
       this.slingGraphics.setDepth(200);
+      this.slingPullSound?.play();
     });
 
     scene.input.keyboard!.on('keyup-CTRL', () => {
       if (!this.slingActive) return;
       this.slingActive = false;
       this.currentAnim = '';
+      this.slingPullSound?.stop();
       this.player.unequipSling();
       if (this.slingGraphics) {
         this.slingGraphics.destroy();
@@ -190,9 +224,15 @@ export class PlayerService {
         save?.weapons?.shield?.unlocked
       ) {
         this.shieldActive = true;
-        this.player.activateShield(() => {
-          this.shieldActive = false;
-        });
+        this.shieldSound?.play();
+        this.player.activateShield(
+          () => {
+            this.shieldActive = false;
+          },
+          () => {
+            this.shieldBreakSound?.play();
+          },
+        );
         return;
       }
       if (!pointer.leftButtonDown()) return;
@@ -213,6 +253,7 @@ export class PlayerService {
           stone.setActive(true).setVisible(true);
           const body = stone.body as Phaser.Physics.Arcade.Body;
           body.enable = true;
+          body.setSize(2, 2);
           body.setAllowGravity(false);
           body.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
         }
@@ -230,6 +271,8 @@ export class PlayerService {
         this.slingActive = false;
         this.slingFiring = true;
         this.currentAnim = '';
+        this.slingPullSound?.stop();
+        this.slingReleaseSound?.play();
         this.player.setVelocityX(0);
         if (this.slingGraphics) {
           this.slingGraphics.destroy();
@@ -295,6 +338,8 @@ export class PlayerService {
         const b = s.body as Phaser.Physics.Arcade.Body;
         b.stop();
         b.enable = false;
+        this.slingHitSound?.play();
+        this.slingParticles?.explode(4, s.x, s.y);
       });
     });
   }

@@ -69,9 +69,11 @@ export class PlayerService {
     this.lastX = player.x;
     this.sessionStart = Date.now();
     this.basePlayTime = this.saveManagerService.get()?.slotInfo?.playTime ?? 0;
+    this.attacking = false;
     this.shieldActive = false;
     this.slingActive = false;
     this.slingFiring = false;
+    this.currentAnim = '';
     if (this.slingGraphics) {
       this.slingGraphics.destroy();
       this.slingGraphics = null;

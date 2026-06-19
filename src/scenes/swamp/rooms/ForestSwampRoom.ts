@@ -21,6 +21,13 @@ export class ForestSwampRoom extends Phaser.Scene {
 
   create(data: { spawnX?: number; spawnY?: number }): void {
     const { tileH, groundTop } = getTileSize(this);
+
+    this.add
+      .image(mapWidth / 2, (groundTop + tileH) / 2 + 53, 'forest-swamp-background')
+      .setDisplaySize(mapWidth, groundTop + tileH)
+      .setDepth(Depth.FAR_BACKGROUND)
+      .setAlpha(0.85);
+
     const { group: groundGroup } = createGround(
       this,
       'swamp-ground',
@@ -182,6 +189,8 @@ export class ForestSwampRoom extends Phaser.Scene {
       player,
       'forest-swamp-room-door-1',
     );
+
+    this.sound.play('forest-swamp-ambient', { loop: true, volume: 0.5 });
 
     PlayerCamera.setup(this, player, mapWidth);
     this.playerService = container.resolve<PlayerService>('playerService');

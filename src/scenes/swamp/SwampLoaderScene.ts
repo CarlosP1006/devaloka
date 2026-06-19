@@ -1,5 +1,6 @@
 import swampGroundRoots from '@assets/swamp/images/swamp-ground-roots.png';
 import swampBackground from '@assets/swamp/images/spawn-swamp-background.png';
+import forestBackground from '@assets/swamp/images/forest-swamp-background.png';
 import swampGroundDirt from '@assets/swamp/images/swamp-ground-dirt.png';
 import forestGroundSurface from '@assets/swamp/images/forest-swamp-ground-surface.png';
 import forestGroundThorns from '@assets/swamp/images/forest-swamp-ground-thorns.png';
@@ -12,6 +13,7 @@ import chestClosed from '@assets/swamp/images/chest-swamp-closed.png';
 import chestOpen from '@assets/swamp/images/chest-swamp-open.png';
 import swampStep from '@assets/swamp/audio/swamp-step.ogg';
 import swampAmbient from '@assets/swamp/audio/swamp-ambient.ogg';
+import forestSwampAmbient from '@assets/swamp/audio/forest-swamp-ambient.ogg';
 import swampOwlCall from '@assets/swamp/audio/swamp-owl-call.ogg';
 import { container } from '@containers/index';
 import { SaveManagerService } from '@services/SaveManagerService';
@@ -26,6 +28,7 @@ export class SwampLoaderScene extends Phaser.Scene {
   preload(): void {
     this.load.image('swamp-ground', swampGroundRoots);
     this.load.image('spawn-swamp-background', swampBackground);
+    this.load.image('forest-swamp-background', forestBackground);
     this.load.image('swamp-ground-dirt', swampGroundDirt);
     this.load.image('forest-swamp-ground-surface', forestGroundSurface);
     this.load.image('forest-swamp-ground-thorns', forestGroundThorns);
@@ -41,6 +44,7 @@ export class SwampLoaderScene extends Phaser.Scene {
     this.load.image('chest-swamp-open', chestOpen);
     this.load.audio('swamp-step', swampStep);
     this.load.audio('swamp-ambient', swampAmbient);
+    this.load.audio('forest-swamp-ambient', forestSwampAmbient);
     this.load.audio('swamp-owl-call', swampOwlCall);
   }
 

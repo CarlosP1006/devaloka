@@ -64,7 +64,11 @@ export class LoreScene extends Phaser.Scene {
     let minScrollY = winY;
     let scrollEnabled = false;
 
+    const bgMusic = this.sound.add('menu-music', { loop: true, volume: 0.1 });
+    bgMusic.play();
+
     const close = () => {
+      bgMusic.stop();
       data.onClose?.();
       this.scene.stop();
       this.scene.resume(data.resumeKey);

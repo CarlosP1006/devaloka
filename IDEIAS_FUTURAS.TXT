@@ -257,6 +257,7 @@
 [x] SpawnSwampRoom lança LoreScene automaticamente se loreShown=false, pausando sons e cena
 [x] LoreScene refatorada para genérica — paragraphs[] e onClose() via data, reutilizável em qualquer ponto do jogo
 [x] INTRO_LORE movida para SpawnSwampRoom — texto de lore inicial do jogo
+[x] Música de fundo na LoreScene — menu-music em loop, volume 0.1, para ao fechar
 
 --------------------------------------------------
 ## IDEIAS FUTURAS

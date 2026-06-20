@@ -251,6 +251,13 @@
 [x] Som ambiente da ForestSwampRoom (forest-swamp-ambient.ogg) — mata fechada noturna, loop, volume 0.5
 [x] Bug corrigido — player travado após New Game: attacking e currentAnim não eram resetados no PlayerService.init()
 
+## 2026-06-20
+[x] LoreScene criada — overlay genérico com texto scrollável (drag + roda do mouse), máscara de recorte, seta pulsante e botão CONTINUAR que aparece só ao chegar no fim
+[x] loreShown adicionado ao GameSaveTypes — flag por slot, lore só aparece na primeira entrada no jogo
+[x] SpawnSwampRoom lança LoreScene automaticamente se loreShown=false, pausando sons e cena
+[x] LoreScene refatorada para genérica — paragraphs[] e onClose() via data, reutilizável em qualquer ponto do jogo
+[x] INTRO_LORE movida para SpawnSwampRoom — texto de lore inicial do jogo
+
 --------------------------------------------------
 ## IDEIAS FUTURAS
 

@@ -8,4 +8,5 @@ export type GameSaveTypes = {
   slotInfo?: SlotInfoTypes;
   weapons?: WeaponTypes;
   sceneMods?: SceneModTypes;
+  loreShown?: boolean;
 };

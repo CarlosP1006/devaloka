@@ -12,6 +12,17 @@ import {
 import { createTransitionLine } from '@utils/createTransitionLine';
 import { Depth } from '@utils/Depth';
 
+const INTRO_LORE = [
+  'Há um lugar além do véu do mundo dos vivos.',
+  'Os antigos o chamavam de Devaloka, o plano sagrado, onde os deuses caminham e o tempo não carrega peso.',
+  'Dizem que outrora, este mundo e o Devaloka eram um só. Mas algo quebrou o equilíbrio. A terra sangrou. O céu escureceu. E criaturas de outro plano começaram a vagar entre os mortais, corrompidas, amaldiçoadas, famintas.',
+  'A fome se alastrou. As colheitas morreram. Os rios secaram. E com eles, a esperança.',
+  'Mas os anciãos guardam uma profecia. Uma única verdade que ainda resiste ao esquecimento:',
+  '"Aquele que ousar enfrentar as criaturas amaldiçoadas, e as purgar desta terra, abrirá o caminho para Devaloka. E com ele, restaurará o que foi perdido."',
+  'Ninguém sabe o que aguarda do outro lado.',
+  'Mas quando o mundo inteiro é uma ferida aberta, até uma lenda é razão suficiente para levantar uma espada.',
+];
+
 export class SpawnSwampRoom extends Phaser.Scene {
   private playerService!: PlayerService;
 
@@ -200,6 +211,16 @@ export class SpawnSwampRoom extends Phaser.Scene {
       this.input.removeAllListeners();
       this.input.keyboard?.removeAllListeners();
     });
+
+    if (!save?.loreShown) {
+      this.sound.pauseAll();
+      this.scene.pause();
+      this.scene.launch('LoreScene', {
+        resumeKey: 'SpawnSwampRoom',
+        paragraphs: INTRO_LORE,
+        onClose: () => saveManagerService.save({ loreShown: true }),
+      });
+    }
   }
 
   update(): void {
